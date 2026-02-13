@@ -250,6 +250,75 @@ export const budgetUtilization = [
   { name: "Other", value: 7, fill: "hsl(340, 65%, 55%)" },
 ];
 
+// ─── Budget vs Actual Data ───
+export const budgetVsActualData = [
+  { category: "Maintenance", budget: 2400, actual: 2650, variance: -250 },
+  { category: "Crew Wages", budget: 1800, actual: 1720, variance: 80 },
+  { category: "Stores & Spares", budget: 1200, actual: 1380, variance: -180 },
+  { category: "Insurance", budget: 850, actual: 840, variance: 10 },
+  { category: "Bunkering", budget: 3200, actual: 3450, variance: -250 },
+  { category: "Port Charges", budget: 600, actual: 580, variance: 20 },
+  { category: "Dry Dock", budget: 1500, actual: 1650, variance: -150 },
+  { category: "Admin & Overhead", budget: 400, actual: 390, variance: 10 },
+];
+
+export const budgetTrendMonthly = [
+  { month: "Sep", budget: 1200, actual: 1180 },
+  { month: "Oct", budget: 1250, actual: 1310 },
+  { month: "Nov", budget: 1280, actual: 1350 },
+  { month: "Dec", budget: 1300, actual: 1250 },
+  { month: "Jan", budget: 1350, actual: 1420 },
+  { month: "Feb", budget: 1200, actual: 1280 },
+];
+
+// ─── Dry Dock Data ───
+export interface DryDockKpi {
+  id: string;
+  label: string;
+  value: string;
+  unit: string;
+  trend: number;
+  severity: Severity;
+}
+
+export const dryDockKpis: DryDockKpi[] = [
+  { id: "dd-active", label: "Active Dry Docks", value: "1", unit: "vessel", trend: 0, severity: "low" },
+  { id: "dd-planned", label: "Planned This Year", value: "3", unit: "vessels", trend: 0, severity: "low" },
+  { id: "dd-budget", label: "Dry Dock Budget Utilization", value: "68%", unit: "of annual", trend: 12, severity: "medium" },
+  { id: "dd-overrun", label: "Cost Overrun", value: "11%", unit: "avg variance", trend: 5, severity: "medium" },
+  { id: "dd-duration", label: "Avg Dock Duration", value: "18", unit: "days", trend: -6, severity: "low" },
+  { id: "dd-completion", label: "Job Completion Rate", value: "92%", unit: "on schedule", trend: 3, severity: "low" },
+];
+
+export interface DryDockEntry {
+  id: string;
+  vessel: string;
+  yard: string;
+  startDate: string;
+  endDate: string;
+  status: "in-progress" | "completed" | "planned";
+  budgetUSD: number;
+  actualUSD: number;
+  scope: string;
+  completionPct: number;
+}
+
+export const dryDockEntries: DryDockEntry[] = [
+  { id: "dd1", vessel: "MV Narmada", yard: "Cochin Shipyard", startDate: "2026-01-20", endDate: "2026-02-15", status: "in-progress", budgetUSD: 520000, actualUSD: 485000, scope: "Hull treatment, propeller polish, class survey", completionPct: 78 },
+  { id: "dd2", vessel: "MT Kaveri", yard: "L&T Shipyard, Hazira", startDate: "2026-04-10", endDate: "2026-04-28", status: "planned", budgetUSD: 680000, actualUSD: 0, scope: "Special survey, ballast tank coating, BWTS install", completionPct: 0 },
+  { id: "dd3", vessel: "MV Tapti", yard: "ABG Shipyard, Surat", startDate: "2026-07-01", endDate: "2026-07-20", status: "planned", budgetUSD: 450000, actualUSD: 0, scope: "Intermediate survey, hull coating, shaft alignment", completionPct: 0 },
+  { id: "dd4", vessel: "MT Chambal", yard: "Western India Shipyard", startDate: "2025-10-05", endDate: "2025-10-22", status: "completed", budgetUSD: 390000, actualUSD: 425000, scope: "Annual survey, underwater hull cleaning, valve overhaul", completionPct: 100 },
+];
+
+export const dryDockCostBreakdown = [
+  { name: "Hull & Coating", value: 30, fill: "hsl(222, 52%, 23%)" },
+  { name: "Machinery", value: 25, fill: "hsl(28, 93%, 54%)" },
+  { name: "Class Survey", value: 15, fill: "hsl(152, 55%, 42%)" },
+  { name: "BWTS/Environmental", value: 12, fill: "hsl(210, 80%, 52%)" },
+  { name: "Electrical", value: 10, fill: "hsl(38, 92%, 50%)" },
+  { name: "Other", value: 8, fill: "hsl(340, 65%, 55%)" },
+];
+
 // ─── AI Chat Data ───
 export interface ChatMessage {
   id: string;
