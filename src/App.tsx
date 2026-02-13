@@ -7,6 +7,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import DashboardHome from "@/pages/DashboardHome";
 import ChatAnalytics from "@/pages/ChatAnalytics";
 import InsightsLibrary from "@/pages/InsightsLibrary";
+import KpiMethodology from "@/pages/KpiMethodology";
 import ReportsPage from "@/pages/ReportsPage";
 import AdminPage from "@/pages/AdminPage";
 import NotFound from "./pages/NotFound";
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/" element={<DashboardHome />} />
             <Route path="/chat" element={<ChatAnalytics />} />
             <Route path="/insights" element={<InsightsLibrary />} />
+            <Route path="/methodology" element={<KpiMethodology />} />
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="*" element={<NotFound />} />

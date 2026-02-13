@@ -9,12 +9,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Anchor,
+  BookOpen,
 } from "lucide-react";
 
 const navItems = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/" },
   { title: "Chat Analytics", icon: MessageSquare, path: "/chat" },
   { title: "Insights", icon: Lightbulb, path: "/insights" },
+  { title: "KPI Methodology", icon: BookOpen, path: "/methodology" },
   { title: "Reports", icon: BarChart3, path: "/reports" },
   { title: "Admin", icon: Settings, path: "/admin" },
 ];
