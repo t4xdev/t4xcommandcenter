@@ -36,7 +36,7 @@ export function AppSidebar() {
         </div>
         {!collapsed && (
           <div className="overflow-hidden">
-            <p className="text-sm font-bold text-sidebar-primary-foreground truncate">Smart Insights</p>
+            <p className="text-sm font-bold text-sidebar-foreground truncate">Smart Insights</p>
             <p className="text-[10px] text-sidebar-foreground/60 truncate">MIS Dashboard</p>
           </div>
         )}
