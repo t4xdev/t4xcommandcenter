@@ -13,6 +13,7 @@ import {
   docKpis, certificateAlerts, opsKpis, incidentTrendData, pmsComplianceData,
   certStatusData, drillComplianceData, predefinedQuestions, aiResponses,
   fleets, getVesselsByFleet,
+  incidentTypeDistribution, vesselStatusDistribution, maintenanceStatusDistribution, budgetUtilization,
   type Severity, type FleetName, type ChatMessage, type PredefinedQuestion,
 } from "@/data/maritimeData";
 
@@ -244,6 +245,39 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
+                {/* Donut Charts Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Incident Type Distribution</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Year-to-date breakdown</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={incidentTypeDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                            {incidentTypeDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Fleet Status</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Current vessel operational status</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={vesselStatusDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name} (${value})`}>
+                            {vesselStatusDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
                 {/* Recent Incidents */}
                 <div className="card-elevated overflow-hidden">
                   <div className="px-5 py-3 border-b border-border flex items-center gap-2">
@@ -311,6 +345,24 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
+                {/* Maintenance Donut Chart */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Task Status Breakdown</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Current maintenance task distribution</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={maintenanceStatusDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                            {maintenanceStatusDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -359,6 +411,23 @@ export default function Dashboard() {
               <div className="space-y-5 animate-fade-in-up">
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
                   {opsKpis.map((k, i) => <KpiCard key={k.id} {...k} index={i} />)}
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Budget Utilization</h3>
+                    <p className="text-xs text-muted-foreground mb-4">OPEX distribution by category</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={budgetUtilization} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                            {budgetUtilization.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
