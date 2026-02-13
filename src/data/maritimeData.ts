@@ -41,15 +41,17 @@ export interface QhseKpi {
   trend: number;
   severity: Severity;
   target?: string;
+  lastMonth: string;
+  avg6m: string;
 }
 
 export const qhseKpis: QhseKpi[] = [
-  { id: "ltif", label: "LTIF (Lost Time Injury Freq)", value: "0.42", unit: "per million hrs", trend: -12, severity: "low", target: "< 0.5" },
-  { id: "trir", label: "TRIR (Total Recordable Rate)", value: "1.8", unit: "per million hrs", trend: 5, severity: "medium", target: "< 1.5" },
-  { id: "near-miss", label: "Near Miss Reports", value: "34", unit: "this month", trend: 18, severity: "low" },
-  { id: "safety-drills", label: "Safety Drills Completed", value: "96%", unit: "compliance", trend: 2, severity: "low", target: "100%" },
-  { id: "env-incidents", label: "Environmental Incidents", value: "0", unit: "this quarter", trend: 0, severity: "low", target: "0" },
-  { id: "psc-deficiency", label: "PSC Deficiency Rate", value: "1.2", unit: "per inspection", trend: -8, severity: "low", target: "< 2.0" },
+  { id: "ltif", label: "LTIF (Lost Time Injury Freq)", value: "0.42", unit: "per million hrs", trend: -12, severity: "low", target: "< 0.5", lastMonth: "0.44", avg6m: "0.48" },
+  { id: "trir", label: "TRIR (Total Recordable Rate)", value: "1.8", unit: "per million hrs", trend: 5, severity: "medium", target: "< 1.5", lastMonth: "1.7", avg6m: "1.6" },
+  { id: "near-miss", label: "Near Miss Reports", value: "34", unit: "this month", trend: 18, severity: "low", lastMonth: "28", avg6m: "22" },
+  { id: "safety-drills", label: "Safety Drills Completed", value: "96%", unit: "compliance", trend: 2, severity: "low", target: "100%", lastMonth: "94%", avg6m: "95%" },
+  { id: "env-incidents", label: "Environmental Incidents", value: "0", unit: "this quarter", trend: 0, severity: "low", target: "0", lastMonth: "0", avg6m: "0.2" },
+  { id: "psc-deficiency", label: "PSC Deficiency Rate", value: "1.2", unit: "per inspection", trend: -8, severity: "low", target: "< 2.0", lastMonth: "1.3", avg6m: "1.4" },
 ];
 
 export interface IncidentRecord {
@@ -78,15 +80,17 @@ export interface MaintenanceKpi {
   unit: string;
   trend: number;
   severity: Severity;
+  lastMonth: string;
+  avg6m: string;
 }
 
 export const maintenanceKpis: MaintenanceKpi[] = [
-  { id: "pms-completion", label: "PMS Task Completion", value: "87%", unit: "on schedule", trend: -3, severity: "medium" },
-  { id: "overdue", label: "Overdue Jobs", value: "23", unit: "tasks", trend: 15, severity: "high" },
-  { id: "running-hrs", label: "Running Hours Reported", value: "98%", unit: "accuracy", trend: 1, severity: "low" },
-  { id: "spare-stock", label: "Critical Spare Availability", value: "91%", unit: "in stock", trend: -5, severity: "medium" },
-  { id: "dry-dock", label: "Dry Dock Status", value: "1", unit: "vessel in dock", trend: 0, severity: "low" },
-  { id: "defect-closure", label: "Defect Closure Rate", value: "78%", unit: "within SLA", trend: -8, severity: "medium" },
+  { id: "pms-completion", label: "PMS Task Completion", value: "87%", unit: "on schedule", trend: -3, severity: "medium", lastMonth: "90%", avg6m: "89%" },
+  { id: "overdue", label: "Overdue Jobs", value: "23", unit: "tasks", trend: 15, severity: "high", lastMonth: "20", avg6m: "18" },
+  { id: "running-hrs", label: "Running Hours Reported", value: "98%", unit: "accuracy", trend: 1, severity: "low", lastMonth: "97%", avg6m: "97%" },
+  { id: "spare-stock", label: "Critical Spare Availability", value: "91%", unit: "in stock", trend: -5, severity: "medium", lastMonth: "96%", avg6m: "94%" },
+  { id: "dry-dock", label: "Dry Dock Status", value: "1", unit: "vessel in dock", trend: 0, severity: "low", lastMonth: "1", avg6m: "0.8" },
+  { id: "defect-closure", label: "Defect Closure Rate", value: "78%", unit: "within SLA", trend: -8, severity: "medium", lastMonth: "85%", avg6m: "82%" },
 ];
 
 export interface MaintenanceTask {
@@ -116,15 +120,17 @@ export interface DocKpi {
   unit: string;
   trend: number;
   severity: Severity;
+  lastMonth: string;
+  avg6m: string;
 }
 
 export const docKpis: DocKpi[] = [
-  { id: "cert-renewal", label: "Certificates Renewed On Time", value: "94%", unit: "compliance", trend: 2, severity: "low" },
-  { id: "cert-expiring", label: "Certificates Expiring (30 days)", value: "7", unit: "across fleet", trend: 40, severity: "high" },
-  { id: "mandatory-read", label: "Mandatory Read Acknowledgement", value: "82%", unit: "crew rate", trend: -6, severity: "medium" },
-  { id: "sop-adherence", label: "SOP Adherence", value: "91%", unit: "compliance", trend: 1, severity: "low" },
-  { id: "circular-ack", label: "Circular Acknowledgement", value: "76%", unit: "response rate", trend: -10, severity: "medium" },
-  { id: "statutory", label: "Statutory Compliance", value: "98%", unit: "audit pass rate", trend: 0.5, severity: "low" },
+  { id: "cert-renewal", label: "Certificates Renewed On Time", value: "94%", unit: "compliance", trend: 2, severity: "low", lastMonth: "92%", avg6m: "91%" },
+  { id: "cert-expiring", label: "Certificates Expiring (30 days)", value: "7", unit: "across fleet", trend: 40, severity: "high", lastMonth: "5", avg6m: "4" },
+  { id: "mandatory-read", label: "Mandatory Read Acknowledgement", value: "82%", unit: "crew rate", trend: -6, severity: "medium", lastMonth: "87%", avg6m: "85%" },
+  { id: "sop-adherence", label: "SOP Adherence", value: "91%", unit: "compliance", trend: 1, severity: "low", lastMonth: "90%", avg6m: "89%" },
+  { id: "circular-ack", label: "Circular Acknowledgement", value: "76%", unit: "response rate", trend: -10, severity: "medium", lastMonth: "84%", avg6m: "80%" },
+  { id: "statutory", label: "Statutory Compliance", value: "98%", unit: "audit pass rate", trend: 0.5, severity: "low", lastMonth: "97.5%", avg6m: "97%" },
 ];
 
 export interface CertificateAlert {
@@ -155,15 +161,17 @@ export interface OpsKpi {
   unit: string;
   trend: number;
   severity: Severity;
+  lastMonth: string;
+  avg6m: string;
 }
 
 export const opsKpis: OpsKpi[] = [
-  { id: "daily-report", label: "Daily Report Submission", value: "96%", unit: "on time", trend: 2, severity: "low" },
-  { id: "rest-hours", label: "Rest Hours Compliance", value: "99%", unit: "crew compliant", trend: 0, severity: "low" },
-  { id: "requisition-time", label: "Requisition Cycle Time", value: "4.2", unit: "days avg", trend: -8, severity: "low" },
-  { id: "po-accuracy", label: "PO Accuracy", value: "94%", unit: "error-free", trend: 3, severity: "low" },
-  { id: "vendor-vetting", label: "Vendor Vetting Compliance", value: "88%", unit: "approved vendors", trend: -2, severity: "medium" },
-  { id: "invoice-time", label: "Invoice Processing Time", value: "3.1", unit: "days avg", trend: 12, severity: "medium" },
+  { id: "daily-report", label: "Daily Report Submission", value: "96%", unit: "on time", trend: 2, severity: "low", lastMonth: "94%", avg6m: "93%" },
+  { id: "rest-hours", label: "Rest Hours Compliance", value: "99%", unit: "crew compliant", trend: 0, severity: "low", lastMonth: "99%", avg6m: "98%" },
+  { id: "requisition-time", label: "Requisition Cycle Time", value: "4.2", unit: "days avg", trend: -8, severity: "low", lastMonth: "4.6", avg6m: "4.8" },
+  { id: "po-accuracy", label: "PO Accuracy", value: "94%", unit: "error-free", trend: 3, severity: "low", lastMonth: "91%", avg6m: "90%" },
+  { id: "vendor-vetting", label: "Vendor Vetting Compliance", value: "88%", unit: "approved vendors", trend: -2, severity: "medium", lastMonth: "90%", avg6m: "89%" },
+  { id: "invoice-time", label: "Invoice Processing Time", value: "3.1", unit: "days avg", trend: 12, severity: "medium", lastMonth: "2.8", avg6m: "2.6" },
 ];
 
 // ─── Fleet Summary Stats ───
@@ -279,15 +287,17 @@ export interface DryDockKpi {
   unit: string;
   trend: number;
   severity: Severity;
+  lastMonth: string;
+  avg6m: string;
 }
 
 export const dryDockKpis: DryDockKpi[] = [
-  { id: "dd-active", label: "Active Dry Docks", value: "1", unit: "vessel", trend: 0, severity: "low" },
-  { id: "dd-planned", label: "Planned This Year", value: "3", unit: "vessels", trend: 0, severity: "low" },
-  { id: "dd-budget", label: "Dry Dock Budget Utilization", value: "68%", unit: "of annual", trend: 12, severity: "medium" },
-  { id: "dd-overrun", label: "Cost Overrun", value: "11%", unit: "avg variance", trend: 5, severity: "medium" },
-  { id: "dd-duration", label: "Avg Dock Duration", value: "18", unit: "days", trend: -6, severity: "low" },
-  { id: "dd-completion", label: "Job Completion Rate", value: "92%", unit: "on schedule", trend: 3, severity: "low" },
+  { id: "dd-active", label: "Active Dry Docks", value: "1", unit: "vessel", trend: 0, severity: "low", lastMonth: "1", avg6m: "0.7" },
+  { id: "dd-planned", label: "Planned This Year", value: "3", unit: "vessels", trend: 0, severity: "low", lastMonth: "3", avg6m: "3" },
+  { id: "dd-budget", label: "Dry Dock Budget Utilization", value: "68%", unit: "of annual", trend: 12, severity: "medium", lastMonth: "55%", avg6m: "48%" },
+  { id: "dd-overrun", label: "Cost Overrun", value: "11%", unit: "avg variance", trend: 5, severity: "medium", lastMonth: "9%", avg6m: "8%" },
+  { id: "dd-duration", label: "Avg Dock Duration", value: "18", unit: "days", trend: -6, severity: "low", lastMonth: "20", avg6m: "21" },
+  { id: "dd-completion", label: "Job Completion Rate", value: "92%", unit: "on schedule", trend: 3, severity: "low", lastMonth: "89%", avg6m: "88%" },
 ];
 
 export interface DryDockEntry {
