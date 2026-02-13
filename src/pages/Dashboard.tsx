@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
-  ClipboardList, ChevronDown, Circle,
+  ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target,
 } from "lucide-react";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
@@ -14,6 +14,8 @@ import {
   certStatusData, drillComplianceData, predefinedQuestions, aiResponses,
   fleets, getVesselsByFleet,
   incidentTypeDistribution, vesselStatusDistribution, maintenanceStatusDistribution, budgetUtilization,
+  budgetVsActualData, budgetTrendMonthly,
+  dryDockKpis, dryDockEntries, dryDockCostBreakdown,
   type Severity, type FleetName, type ChatMessage, type PredefinedQuestion,
 } from "@/data/maritimeData";
 
@@ -55,20 +57,38 @@ function KpiCard({ label, value, unit, trend, severity, index }: {
   );
 }
 
+// ─── Graph Summary Card ───
+interface InsightCard { icon: typeof CheckCircle; label: string; value: string; detail: string; color: string }
+
+function GraphSummary({ insights }: { insights: InsightCard[] }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+      {insights.map((ins, i) => (
+        <div key={i} className={`rounded-lg border px-4 py-3 ${ins.color}`}>
+          <div className="flex items-center gap-2 mb-1">
+            <ins.icon className="w-3.5 h-3.5" />
+            <span className="text-[11px] font-bold uppercase tracking-wider">{ins.label}</span>
+          </div>
+          <p className="text-lg font-bold font-mono">{ins.value}</p>
+          <p className="text-[10px] opacity-80">{ins.detail}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const domains = [
   { id: "qhse", label: "QHSE & Incidents", icon: Shield },
   { id: "maintenance", label: "Maintenance & PMS", icon: Wrench },
   { id: "documents", label: "Documents & Compliance", icon: FileCheck },
   { id: "operations", label: "Operations & Procurement", icon: ClipboardList },
+  { id: "drydock", label: "Dry Dock", icon: HardHat },
 ] as const;
 
 type DomainId = (typeof domains)[number]["id"];
 
 const chatCategories: Record<string, string> = {
-  safety: "Safety & QHSE",
-  maintenance: "Maintenance",
-  documents: "Documents",
-  operations: "Operations",
+  safety: "Safety & QHSE", maintenance: "Maintenance", documents: "Documents", operations: "Operations",
 };
 const chatCatColors: Record<string, string> = {
   safety: "bg-destructive/10 text-destructive border-destructive/20",
@@ -120,7 +140,6 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Tabs */}
           <div className="flex items-center bg-accent rounded-lg p-0.5">
             <button onClick={() => setActiveTab("overview")} className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === "overview" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
               Fleet Overview
@@ -131,13 +150,8 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Fleet Selector */}
             <div className="relative">
-              <select
-                value={selectedFleet}
-                onChange={(e) => setSelectedFleet(e.target.value as FleetName)}
-                className="appearance-none card-elevated pl-3 pr-8 py-1.5 text-xs font-medium text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-lg"
-              >
+              <select value={selectedFleet} onChange={(e) => setSelectedFleet(e.target.value as FleetName)} className="appearance-none card-elevated pl-3 pr-8 py-1.5 text-xs font-medium text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-lg">
                 {fleets.map((f) => <option key={f} value={f}>{f}</option>)}
               </select>
               <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
@@ -184,30 +198,23 @@ export default function Dashboard() {
             </div>
 
             {/* Domain Tabs */}
-            <div className="flex items-center gap-1 border-b border-border pb-0">
+            <div className="flex items-center gap-1 border-b border-border pb-0 overflow-x-auto">
               {domains.map((d) => (
-                <button
-                  key={d.id}
-                  onClick={() => setActiveDomain(d.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium rounded-t-lg transition-all border-b-2 ${
-                    activeDomain === d.id
-                      ? "border-secondary text-foreground bg-card"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
+                <button key={d.id} onClick={() => setActiveDomain(d.id)} className={`flex items-center gap-2 px-4 py-2.5 text-xs font-medium rounded-t-lg transition-all border-b-2 whitespace-nowrap ${activeDomain === d.id ? "border-secondary text-foreground bg-card" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
                   <d.icon className="w-4 h-4" />
                   {d.label}
                 </button>
               ))}
             </div>
 
-            {/* Domain Content */}
+            {/* ═══════ QHSE ═══════ */}
             {activeDomain === "qhse" && (
               <div className="space-y-5 animate-fade-in-up">
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
                   {qhseKpis.map((k, i) => <KpiCard key={k.id} {...k} index={i} />)}
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {/* Incident Trend */}
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Incident Trend</h3>
                     <p className="text-xs text-muted-foreground mb-4">Monthly near-miss vs injuries</p>
@@ -225,7 +232,13 @@ export default function Dashboard() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: TrendingUp, label: "Proactive Reporting", value: "+183%", detail: "Near-miss reports up — strong safety culture", color: "bg-success/10 text-success border-success/20" },
+                      { icon: TrendingDown, label: "Injury Reduction", value: "-33%", detail: "Medical cases dropped from 1 to 0 this quarter", color: "bg-info/10 text-info border-info/20" },
+                      { icon: Target, label: "Target Gap", value: "0.08", detail: "LTIF 0.42 — only 0.08 above target of < 0.5", color: "bg-warning/10 text-warning border-warning/20" },
+                    ]} />
                   </div>
+                  {/* Drill Compliance */}
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Drill Compliance</h3>
                     <p className="text-xs text-muted-foreground mb-4">Monthly drill completion rate (%)</p>
@@ -243,6 +256,11 @@ export default function Dashboard() {
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: CheckCircle, label: "Proactive", value: "20%", detail: "Drills completed before scheduled time", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Clock, label: "Reactive", value: "30%", detail: "Completed after due date — needs attention", color: "bg-warning/10 text-warning border-warning/20" },
+                      { icon: Target, label: "Scope of Improvement", value: "10%", detail: "Drills still due — compliance gap to close", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                    ]} />
                   </div>
                 </div>
                 {/* Donut Charts Row */}
@@ -250,7 +268,7 @@ export default function Dashboard() {
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Incident Type Distribution</h3>
                     <p className="text-xs text-muted-foreground mb-4">Year-to-date breakdown</p>
-                    <div className="h-[280px]">
+                    <div className="h-[260px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie data={incidentTypeDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
@@ -261,11 +279,16 @@ export default function Dashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: CheckCircle, label: "Positive Trend", value: "45%", detail: "Near-miss dominance indicates proactive reporting", color: "bg-success/10 text-success border-success/20" },
+                      { icon: AlertTriangle, label: "Watch Area", value: "12%", detail: "Medical cases need root-cause analysis", color: "bg-warning/10 text-warning border-warning/20" },
+                      { icon: Target, label: "Env. Risk", value: "10%", detail: "Environmental incidents — regulatory exposure", color: "bg-info/10 text-info border-info/20" },
+                    ]} />
                   </div>
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Fleet Status</h3>
                     <p className="text-xs text-muted-foreground mb-4">Current vessel operational status</p>
-                    <div className="h-[280px]">
+                    <div className="h-[260px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie data={vesselStatusDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
@@ -276,6 +299,11 @@ export default function Dashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: CheckCircle, label: "Operational", value: "75%", detail: "6 of 8 vessels fully operational", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Wrench, label: "In Dry Dock", value: "1", detail: "MV Narmada — scheduled maintenance", color: "bg-warning/10 text-warning border-warning/20" },
+                      { icon: Anchor, label: "Anchored", value: "1", detail: "MT Chambal — awaiting berth allocation", color: "bg-muted text-muted-foreground border-border" },
+                    ]} />
                   </div>
                 </div>
                 {/* Recent Incidents */}
@@ -302,6 +330,7 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* ═══════ MAINTENANCE ═══════ */}
             {activeDomain === "maintenance" && (
               <div className="space-y-5 animate-fade-in-up">
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
@@ -324,6 +353,11 @@ export default function Dashboard() {
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: CheckCircle, label: "Above Target", value: "3", detail: "Kaveri, Tapti, Mahanadi above 90% compliance", color: "bg-success/10 text-success border-success/20" },
+                      { icon: AlertTriangle, label: "Below Target", value: "4", detail: "Vessels between 78-89% — need acceleration", color: "bg-warning/10 text-warning border-warning/20" },
+                      { icon: Target, label: "Fleet Target", value: "95%", detail: "Current avg 87% — 8% gap to close", color: "bg-info/10 text-info border-info/20" },
+                    ]} />
                   </div>
                   <div className="card-elevated overflow-hidden">
                     <div className="px-5 py-3 border-b border-border"><h3 className="text-sm font-semibold text-foreground">Priority Tasks</h3></div>
@@ -336,21 +370,19 @@ export default function Dashboard() {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] font-mono text-muted-foreground">{t.dueDate}</span>
-                            <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${
-                              t.status === "overdue" ? "severity-high" : t.status === "upcoming" ? "severity-low" : "severity-medium"
-                            }`}>{t.status}</span>
+                            <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${t.status === "overdue" ? "severity-high" : t.status === "upcoming" ? "severity-low" : "severity-medium"}`}>{t.status}</span>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
-                {/* Maintenance Donut Chart */}
+                {/* Maintenance Donut */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Task Status Breakdown</h3>
                     <p className="text-xs text-muted-foreground mb-4">Current maintenance task distribution</p>
-                    <div className="h-[280px]">
+                    <div className="h-[260px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie data={maintenanceStatusDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
@@ -361,11 +393,17 @@ export default function Dashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: CheckCircle, label: "On Track", value: "62%", detail: "Tasks completed within SLA", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Clock, label: "Pipeline", value: "28%", detail: "Upcoming tasks scheduled this month", color: "bg-info/10 text-info border-info/20" },
+                      { icon: AlertTriangle, label: "Overdue", value: "10%", detail: "23 tasks past due — escalation needed", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                    ]} />
                   </div>
                 </div>
               </div>
             )}
 
+            {/* ═══════ DOCUMENTS ═══════ */}
             {activeDomain === "documents" && (
               <div className="space-y-5 animate-fade-in-up">
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
@@ -375,7 +413,7 @@ export default function Dashboard() {
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Certificate Status</h3>
                     <p className="text-xs text-muted-foreground mb-4">Fleet-wide certificate health</p>
-                    <div className="h-[280px]">
+                    <div className="h-[260px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie data={certStatusData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
@@ -386,6 +424,11 @@ export default function Dashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: CheckCircle, label: "Compliant", value: "78%", detail: "Certificates valid with >30 days remaining", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Clock, label: "Expiring Soon", value: "15%", detail: "7 certificates within 30-day window", color: "bg-warning/10 text-warning border-warning/20" },
+                      { icon: AlertTriangle, label: "Critical Risk", value: "7%", detail: "3 unacknowledged — potential vessel detention", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                    ]} />
                   </div>
                   <div className="card-elevated overflow-hidden">
                     <div className="px-5 py-3 border-b border-border"><h3 className="text-sm font-semibold text-foreground">Certificate Alerts</h3></div>
@@ -408,16 +451,66 @@ export default function Dashboard() {
               </div>
             )}
 
+            {/* ═══════ OPERATIONS ═══════ */}
             {activeDomain === "operations" && (
               <div className="space-y-5 animate-fade-in-up">
                 <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
                   {opsKpis.map((k, i) => <KpiCard key={k.id} {...k} index={i} />)}
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {/* Budget vs Actual Bar Chart */}
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Budget vs Actual (USD '000)</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Category-wise OPEX comparison — YTD</p>
+                    <div className="h-[280px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={budgetVsActualData} layout="vertical">
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" horizontal={false} />
+                          <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <YAxis type="category" dataKey="category" tick={{ fontSize: 10, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} width={85} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`$${value}K`, ""]} />
+                          <Bar dataKey="budget" fill="hsl(222,52%,23%)" radius={[0,3,3,0]} barSize={10} name="Budget" />
+                          <Bar dataKey="actual" fill="hsl(28,93%,54%)" radius={[0,3,3,0]} barSize={10} name="Actual" />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <GraphSummary insights={[
+                      { icon: TrendingDown, label: "Over Budget", value: "$830K", detail: "Maintenance, Spares & Bunkering exceeded budget", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                      { icon: CheckCircle, label: "Under Budget", value: "$120K", detail: "Crew, Insurance, Port & Admin within limits", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Target, label: "Net Variance", value: "-$710K", detail: "Total OPEX 6.8% over annual budget", color: "bg-warning/10 text-warning border-warning/20" },
+                    ]} />
+                  </div>
+                  {/* Monthly Budget Trend */}
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Monthly OPEX Trend</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Budget vs Actual spend per month (USD '000)</p>
+                    <div className="h-[280px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={budgetTrendMonthly}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" />
+                          <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <YAxis tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`$${value}K`, ""]} />
+                          <Area type="monotone" dataKey="budget" stroke="hsl(222,52%,23%)" fill="hsl(222,52%,23%)" fillOpacity={0.15} strokeWidth={2} name="Budget" />
+                          <Area type="monotone" dataKey="actual" stroke="hsl(28,93%,54%)" fill="hsl(28,93%,54%)" fillOpacity={0.15} strokeWidth={2} name="Actual" />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <GraphSummary insights={[
+                      { icon: TrendingUp, label: "Peak Spend", value: "Jan", detail: "$1,420K actual vs $1,350K budget", color: "bg-warning/10 text-warning border-warning/20" },
+                      { icon: CheckCircle, label: "Best Month", value: "Dec", detail: "$50K under budget — cost controls effective", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Target, label: "Avg Overrun", value: "4.2%", detail: "Consistent overspend — procurement review needed", color: "bg-info/10 text-info border-info/20" },
+                    ]} />
+                  </div>
+                </div>
+                {/* Budget Utilization Donut */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Budget Utilization</h3>
                     <p className="text-xs text-muted-foreground mb-4">OPEX distribution by category</p>
-                    <div className="h-[280px]">
+                    <div className="h-[260px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie data={budgetUtilization} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
@@ -428,6 +521,108 @@ export default function Dashboard() {
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
+                    <GraphSummary insights={[
+                      { icon: Target, label: "Largest Spend", value: "35%", detail: "Maintenance dominates — optimize vendor contracts", color: "bg-info/10 text-info border-info/20" },
+                      { icon: CheckCircle, label: "Crew Efficiency", value: "28%", detail: "Crew cost stable — in line with benchmarks", color: "bg-success/10 text-success border-success/20" },
+                      { icon: AlertTriangle, label: "Spares Risk", value: "18%", detail: "Rising spare costs — bulk procurement advised", color: "bg-warning/10 text-warning border-warning/20" },
+                    ]} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══════ DRY DOCK ═══════ */}
+            {activeDomain === "drydock" && (
+              <div className="space-y-5 animate-fade-in-up">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+                  {dryDockKpis.map((k, i) => <KpiCard key={k.id} {...k} index={i} />)}
+                </div>
+                {/* Dry Dock Schedule */}
+                <div className="card-elevated overflow-hidden">
+                  <div className="px-5 py-3 border-b border-border flex items-center gap-2">
+                    <HardHat className="w-4 h-4 text-primary" />
+                    <h3 className="text-sm font-semibold text-foreground">Dry Dock Schedule & Status</h3>
+                  </div>
+                  <table className="w-full text-sm">
+                    <thead><tr className="border-b border-border bg-accent/30">
+                      <th className="text-left px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Vessel</th>
+                      <th className="text-left px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Yard</th>
+                      <th className="text-left px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Period</th>
+                      <th className="text-left px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Scope</th>
+                      <th className="text-right px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Budget</th>
+                      <th className="text-right px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Actual</th>
+                      <th className="text-center px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Progress</th>
+                      <th className="text-center px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                    </tr></thead>
+                    <tbody>
+                      {dryDockEntries.map((dd) => (
+                        <tr key={dd.id} className="border-b border-border/40 hover:bg-accent/20">
+                          <td className="px-5 py-2.5 font-medium text-xs">{dd.vessel}</td>
+                          <td className="px-5 py-2.5 text-xs text-muted-foreground">{dd.yard}</td>
+                          <td className="px-5 py-2.5 text-[11px] font-mono text-muted-foreground">{dd.startDate} → {dd.endDate}</td>
+                          <td className="px-5 py-2.5 text-[11px] text-muted-foreground max-w-[200px] truncate">{dd.scope}</td>
+                          <td className="px-5 py-2.5 text-xs font-mono text-right">${(dd.budgetUSD / 1000).toFixed(0)}K</td>
+                          <td className="px-5 py-2.5 text-xs font-mono text-right">{dd.actualUSD > 0 ? `$${(dd.actualUSD / 1000).toFixed(0)}K` : "—"}</td>
+                          <td className="px-5 py-2.5 text-center">
+                            <div className="flex items-center gap-2 justify-center">
+                              <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                                <div className="h-full rounded-full bg-primary" style={{ width: `${dd.completionPct}%` }} />
+                              </div>
+                              <span className="text-[10px] font-mono text-muted-foreground">{dd.completionPct}%</span>
+                            </div>
+                          </td>
+                          <td className="px-5 py-2.5 text-center">
+                            <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${dd.status === "completed" ? "severity-low" : dd.status === "in-progress" ? "severity-medium" : "bg-info/10 text-info border-info/20"}`}>{dd.status}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {/* Dry Dock Charts */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Dry Dock Cost Breakdown</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Average cost distribution by work category</p>
+                    <div className="h-[260px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={dryDockCostBreakdown} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
+                            {dryDockCostBreakdown.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <GraphSummary insights={[
+                      { icon: Target, label: "Major Cost", value: "55%", detail: "Hull & Machinery account for over half of dry dock spend", color: "bg-info/10 text-info border-info/20" },
+                      { icon: CheckCircle, label: "Compliance", value: "15%", detail: "Class survey costs predictable & within norms", color: "bg-success/10 text-success border-success/20" },
+                      { icon: AlertTriangle, label: "BWTS Rising", value: "12%", detail: "Environmental retrofits increasing — plan ahead", color: "bg-warning/10 text-warning border-warning/20" },
+                    ]} />
+                  </div>
+                  {/* Dry Dock Budget vs Actual */}
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Dry Dock Budget vs Actual</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Per vessel cost comparison (USD '000)</p>
+                    <div className="h-[260px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={dryDockEntries.filter(d => d.budgetUSD > 0).map(d => ({ vessel: d.vessel.replace("MV ", "").replace("MT ", ""), budget: Math.round(d.budgetUSD / 1000), actual: Math.round(d.actualUSD / 1000) }))}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" />
+                          <XAxis dataKey="vessel" tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <YAxis tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`$${value}K`, ""]} />
+                          <Bar dataKey="budget" fill="hsl(222,52%,23%)" radius={[3,3,0,0]} barSize={20} name="Budget" />
+                          <Bar dataKey="actual" fill="hsl(28,93%,54%)" radius={[3,3,0,0]} barSize={20} name="Actual" />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <GraphSummary insights={[
+                      { icon: AlertTriangle, label: "Overrun", value: "$35K", detail: "MT Chambal exceeded budget by 9% — valve overhaul", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                      { icon: CheckCircle, label: "On Track", value: "MV Narmada", detail: "Currently 78% done, 93% budget consumed — on target", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Target, label: "Annual Budget", value: "$2.04M", detail: "3 dry docks planned — 68% budget utilized YTD", color: "bg-info/10 text-info border-info/20" },
+                    ]} />
                   </div>
                 </div>
               </div>
