@@ -244,46 +244,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Vessel Filter Modal */}
-            {vesselFilterOpen && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 animate-fade-in-up" onClick={() => setVesselFilterOpen(false)}>
-                <div className="bg-card border border-border rounded-2xl shadow-2xl w-[600px] max-w-[90vw] max-h-[80vh] flex flex-col" onClick={e => e.stopPropagation()} ref={filterRef}>
-                  <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                    <div>
-                      <h2 className="text-sm font-bold text-foreground">Select Vessels</h2>
-                      <p className="text-[11px] text-muted-foreground mt-0.5">{activeVessels.length} of {fleetVessels.length} vessels selected · {selectedFleet}</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button onClick={selectAllVessels} className="text-[11px] font-medium text-primary hover:underline">Select All</button>
-                      <button onClick={deselectAllVessels} className="text-[11px] font-medium text-muted-foreground hover:underline">Clear All</button>
-                      <button onClick={() => setVesselFilterOpen(false)} className="p-1.5 rounded-lg hover:bg-accent text-muted-foreground"><X className="w-4 h-4" /></button>
-                    </div>
-                  </div>
-                  <div className="flex-1 overflow-auto p-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {fleetVessels.map(v => (
-                        <label key={v.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${selectedVesselIds.has(v.id) ? "bg-primary/5 border-primary/30" : "bg-card border-border hover:bg-accent/50"}`}>
-                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${selectedVesselIds.has(v.id) ? "bg-primary border-primary" : "border-input"}`} onClick={(e) => { e.preventDefault(); toggleVessel(v.id); }}>
-                            {selectedVesselIds.has(v.id) && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
-                          </div>
-                          <StatusDot status={v.status} />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-foreground">{v.name}</p>
-                            <p className="text-[10px] text-muted-foreground">{v.type} · {v.fleet} · IMO {v.imo}</p>
-                          </div>
-                          <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${v.status === "operational" ? "severity-low" : v.status === "dry-dock" ? "severity-medium" : "bg-muted text-muted-foreground"}`}>{v.status}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="px-6 py-3 border-t border-border flex items-center justify-between">
-                    <p className="text-[11px] text-muted-foreground"><span className="font-semibold text-foreground">{activeVessels.length}</span> vessels will be shown in dashboard</p>
-                    <button onClick={() => setVesselFilterOpen(false)} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity">Apply & Close</button>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Fleet Summary */}
             <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
               {summary.map((s, i) => (
@@ -835,6 +795,46 @@ export default function Dashboard() {
           </div>
         )}
       </main>
+
+      {/* Vessel Filter Modal */}
+      {vesselFilterOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40" onClick={() => setVesselFilterOpen(false)}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-[600px] max-w-[90vw] max-h-[80vh] flex flex-col animate-fade-in-up" onClick={e => e.stopPropagation()} ref={filterRef}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+              <div>
+                <h2 className="text-sm font-bold text-foreground">Select Vessels</h2>
+                <p className="text-[11px] text-muted-foreground mt-0.5">{activeVessels.length} of {fleetVessels.length} vessels selected · {selectedFleet}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <button onClick={selectAllVessels} className="text-[11px] font-medium text-primary hover:underline">Select All</button>
+                <button onClick={deselectAllVessels} className="text-[11px] font-medium text-muted-foreground hover:underline">Clear All</button>
+                <button onClick={() => setVesselFilterOpen(false)} className="p-1.5 rounded-lg hover:bg-accent text-muted-foreground"><X className="w-4 h-4" /></button>
+              </div>
+            </div>
+            <div className="flex-1 overflow-auto p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {fleetVessels.map(v => (
+                  <label key={v.id} className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-all ${selectedVesselIds.has(v.id) ? "bg-primary/5 border-primary/30" : "bg-card border-border hover:bg-accent/50"}`}>
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${selectedVesselIds.has(v.id) ? "bg-primary border-primary" : "border-input"}`} onClick={(e) => { e.preventDefault(); toggleVessel(v.id); }}>
+                      {selectedVesselIds.has(v.id) && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
+                    </div>
+                    <StatusDot status={v.status} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-foreground">{v.name}</p>
+                      <p className="text-[10px] text-muted-foreground">{v.type} · {v.fleet} · IMO {v.imo}</p>
+                    </div>
+                    <span className={`text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded ${v.status === "operational" ? "severity-low" : v.status === "dry-dock" ? "severity-medium" : "bg-muted text-muted-foreground"}`}>{v.status}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="px-6 py-3 border-t border-border flex items-center justify-between">
+              <p className="text-[11px] text-muted-foreground"><span className="font-semibold text-foreground">{activeVessels.length}</span> vessels will be shown in dashboard</p>
+              <button onClick={() => setVesselFilterOpen(false)} className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity">Apply & Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
