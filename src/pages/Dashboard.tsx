@@ -175,7 +175,7 @@ export default function Dashboard() {
                 {fleetVessels.map((v) => (
                   <div key={v.id} className="flex items-center gap-1.5 bg-accent px-2.5 py-1 rounded-md text-xs">
                     <StatusDot status={v.status} />
-                    <span className="font-medium text-foreground">{v.name.replace("MV Adani ", "")}</span>
+                    <span className="font-medium text-foreground">{v.name}</span>
                     <span className="text-muted-foreground">{v.type}</span>
                   </div>
                 ))}
@@ -260,7 +260,7 @@ export default function Dashboard() {
                     </tr></thead>
                     <tbody>
                       {incidents.map((inc) => (
-                        <tr key={inc.id} className="border-b border-border/40 hover:bg-accent/20"><td className="px-5 py-2.5 text-xs text-muted-foreground font-mono">{inc.date}</td><td className="px-5 py-2.5 font-medium">{inc.vessel.replace("MV Adani ", "")}</td><td className="px-5 py-2.5"><SeverityBadge severity={inc.severity} /></td><td className="px-5 py-2.5 text-xs text-muted-foreground">{inc.description}</td><td className="px-5 py-2.5 text-center"><span className={`text-[10px] font-semibold uppercase ${inc.status === "closed" ? "text-success" : "text-warning"}`}>{inc.status}</span></td></tr>
+                        <tr key={inc.id} className="border-b border-border/40 hover:bg-accent/20"><td className="px-5 py-2.5 text-xs text-muted-foreground font-mono">{inc.date}</td><td className="px-5 py-2.5 font-medium">{inc.vessel}</td><td className="px-5 py-2.5"><SeverityBadge severity={inc.severity} /></td><td className="px-5 py-2.5 text-xs text-muted-foreground">{inc.description}</td><td className="px-5 py-2.5 text-center"><span className={`text-[10px] font-semibold uppercase ${inc.status === "closed" ? "text-success" : "text-warning"}`}>{inc.status}</span></td></tr>
                       ))}
                     </tbody>
                   </table>
@@ -297,7 +297,7 @@ export default function Dashboard() {
                       {maintenanceTasks.map((t) => (
                         <div key={t.id} className="px-5 py-3 flex items-center justify-between hover:bg-accent/20">
                           <div>
-                            <p className="text-xs font-medium text-foreground">{t.vessel.replace("MV Adani ", "")} — {t.equipment}</p>
+                            <p className="text-xs font-medium text-foreground">{t.vessel} — {t.equipment}</p>
                             <p className="text-[11px] text-muted-foreground">{t.task}</p>
                           </div>
                           <div className="flex items-center gap-2">
@@ -340,7 +340,7 @@ export default function Dashboard() {
                       {certificateAlerts.filter((c) => c.daysRemaining <= 20).map((c) => (
                         <div key={c.id} className="px-5 py-3 flex items-center justify-between hover:bg-accent/20">
                           <div>
-                            <p className="text-xs font-medium text-foreground">{c.vessel.replace("MV Adani ", "")} — {c.certificate}</p>
+                            <p className="text-xs font-medium text-foreground">{c.vessel} — {c.certificate}</p>
                             <p className="text-[10px] text-muted-foreground">Expires: {c.expiryDate}</p>
                           </div>
                           <div className="flex items-center gap-2">

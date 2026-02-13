@@ -13,18 +13,18 @@ export interface Vessel {
   status: "operational" | "dry-dock" | "anchored";
 }
 
-export const fleets = ["All Fleets", "Adani Coastal", "Adani Offshore", "Adani Bulk"] as const;
+export const fleets = ["All Fleets", "Coastal Fleet", "Offshore Fleet", "Bulk Fleet"] as const;
 export type FleetName = (typeof fleets)[number];
 
 export const vessels: Vessel[] = [
-  { id: "v1", name: "MV Adani Prana", fleet: "Adani Coastal", type: "Bulk Carrier", flag: "India", imo: "9876543", status: "operational" },
-  { id: "v2", name: "MV Adani Shakti", fleet: "Adani Coastal", type: "Container", flag: "India", imo: "9876544", status: "operational" },
-  { id: "v3", name: "MV Adani Veda", fleet: "Adani Offshore", type: "AHTS", flag: "India", imo: "9876545", status: "dry-dock" },
-  { id: "v4", name: "MV Adani Dharma", fleet: "Adani Offshore", type: "PSV", flag: "India", imo: "9876546", status: "operational" },
-  { id: "v5", name: "MV Adani Navi", fleet: "Adani Bulk", type: "Bulk Carrier", flag: "India", imo: "9876547", status: "operational" },
-  { id: "v6", name: "MV Adani Samudra", fleet: "Adani Bulk", type: "Tanker", flag: "India", imo: "9876548", status: "anchored" },
-  { id: "v7", name: "MV Adani Sindhu", fleet: "Adani Coastal", type: "Bulk Carrier", flag: "India", imo: "9876549", status: "operational" },
-  { id: "v8", name: "MV Adani Ganga", fleet: "Adani Bulk", type: "Bulk Carrier", flag: "India", imo: "9876550", status: "operational" },
+  { id: "v1", name: "MT Kaveri", fleet: "Coastal Fleet", type: "Bulk Carrier", flag: "India", imo: "9876543", status: "operational" },
+  { id: "v2", name: "MV Godavari", fleet: "Coastal Fleet", type: "Container", flag: "India", imo: "9876544", status: "operational" },
+  { id: "v3", name: "MV Narmada", fleet: "Offshore Fleet", type: "AHTS", flag: "India", imo: "9876545", status: "dry-dock" },
+  { id: "v4", name: "MV Krishna", fleet: "Offshore Fleet", type: "PSV", flag: "India", imo: "9876546", status: "operational" },
+  { id: "v5", name: "MV Tapti", fleet: "Bulk Fleet", type: "Bulk Carrier", flag: "India", imo: "9876547", status: "operational" },
+  { id: "v6", name: "MT Chambal", fleet: "Bulk Fleet", type: "Tanker", flag: "India", imo: "9876548", status: "anchored" },
+  { id: "v7", name: "MV Mahanadi", fleet: "Coastal Fleet", type: "Bulk Carrier", flag: "India", imo: "9876549", status: "operational" },
+  { id: "v8", name: "MV Sabarmati", fleet: "Bulk Fleet", type: "Bulk Carrier", flag: "India", imo: "9876550", status: "operational" },
 ];
 
 export function getVesselsByFleet(fleet: FleetName): Vessel[] {
@@ -63,11 +63,11 @@ export interface IncidentRecord {
 }
 
 export const incidents: IncidentRecord[] = [
-  { id: "inc1", vessel: "MV Adani Prana", type: "Near Miss", severity: "low", date: "2026-02-12", description: "Unsecured deck cargo during heavy weather", status: "closed" },
-  { id: "inc2", vessel: "MV Adani Shakti", type: "First Aid", severity: "medium", date: "2026-02-11", description: "Minor hand injury during mooring operations", status: "closed" },
-  { id: "inc3", vessel: "MV Adani Navi", type: "Near Miss", severity: "low", date: "2026-02-10", description: "Crane limit switch malfunction during cargo ops", status: "investigating" },
-  { id: "inc4", vessel: "MV Adani Ganga", type: "Environmental", severity: "medium", date: "2026-02-08", description: "Minor oil sheen observed during bunkering", status: "investigating" },
-  { id: "inc5", vessel: "MV Adani Sindhu", type: "Near Miss", severity: "low", date: "2026-02-07", description: "Gangway clearance issue during berthing", status: "closed" },
+  { id: "inc1", vessel: "MT Kaveri", type: "Near Miss", severity: "low", date: "2026-02-12", description: "Unsecured deck cargo during heavy weather", status: "closed" },
+  { id: "inc2", vessel: "MV Godavari", type: "First Aid", severity: "medium", date: "2026-02-11", description: "Minor hand injury during mooring operations", status: "closed" },
+  { id: "inc3", vessel: "MV Tapti", type: "Near Miss", severity: "low", date: "2026-02-10", description: "Crane limit switch malfunction during cargo ops", status: "investigating" },
+  { id: "inc4", vessel: "MV Sabarmati", type: "Environmental", severity: "medium", date: "2026-02-08", description: "Minor oil sheen observed during bunkering", status: "investigating" },
+  { id: "inc5", vessel: "MV Mahanadi", type: "Near Miss", severity: "low", date: "2026-02-07", description: "Gangway clearance issue during berthing", status: "closed" },
 ];
 
 // ─── Domain: Maintenance / PMS ───
@@ -100,12 +100,12 @@ export interface MaintenanceTask {
 }
 
 export const maintenanceTasks: MaintenanceTask[] = [
-  { id: "mt1", vessel: "MV Adani Prana", equipment: "Main Engine", task: "Cylinder liner inspection", dueDate: "2026-02-15", status: "upcoming", priority: "high" },
-  { id: "mt2", vessel: "MV Adani Shakti", equipment: "Aux Boiler", task: "Safety valve overhaul", dueDate: "2026-02-08", status: "overdue", priority: "high" },
-  { id: "mt3", vessel: "MV Adani Navi", equipment: "Purifier", task: "Seal ring replacement", dueDate: "2026-02-20", status: "upcoming", priority: "medium" },
-  { id: "mt4", vessel: "MV Adani Dharma", equipment: "Crane #1", task: "Wire rope inspection", dueDate: "2026-02-05", status: "overdue", priority: "medium" },
-  { id: "mt5", vessel: "MV Adani Ganga", equipment: "Lifeboat", task: "Annual davit load test", dueDate: "2026-02-18", status: "upcoming", priority: "high" },
-  { id: "mt6", vessel: "MV Adani Sindhu", equipment: "Nav Equipment", task: "ECDIS software update", dueDate: "2026-02-25", status: "upcoming", priority: "low" },
+  { id: "mt1", vessel: "MT Kaveri", equipment: "Main Engine", task: "Cylinder liner inspection", dueDate: "2026-02-15", status: "upcoming", priority: "high" },
+  { id: "mt2", vessel: "MV Godavari", equipment: "Aux Boiler", task: "Safety valve overhaul", dueDate: "2026-02-08", status: "overdue", priority: "high" },
+  { id: "mt3", vessel: "MV Tapti", equipment: "Purifier", task: "Seal ring replacement", dueDate: "2026-02-20", status: "upcoming", priority: "medium" },
+  { id: "mt4", vessel: "MV Krishna", equipment: "Crane #1", task: "Wire rope inspection", dueDate: "2026-02-05", status: "overdue", priority: "medium" },
+  { id: "mt5", vessel: "MV Sabarmati", equipment: "Lifeboat", task: "Annual davit load test", dueDate: "2026-02-18", status: "upcoming", priority: "high" },
+  { id: "mt6", vessel: "MV Mahanadi", equipment: "Nav Equipment", task: "ECDIS software update", dueDate: "2026-02-25", status: "upcoming", priority: "low" },
 ];
 
 // ─── Domain: Documents & Compliance ───
@@ -138,13 +138,13 @@ export interface CertificateAlert {
 }
 
 export const certificateAlerts: CertificateAlert[] = [
-  { id: "ca1", vessel: "MV Adani Prana", certificate: "Safety Management Certificate", expiryDate: "2026-02-25", daysRemaining: 12, severity: "high", acknowledged: false },
-  { id: "ca2", vessel: "MV Adani Shakti", certificate: "IOPP Certificate", expiryDate: "2026-02-28", daysRemaining: 15, severity: "medium", acknowledged: true },
-  { id: "ca3", vessel: "MV Adani Navi", certificate: "Class Certificate", expiryDate: "2026-03-05", daysRemaining: 20, severity: "medium", acknowledged: false },
-  { id: "ca4", vessel: "MV Adani Ganga", certificate: "DOC (Company)", expiryDate: "2026-02-20", daysRemaining: 7, severity: "high", acknowledged: false },
-  { id: "ca5", vessel: "MV Adani Sindhu", certificate: "Load Line Certificate", expiryDate: "2026-03-10", daysRemaining: 25, severity: "low", acknowledged: true },
-  { id: "ca6", vessel: "MV Adani Dharma", certificate: "ISPS Certificate", expiryDate: "2026-02-22", daysRemaining: 9, severity: "high", acknowledged: false },
-  { id: "ca7", vessel: "MV Adani Samudra", certificate: "CLC Certificate", expiryDate: "2026-03-15", daysRemaining: 30, severity: "low", acknowledged: true },
+  { id: "ca1", vessel: "MT Kaveri", certificate: "Safety Management Certificate", expiryDate: "2026-02-25", daysRemaining: 12, severity: "high", acknowledged: false },
+  { id: "ca2", vessel: "MV Godavari", certificate: "IOPP Certificate", expiryDate: "2026-02-28", daysRemaining: 15, severity: "medium", acknowledged: true },
+  { id: "ca3", vessel: "MV Tapti", certificate: "Class Certificate", expiryDate: "2026-03-05", daysRemaining: 20, severity: "medium", acknowledged: false },
+  { id: "ca4", vessel: "MV Sabarmati", certificate: "DOC (Company)", expiryDate: "2026-02-20", daysRemaining: 7, severity: "high", acknowledged: false },
+  { id: "ca5", vessel: "MV Mahanadi", certificate: "Load Line Certificate", expiryDate: "2026-03-10", daysRemaining: 25, severity: "low", acknowledged: true },
+  { id: "ca6", vessel: "MV Krishna", certificate: "ISPS Certificate", expiryDate: "2026-02-22", daysRemaining: 9, severity: "high", acknowledged: false },
+  { id: "ca7", vessel: "MT Chambal", certificate: "CLC Certificate", expiryDate: "2026-03-15", daysRemaining: 30, severity: "low", acknowledged: true },
 ];
 
 // ─── Domain: Operations / Procurement ───
@@ -196,14 +196,14 @@ export const incidentTrendData = [
 ];
 
 export const pmsComplianceData = [
-  { vessel: "Prana", completion: 92 },
-  { vessel: "Shakti", completion: 84 },
-  { vessel: "Veda", completion: 0 },
-  { vessel: "Dharma", completion: 89 },
-  { vessel: "Navi", completion: 95 },
-  { vessel: "Samudra", completion: 78 },
-  { vessel: "Sindhu", completion: 91 },
-  { vessel: "Ganga", completion: 88 },
+  { vessel: "Kaveri", completion: 92 },
+  { vessel: "Godavari", completion: 84 },
+  { vessel: "Narmada", completion: 0 },
+  { vessel: "Krishna", completion: 89 },
+  { vessel: "Tapti", completion: 95 },
+  { vessel: "Chambal", completion: 78 },
+  { vessel: "Mahanadi", completion: 91 },
+  { vessel: "Sabarmati", completion: 88 },
 ];
 
 export const certStatusData = [
@@ -247,12 +247,12 @@ export const predefinedQuestions: PredefinedQuestion[] = [
 ];
 
 export const aiResponses: Record<string, string> = {
-  "q1": "**Fleet LTIF Trend (6-Month)**\n\nCurrent LTIF: **0.42** per million man-hours (Target: < 0.5)\n\n| Month | LTIF | Man-Hours |\n|-------|------|----------|\n| Sep | 0.58 | 245,000 |\n| Oct | 0.52 | 251,000 |\n| Nov | 0.48 | 248,000 |\n| Dec | 0.45 | 260,000 |\n| Jan | 0.44 | 255,000 |\n| Feb (MTD) | 0.42 | 189,000 |\n\n📈 Consistent downward trend. LTIF has improved 27.6% over 6 months.\n\n**Key Drivers:**\n1. Enhanced toolbox talks across fleet\n2. Near-miss reporting culture improvement (+183%)\n3. Safety observation card program on MV Adani Prana",
-  "q2": "**Open Incidents Requiring Attention**\n\n⚠️ **2 incidents under investigation:**\n\n1. **MV Adani Navi** — Crane limit switch malfunction (Feb 10)\n   - Type: Near Miss\n   - Status: Root cause analysis pending\n   - Action: Crane operations suspended until inspection\n\n2. **MV Adani Ganga** — Minor oil sheen during bunkering (Feb 8)\n   - Type: Environmental\n   - Status: Investigation ongoing\n   - Action: SOPEP drill conducted, samples collected\n\n**Recommendation:** Prioritize MV Adani Ganga investigation due to environmental regulatory risk.",
-  "q3": "**Vessels with Overdue PMS Jobs**\n\n🔴 **2 vessels with critical overdue tasks:**\n\n| Vessel | Equipment | Task | Overdue By |\n|--------|-----------|------|-----------||\n| MV Adani Shakti | Aux Boiler | Safety valve overhaul | 5 days |\n| MV Adani Dharma | Crane #1 | Wire rope inspection | 8 days |\n\n⚠️ **MV Adani Shakti**: Safety valve overhaul is critical — potential Class condition. Recommend immediate scheduling.\n\n⚠️ **MV Adani Dharma**: Wire rope inspection overdue — crane ops should be restricted until completion.\n\n**Fleet PMS Completion Rate:** 87% (target: 95%)",
-  "q4": "**Critical Spare Parts Status**\n\nOverall availability: **91%** (target: 95%)\n\n🔴 **Critical items below minimum stock:**\n\n| Item | Vessel | Current | Min | Lead Time |\n|------|--------|---------|-----|----------|\n| Cylinder liner O-rings | MV Adani Prana | 2 | 6 | 21 days |\n| Purifier seal kit | MV Adani Navi | 1 | 3 | 14 days |\n| Aux engine fuel pump | MV Adani Ganga | 0 | 2 | 28 days |\n\n**Action Required:** Emergency requisition recommended for MV Adani Ganga fuel pump. Lead time exceeds next scheduled port call.\n\n📦 Total inventory items tracked: 2,847 across 8 vessels",
-  "q5": "**Certificates Expiring Within 30 Days**\n\n🔴 **7 certificates across the fleet:**\n\n| Vessel | Certificate | Expiry | Days Left | Ack'd |\n|--------|------------|--------|-----------|-------|\n| MV Adani Ganga | DOC (Company) | Feb 20 | 7 | ❌ |\n| MV Adani Dharma | ISPS Certificate | Feb 22 | 9 | ❌ |\n| MV Adani Prana | Safety Mgmt Cert | Feb 25 | 12 | ❌ |\n| MV Adani Shakti | IOPP Certificate | Feb 28 | 15 | ✅ |\n| MV Adani Navi | Class Certificate | Mar 5 | 20 | ❌ |\n| MV Adani Sindhu | Load Line Cert | Mar 10 | 25 | ✅ |\n| MV Adani Samudra | CLC Certificate | Mar 15 | 30 | ✅ |\n\n⚠️ **3 HIGH priority** (≤12 days) — unacknowledged. Immediate vessel manager notification required.",
-  "q6": "**Crew Mandatory Read Status**\n\nFleet-wide acknowledgement rate: **82%** (target: 95%)\n\n| Vessel | Pending Reads | Crew Onboard | Rate |\n|--------|--------------|-------------|------|\n| MV Adani Samudra | 8 | 22 | 64% |\n| MV Adani Dharma | 5 | 18 | 72% |\n| MV Adani Ganga | 4 | 24 | 83% |\n| MV Adani Navi | 3 | 20 | 85% |\n| Others | 0-2 each | — | >90% |\n\n📋 Most pending: Safety Circular SC-2026-08 (Bunkering Procedures)\n\n**Action:** Send reminder alerts to MV Adani Samudra and MV Adani Dharma.",
-  "q7": "**Daily Report Submission Compliance**\n\nFleet-wide: **96%** on-time submission (target: 100%)\n\nLast 7 days:\n| Vessel | On Time | Late | Missed |\n|--------|---------|------|--------|\n| MV Adani Prana | 7/7 | 0 | 0 |\n| MV Adani Shakti | 7/7 | 0 | 0 |\n| MV Adani Veda | N/A (dry dock) | — | — |\n| MV Adani Dharma | 6/7 | 1 | 0 |\n| MV Adani Navi | 7/7 | 0 | 0 |\n| MV Adani Samudra | 5/7 | 1 | 1 |\n| MV Adani Sindhu | 7/7 | 0 | 0 |\n| MV Adani Ganga | 7/7 | 0 | 0 |\n\n⚠️ MV Adani Samudra has 1 missed report (Feb 9) — connectivity issue reported.",
-  "q8": "**Top 3 Fleet Risks — Next 30 Days**\n\n🔴 **1. Certificate Lapse Risk (HIGH)**\n3 certificates expiring within 12 days without acknowledgement. DOC expiry for MV Adani Ganga (7 days) could result in vessel detention.\n\n🟡 **2. Overdue Maintenance (MEDIUM-HIGH)**\nAux boiler safety valve on MV Adani Shakti overdue 5 days. Potential Class condition if not addressed. Crane restriction on MV Adani Dharma impacting cargo operations.\n\n🟡 **3. Spare Parts Stockout (MEDIUM)**\nMV Adani Ganga has zero stock on aux engine fuel pump with 28-day lead time. Next port call in 18 days — emergency procurement required.\n\n**Executive Summary:** Immediate action needed on certificate renewals and MV Adani Shakti boiler. Recommend emergency procurement for critical spares.",
+  "q1": "**Fleet LTIF Trend (6-Month)**\n\nCurrent LTIF: **0.42** per million man-hours (Target: < 0.5)\n\n| Month | LTIF | Man-Hours |\n|-------|------|----------|\n| Sep | 0.58 | 245,000 |\n| Oct | 0.52 | 251,000 |\n| Nov | 0.48 | 248,000 |\n| Dec | 0.45 | 260,000 |\n| Jan | 0.44 | 255,000 |\n| Feb (MTD) | 0.42 | 189,000 |\n\n📈 Consistent downward trend. LTIF has improved 27.6% over 6 months.\n\n**Key Drivers:**\n1. Enhanced toolbox talks across fleet\n2. Near-miss reporting culture improvement (+183%)\n3. Safety observation card program on MT Kaveri",
+  "q2": "**Open Incidents Requiring Attention**\n\n⚠️ **2 incidents under investigation:**\n\n1. **MV Tapti** — Crane limit switch malfunction (Feb 10)\n   - Type: Near Miss\n   - Status: Root cause analysis pending\n   - Action: Crane operations suspended until inspection\n\n2. **MV Sabarmati** — Minor oil sheen during bunkering (Feb 8)\n   - Type: Environmental\n   - Status: Investigation ongoing\n   - Action: SOPEP drill conducted, samples collected\n\n**Recommendation:** Prioritize MV Sabarmati investigation due to environmental regulatory risk.",
+  "q3": "**Vessels with Overdue PMS Jobs**\n\n🔴 **2 vessels with critical overdue tasks:**\n\n| Vessel | Equipment | Task | Overdue By |\n|--------|-----------|------|-----------|\n| MV Godavari | Aux Boiler | Safety valve overhaul | 5 days |\n| MV Krishna | Crane #1 | Wire rope inspection | 8 days |\n\n⚠️ **MV Godavari**: Safety valve overhaul is critical — potential Class condition. Recommend immediate scheduling.\n\n⚠️ **MV Krishna**: Wire rope inspection overdue — crane ops should be restricted until completion.\n\n**Fleet PMS Completion Rate:** 87% (target: 95%)",
+  "q4": "**Critical Spare Parts Status**\n\nOverall availability: **91%** (target: 95%)\n\n🔴 **Critical items below minimum stock:**\n\n| Item | Vessel | Current | Min | Lead Time |\n|------|--------|---------|-----|----------|\n| Cylinder liner O-rings | MT Kaveri | 2 | 6 | 21 days |\n| Purifier seal kit | MV Tapti | 1 | 3 | 14 days |\n| Aux engine fuel pump | MV Sabarmati | 0 | 2 | 28 days |\n\n**Action Required:** Emergency requisition recommended for MV Sabarmati fuel pump. Lead time exceeds next scheduled port call.\n\n📦 Total inventory items tracked: 2,847 across 8 vessels",
+  "q5": "**Certificates Expiring Within 30 Days**\n\n🔴 **7 certificates across the fleet:**\n\n| Vessel | Certificate | Expiry | Days Left | Ack'd |\n|--------|------------|--------|-----------|-------|\n| MV Sabarmati | DOC (Company) | Feb 20 | 7 | ❌ |\n| MV Krishna | ISPS Certificate | Feb 22 | 9 | ❌ |\n| MT Kaveri | Safety Mgmt Cert | Feb 25 | 12 | ❌ |\n| MV Godavari | IOPP Certificate | Feb 28 | 15 | ✅ |\n| MV Tapti | Class Certificate | Mar 5 | 20 | ❌ |\n| MV Mahanadi | Load Line Cert | Mar 10 | 25 | ✅ |\n| MT Chambal | CLC Certificate | Mar 15 | 30 | ✅ |\n\n⚠️ **3 HIGH priority** (≤12 days) — unacknowledged. Immediate vessel manager notification required.",
+  "q6": "**Crew Mandatory Read Status**\n\nFleet-wide acknowledgement rate: **82%** (target: 95%)\n\n| Vessel | Pending Reads | Crew Onboard | Rate |\n|--------|--------------|-------------|------|\n| MT Chambal | 8 | 22 | 64% |\n| MV Krishna | 5 | 18 | 72% |\n| MV Sabarmati | 4 | 24 | 83% |\n| MV Tapti | 3 | 20 | 85% |\n| Others | 0-2 each | — | >90% |\n\n📋 Most pending: Safety Circular SC-2026-08 (Bunkering Procedures)\n\n**Action:** Send reminder alerts to MT Chambal and MV Krishna.",
+  "q7": "**Daily Report Submission Compliance**\n\nFleet-wide: **96%** on-time submission (target: 100%)\n\nLast 7 days:\n| Vessel | On Time | Late | Missed |\n|--------|---------|------|--------|\n| MT Kaveri | 7/7 | 0 | 0 |\n| MV Godavari | 7/7 | 0 | 0 |\n| MV Narmada | N/A (dry dock) | — | — |\n| MV Krishna | 6/7 | 1 | 0 |\n| MV Tapti | 7/7 | 0 | 0 |\n| MT Chambal | 5/7 | 1 | 1 |\n| MV Mahanadi | 7/7 | 0 | 0 |\n| MV Sabarmati | 7/7 | 0 | 0 |\n\n⚠️ MT Chambal has 1 missed report (Feb 9) — connectivity issue reported.",
+  "q8": "**Top 3 Fleet Risks — Next 30 Days**\n\n🔴 **1. Certificate Lapse Risk (HIGH)**\n3 certificates expiring within 12 days without acknowledgement. DOC expiry for MV Sabarmati (7 days) could result in vessel detention.\n\n🟡 **2. Overdue Maintenance (MEDIUM-HIGH)**\nAux boiler safety valve on MV Godavari overdue 5 days. Potential Class condition if not addressed. Crane restriction on MV Krishna impacting cargo operations.\n\n🟡 **3. Spare Parts Stockout (MEDIUM)**\nMV Sabarmati has zero stock on aux engine fuel pump with 28-day lead time. Next port call in 18 days — emergency procurement required.\n\n**Executive Summary:** Immediate action needed on certificate renewals and MV Godavari boiler. Recommend emergency procurement for critical spares.",
 };
