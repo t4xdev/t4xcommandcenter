@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
-  ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target,
+  ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
+  Package,
 } from "lucide-react";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
@@ -16,6 +17,7 @@ import {
   incidentTypeDistribution, vesselStatusDistribution, maintenanceStatusDistribution, budgetUtilization,
   budgetVsActualData, budgetTrendMonthly,
   dryDockKpis, dryDockEntries, dryDockCostBreakdown,
+  procurementKpis, procurementPipelineData, vendorPerformanceData,
   type Severity, type FleetName, type ChatMessage, type PredefinedQuestion,
 } from "@/data/maritimeData";
 
@@ -97,7 +99,8 @@ const domains = [
   { id: "qhse", label: "QHSE & Incidents", icon: Shield },
   { id: "maintenance", label: "Maintenance & PMS", icon: Wrench },
   { id: "documents", label: "Documents & Compliance", icon: FileCheck },
-  { id: "operations", label: "Operations & Procurement", icon: ClipboardList },
+  { id: "operations", label: "Operations", icon: ClipboardList },
+  { id: "procurement", label: "Procurement", icon: ShoppingCart },
   { id: "drydock", label: "Dry Dock", icon: HardHat },
 ] as const;
 
@@ -474,29 +477,6 @@ export default function Dashboard() {
                   {opsKpis.map((k, i) => <KpiCard key={k.id} {...k} index={i} />)}
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                  {/* Budget vs Actual Bar Chart */}
-                  <div className="card-elevated p-5">
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Budget vs Actual (USD '000)</h3>
-                    <p className="text-xs text-muted-foreground mb-4">Category-wise OPEX comparison — YTD</p>
-                    <div className="h-[280px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={budgetVsActualData} layout="vertical">
-                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" horizontal={false} />
-                          <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
-                          <YAxis type="category" dataKey="category" tick={{ fontSize: 10, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} width={85} />
-                          <Tooltip contentStyle={tip} formatter={(value: number) => [`$${value}K`, ""]} />
-                          <Bar dataKey="budget" fill="hsl(222,52%,23%)" radius={[0,3,3,0]} barSize={10} name="Budget" />
-                          <Bar dataKey="actual" fill="hsl(28,93%,54%)" radius={[0,3,3,0]} barSize={10} name="Actual" />
-                          <Legend wrapperStyle={{ fontSize: "11px" }} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                    <GraphSummary insights={[
-                      { icon: TrendingDown, label: "Over Budget", value: "$830K", detail: "Maintenance, Spares & Bunkering exceeded budget", color: "bg-destructive/10 text-destructive border-destructive/20" },
-                      { icon: CheckCircle, label: "Under Budget", value: "$120K", detail: "Crew, Insurance, Port & Admin within limits", color: "bg-success/10 text-success border-success/20" },
-                      { icon: Target, label: "Net Variance", value: "-$710K", detail: "Total OPEX 6.8% over annual budget", color: "bg-warning/10 text-warning border-warning/20" },
-                    ]} />
-                  </div>
                   {/* Monthly Budget Trend */}
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Monthly OPEX Trend</h3>
@@ -520,9 +500,7 @@ export default function Dashboard() {
                       { icon: Target, label: "Avg Overrun", value: "4.2%", detail: "Consistent overspend — procurement review needed", color: "bg-info/10 text-info border-info/20" },
                     ]} />
                   </div>
-                </div>
-                {/* Budget Utilization Donut */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {/* Budget Utilization Donut */}
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Budget Utilization</h3>
                     <p className="text-xs text-muted-foreground mb-4">OPEX distribution by category</p>
@@ -541,6 +519,87 @@ export default function Dashboard() {
                       { icon: Target, label: "Largest Spend", value: "35%", detail: "Maintenance dominates — optimize vendor contracts", color: "bg-info/10 text-info border-info/20" },
                       { icon: CheckCircle, label: "Crew Efficiency", value: "28%", detail: "Crew cost stable — in line with benchmarks", color: "bg-success/10 text-success border-success/20" },
                       { icon: AlertTriangle, label: "Spares Risk", value: "18%", detail: "Rising spare costs — bulk procurement advised", color: "bg-warning/10 text-warning border-warning/20" },
+                    ]} />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ═══════ PROCUREMENT ═══════ */}
+            {activeDomain === "procurement" && (
+              <div className="space-y-5 animate-fade-in-up">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+                  {procurementKpis.map((k, i) => <KpiCard key={k.id} {...k} index={i} />)}
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  {/* Budget vs Actual */}
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Budget vs Actual (USD '000)</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Category-wise OPEX comparison — YTD</p>
+                    <div className="h-[280px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={budgetVsActualData} layout="vertical">
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" horizontal={false} />
+                          <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <YAxis type="category" dataKey="category" tick={{ fontSize: 10, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} width={85} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`$${value}K`, ""]} />
+                          <Bar dataKey="budget" fill="hsl(222,52%,23%)" radius={[0,3,3,0]} barSize={10} name="Budget" />
+                          <Bar dataKey="actual" fill="hsl(28,93%,54%)" radius={[0,3,3,0]} barSize={10} name="Actual" />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <GraphSummary insights={[
+                      { icon: TrendingDown, label: "Over Budget", value: "$830K", detail: "Maintenance, Spares & Bunkering exceeded budget", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                      { icon: CheckCircle, label: "Under Budget", value: "$120K", detail: "Crew, Insurance, Port & Admin within limits", color: "bg-success/10 text-success border-success/20" },
+                      { icon: Target, label: "Net Variance", value: "-$710K", detail: "Total OPEX 6.8% over annual budget", color: "bg-warning/10 text-warning border-warning/20" },
+                    ]} />
+                  </div>
+                  {/* Procurement Pipeline */}
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Procurement Pipeline</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Requisition status & value (USD '000)</p>
+                    <div className="h-[280px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={procurementPipelineData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" />
+                          <XAxis dataKey="status" tick={{ fontSize: 10, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <YAxis yAxisId="left" tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
+                          <Tooltip contentStyle={tip} />
+                          <Bar yAxisId="left" dataKey="count" fill="hsl(222,52%,23%)" radius={[3,3,0,0]} barSize={20} name="Orders" />
+                          <Bar yAxisId="right" dataKey="value" fill="hsl(28,93%,54%)" radius={[3,3,0,0]} barSize={20} name="Value ($K)" />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <GraphSummary insights={[
+                      { icon: Package, label: "In Pipeline", value: "123", detail: "Active requisitions across all stages", color: "bg-info/10 text-info border-info/20" },
+                      { icon: Clock, label: "In Transit", value: "18", detail: "$142K worth of orders en route to vessels", color: "bg-warning/10 text-warning border-warning/20" },
+                      { icon: CheckCircle, label: "Delivered YTD", value: "156", detail: "$1.24M in completed orders this year", color: "bg-success/10 text-success border-success/20" },
+                    ]} />
+                  </div>
+                </div>
+                {/* Vendor Performance Donut */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="card-elevated p-5">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Vendor Performance</h3>
+                    <p className="text-xs text-muted-foreground mb-4">Supplier delivery & quality metrics</p>
+                    <div className="h-[260px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={vendorPerformanceData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
+                            {vendorPerformanceData.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <GraphSummary insights={[
+                      { icon: CheckCircle, label: "Reliable", value: "81%", detail: "On-time delivery rate — target 90%", color: "bg-success/10 text-success border-success/20" },
+                      { icon: AlertTriangle, label: "Quality Issues", value: "8%", detail: "Returns & rejections — vendor audit needed", color: "bg-destructive/10 text-destructive border-destructive/20" },
+                      { icon: Clock, label: "Delayed", value: "11%", detail: "Late deliveries impacting vessel operations", color: "bg-warning/10 text-warning border-warning/20" },
                     ]} />
                   </div>
                 </div>

@@ -153,7 +153,7 @@ export const certificateAlerts: CertificateAlert[] = [
   { id: "ca7", vessel: "MT Chambal", certificate: "CLC Certificate", expiryDate: "2026-03-15", daysRemaining: 30, severity: "low", acknowledged: true },
 ];
 
-// ─── Domain: Operations / Procurement ───
+// ─── Domain: Operations ───
 export interface OpsKpi {
   id: string;
   label: string;
@@ -168,10 +168,45 @@ export interface OpsKpi {
 export const opsKpis: OpsKpi[] = [
   { id: "daily-report", label: "Daily Report Submission", value: "96%", unit: "on time", trend: 2, severity: "low", lastMonth: "94%", avg6m: "93%" },
   { id: "rest-hours", label: "Rest Hours Compliance", value: "99%", unit: "crew compliant", trend: 0, severity: "low", lastMonth: "99%", avg6m: "98%" },
+  { id: "voyage-efficiency", label: "Voyage Efficiency", value: "92%", unit: "on schedule", trend: 1, severity: "low", lastMonth: "91%", avg6m: "90%" },
+  { id: "port-turnaround", label: "Port Turnaround Time", value: "1.8", unit: "days avg", trend: -5, severity: "low", lastMonth: "1.9", avg6m: "2.1" },
+  { id: "cargo-utilization", label: "Cargo Utilization", value: "87%", unit: "capacity used", trend: 3, severity: "low", lastMonth: "84%", avg6m: "83%" },
+  { id: "bunker-efficiency", label: "Bunker Consumption", value: "24.5", unit: "MT/day avg", trend: -2, severity: "low", lastMonth: "25.0", avg6m: "25.8" },
+];
+
+// ─── Domain: Procurement ───
+export interface ProcurementKpi {
+  id: string;
+  label: string;
+  value: string;
+  unit: string;
+  trend: number;
+  severity: Severity;
+  lastMonth: string;
+  avg6m: string;
+}
+
+export const procurementKpis: ProcurementKpi[] = [
   { id: "requisition-time", label: "Requisition Cycle Time", value: "4.2", unit: "days avg", trend: -8, severity: "low", lastMonth: "4.6", avg6m: "4.8" },
   { id: "po-accuracy", label: "PO Accuracy", value: "94%", unit: "error-free", trend: 3, severity: "low", lastMonth: "91%", avg6m: "90%" },
   { id: "vendor-vetting", label: "Vendor Vetting Compliance", value: "88%", unit: "approved vendors", trend: -2, severity: "medium", lastMonth: "90%", avg6m: "89%" },
   { id: "invoice-time", label: "Invoice Processing Time", value: "3.1", unit: "days avg", trend: 12, severity: "medium", lastMonth: "2.8", avg6m: "2.6" },
+  { id: "cost-savings", label: "Cost Savings Achieved", value: "6.2%", unit: "vs last year", trend: 4, severity: "low", lastMonth: "5.8%", avg6m: "5.5%" },
+  { id: "delivery-ontime", label: "On-Time Delivery", value: "81%", unit: "supplier rate", trend: -3, severity: "medium", lastMonth: "84%", avg6m: "83%" },
+];
+
+export const procurementPipelineData = [
+  { status: "Requested", count: 42, value: 285 },
+  { status: "Approved", count: 28, value: 195 },
+  { status: "Ordered", count: 35, value: 310 },
+  { status: "In Transit", count: 18, value: 142 },
+  { status: "Delivered", count: 156, value: 1240 },
+];
+
+export const vendorPerformanceData = [
+  { name: "On-Time Delivery", value: 81, fill: "hsl(152, 55%, 42%)" },
+  { name: "Quality Issues", value: 8, fill: "hsl(0, 72%, 55%)" },
+  { name: "Delayed", value: 11, fill: "hsl(38, 92%, 50%)" },
 ];
 
 // ─── Fleet Summary Stats ───
