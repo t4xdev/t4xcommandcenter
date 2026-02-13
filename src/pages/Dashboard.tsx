@@ -159,14 +159,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center bg-accent rounded-lg p-0.5">
-            <button onClick={() => setActiveTab("overview")} className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === "overview" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
-              Fleet Overview
-            </button>
-            <button onClick={() => setActiveTab("chat")} className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${activeTab === "chat" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
-              AI Analytics
-            </button>
-          </div>
+          <div />
 
           <div className="flex items-center gap-3">
             <div className="relative">
