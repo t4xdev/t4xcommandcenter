@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
   ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
-  Package,
+  Package, Filter, X, Check,
 } from "lucide-react";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
@@ -13,7 +13,7 @@ import {
   getFleetSummary, qhseKpis, incidents, maintenanceKpis, maintenanceTasks,
   docKpis, certificateAlerts, opsKpis, incidentTrendData, pmsComplianceData,
   certStatusData, drillComplianceData, predefinedQuestions, aiResponses,
-  fleets, getVesselsByFleet,
+  fleets, vessels, getVesselsByFleet,
   incidentTypeDistribution, vesselStatusDistribution, maintenanceStatusDistribution, budgetUtilization,
   budgetVsActualData, budgetTrendMonthly,
   dryDockKpis, dryDockEntries, dryDockCostBreakdown,
@@ -121,14 +121,56 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<"overview" | "chat">("overview");
   const [selectedFleet, setSelectedFleet] = useState<FleetName>("All Fleets");
   const [activeDomain, setActiveDomain] = useState<DomainId>("qhse");
+  const [selectedVesselIds, setSelectedVesselIds] = useState<Set<string>>(new Set(vessels.map(v => v.id)));
+  const [vesselFilterOpen, setVesselFilterOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: "welcome", role: "assistant", content: "Welcome to Smart Insights MIS. Ask questions about your fleet's safety, maintenance, compliance, or operations.", timestamp: new Date() },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  // Close filter popover on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) setVesselFilterOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  // When fleet changes, select all vessels in that fleet
+  const fleetVessels = getVesselsByFleet(selectedFleet);
+  useEffect(() => {
+    setSelectedVesselIds(new Set(fleetVessels.map(v => v.id)));
+  }, [selectedFleet]);
+
+  const toggleVessel = (id: string) => {
+    setSelectedVesselIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) { if (next.size > 1) next.delete(id); } else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAllVessels = () => setSelectedVesselIds(new Set(fleetVessels.map(v => v.id)));
+  const deselectAllVessels = () => {
+    if (fleetVessels.length > 0) setSelectedVesselIds(new Set([fleetVessels[0].id]));
+  };
+
+  // Filtered vessels based on selection
+  const activeVessels = useMemo(() => fleetVessels.filter(v => selectedVesselIds.has(v.id)), [fleetVessels, selectedVesselIds]);
+  const activeVesselNames = useMemo(() => new Set(activeVessels.map(v => v.name)), [activeVessels]);
+
+  // Filter vessel-dependent data
+  const filteredIncidents = useMemo(() => incidents.filter(i => activeVesselNames.has(i.vessel)), [activeVesselNames]);
+  const filteredMaintenanceTasks = useMemo(() => maintenanceTasks.filter(t => activeVesselNames.has(t.vessel)), [activeVesselNames]);
+  const filteredCertAlerts = useMemo(() => certificateAlerts.filter(c => activeVesselNames.has(c.vessel)), [activeVesselNames]);
+  const filteredDryDockEntries = useMemo(() => dryDockEntries.filter(d => activeVesselNames.has(d.vessel)), [activeVesselNames]);
+  const filteredPmsData = useMemo(() => pmsComplianceData.filter(p => activeVessels.some(v => v.name.includes(p.vessel))), [activeVessels]);
 
   const handleSend = (text: string, qid?: string) => {
     setMessages((p) => [...p, { id: `u-${Date.now()}`, role: "user", content: text, timestamp: new Date() }]);
@@ -141,7 +183,6 @@ export default function Dashboard() {
   };
 
   const summary = getFleetSummary();
-  const fleetVessels = getVesselsByFleet(selectedFleet);
   const groupedQ = predefinedQuestions.reduce((a, q) => { (a[q.category] ??= []).push(q); return a; }, {} as Record<string, PredefinedQuestion[]>);
 
   return (
@@ -179,18 +220,49 @@ export default function Dashboard() {
           <div className="space-y-5 animate-fade-in-up">
             {/* Vessel Strip */}
             <div className="card-elevated p-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Ship className="w-4 h-4 text-primary" />
-                <span className="text-xs font-semibold text-foreground">{selectedFleet}</span>
-                <span className="text-[10px] text-muted-foreground">· {fleetVessels.length} vessels</span>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Ship className="w-4 h-4 text-primary" />
+                  <span className="text-xs font-semibold text-foreground">{selectedFleet}</span>
+                  <span className="text-[10px] text-muted-foreground">· {activeVessels.length}/{fleetVessels.length} selected</span>
+                </div>
+                <div className="relative" ref={filterRef}>
+                  <button onClick={() => setVesselFilterOpen(!vesselFilterOpen)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-medium bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
+                    <Filter className="w-3 h-3" />
+                    View All
+                  </button>
+                  {vesselFilterOpen && (
+                    <div className="absolute right-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-lg w-72 p-3 animate-fade-in-up">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-foreground">Select Vessels</span>
+                        <div className="flex gap-2">
+                          <button onClick={selectAllVessels} className="text-[10px] font-medium text-primary hover:underline">Select All</button>
+                          <button onClick={deselectAllVessels} className="text-[10px] font-medium text-muted-foreground hover:underline">Clear</button>
+                        </div>
+                      </div>
+                      <div className="max-h-60 overflow-auto space-y-1">
+                        {fleetVessels.map(v => (
+                          <label key={v.id} className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-accent cursor-pointer transition-colors">
+                            <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedVesselIds.has(v.id) ? "bg-primary border-primary" : "border-input"}`}>
+                              {selectedVesselIds.has(v.id) && <Check className="w-3 h-3 text-primary-foreground" />}
+                            </div>
+                            <StatusDot status={v.status} />
+                            <span className="text-xs font-medium text-foreground">{v.name}</span>
+                            <span className="text-[10px] text-muted-foreground ml-auto">{v.type}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="flex flex-wrap gap-2">
                 {fleetVessels.map((v) => (
-                  <div key={v.id} className="flex items-center gap-1.5 bg-accent px-2.5 py-1 rounded-md text-xs">
+                  <button key={v.id} onClick={() => toggleVessel(v.id)} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs transition-all ${selectedVesselIds.has(v.id) ? "bg-primary/10 border border-primary/30 text-foreground" : "bg-muted/50 border border-transparent text-muted-foreground opacity-50"}`}>
                     <StatusDot status={v.status} />
-                    <span className="font-medium text-foreground">{v.name}</span>
-                    <span className="text-muted-foreground">{v.type}</span>
-                  </div>
+                    <span className="font-medium">{v.name}</span>
+                    <span className={selectedVesselIds.has(v.id) ? "text-muted-foreground" : "text-muted-foreground/50"}>{v.type}</span>
+                  </button>
                 ))}
               </div>
             </div>
@@ -333,7 +405,7 @@ export default function Dashboard() {
                       <th className="text-center px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
                     </tr></thead>
                     <tbody>
-                      {incidents.map((inc) => (
+                      {filteredIncidents.map((inc) => (
                         <tr key={inc.id} className="border-b border-border/40 hover:bg-accent/20"><td className="px-5 py-2.5 text-xs text-muted-foreground font-mono">{inc.date}</td><td className="px-5 py-2.5 font-medium">{inc.vessel}</td><td className="px-5 py-2.5"><SeverityBadge severity={inc.severity} /></td><td className="px-5 py-2.5 text-xs text-muted-foreground">{inc.description}</td><td className="px-5 py-2.5 text-center"><span className={`text-[10px] font-semibold uppercase ${inc.status === "closed" ? "text-success" : "text-warning"}`}>{inc.status}</span></td></tr>
                       ))}
                     </tbody>
@@ -354,13 +426,13 @@ export default function Dashboard() {
                     <p className="text-xs text-muted-foreground mb-4">Current month task completion (%)</p>
                     <div className="h-[220px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={pmsComplianceData} layout="vertical">
+                        <BarChart data={filteredPmsData} layout="vertical">
                           <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" horizontal={false} />
                           <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                           <YAxis type="category" dataKey="vessel" tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} width={60} />
                           <Tooltip contentStyle={tip} />
                           <Bar dataKey="completion" radius={[0, 4, 4, 0]} barSize={14}>
-                            {pmsComplianceData.map((e, i) => <Cell key={i} fill={e.completion >= 90 ? "hsl(152,55%,42%)" : e.completion >= 80 ? "hsl(38,92%,50%)" : e.completion === 0 ? "hsl(220,15%,85%)" : "hsl(0,72%,55%)"} />)}
+                            {filteredPmsData.map((e, i) => <Cell key={i} fill={e.completion >= 90 ? "hsl(152,55%,42%)" : e.completion >= 80 ? "hsl(38,92%,50%)" : e.completion === 0 ? "hsl(220,15%,85%)" : "hsl(0,72%,55%)"} />)}
                           </Bar>
                         </BarChart>
                       </ResponsiveContainer>
@@ -374,7 +446,7 @@ export default function Dashboard() {
                   <div className="card-elevated overflow-hidden">
                     <div className="px-5 py-3 border-b border-border"><h3 className="text-sm font-semibold text-foreground">Priority Tasks</h3></div>
                     <div className="divide-y divide-border/40">
-                      {maintenanceTasks.map((t) => (
+                      {filteredMaintenanceTasks.map((t) => (
                         <div key={t.id} className="px-5 py-3 flex items-center justify-between hover:bg-accent/20">
                           <div>
                             <p className="text-xs font-medium text-foreground">{t.vessel} — {t.equipment}</p>
@@ -445,7 +517,7 @@ export default function Dashboard() {
                   <div className="card-elevated overflow-hidden">
                     <div className="px-5 py-3 border-b border-border"><h3 className="text-sm font-semibold text-foreground">Certificate Alerts</h3></div>
                     <div className="divide-y divide-border/40">
-                      {certificateAlerts.filter((c) => c.daysRemaining <= 20).map((c) => (
+                      {filteredCertAlerts.filter((c) => c.daysRemaining <= 20).map((c) => (
                         <div key={c.id} className="px-5 py-3 flex items-center justify-between hover:bg-accent/20">
                           <div>
                             <p className="text-xs font-medium text-foreground">{c.vessel} — {c.certificate}</p>
@@ -623,7 +695,7 @@ export default function Dashboard() {
                       <th className="text-center px-5 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
                     </tr></thead>
                     <tbody>
-                      {dryDockEntries.map((dd) => (
+                      {filteredDryDockEntries.map((dd) => (
                         <tr key={dd.id} className="border-b border-border/40 hover:bg-accent/20">
                           <td className="px-5 py-2.5 font-medium text-xs">{dd.vessel}</td>
                           <td className="px-5 py-2.5 text-xs text-muted-foreground">{dd.yard}</td>
@@ -675,7 +747,7 @@ export default function Dashboard() {
                     <p className="text-xs text-muted-foreground mb-4">Per vessel cost comparison (USD '000)</p>
                     <div className="h-[260px]">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={dryDockEntries.filter(d => d.budgetUSD > 0).map(d => ({ vessel: d.vessel.replace("MV ", "").replace("MT ", ""), budget: Math.round(d.budgetUSD / 1000), actual: Math.round(d.actualUSD / 1000) }))}>
+                        <BarChart data={filteredDryDockEntries.filter(d => d.budgetUSD > 0).map(d => ({ vessel: d.vessel.replace("MV ", "").replace("MT ", ""), budget: Math.round(d.budgetUSD / 1000), actual: Math.round(d.actualUSD / 1000) }))}>
                           <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,92%)" />
                           <XAxis dataKey="vessel" tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
                           <YAxis tick={{ fontSize: 11, fill: "hsl(220,10%,46%)" }} axisLine={false} tickLine={false} />
