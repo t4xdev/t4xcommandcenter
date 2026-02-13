@@ -221,6 +221,35 @@ export const drillComplianceData = [
   { month: "Feb", fire: 96, abandon: 98, man_overboard: 92 },
 ];
 
+// ─── Circular / Donut Chart Data ───
+export const incidentTypeDistribution = [
+  { name: "Near Miss", value: 45, fill: "hsl(38, 92%, 50%)" },
+  { name: "First Aid", value: 28, fill: "hsl(28, 93%, 54%)" },
+  { name: "Medical", value: 12, fill: "hsl(0, 72%, 55%)" },
+  { name: "Environmental", value: 10, fill: "hsl(210, 80%, 52%)" },
+  { name: "Property Damage", value: 5, fill: "hsl(222, 52%, 23%)" },
+];
+
+export const vesselStatusDistribution = [
+  { name: "Operational", value: 6, fill: "hsl(152, 55%, 42%)" },
+  { name: "Dry Dock", value: 1, fill: "hsl(38, 92%, 50%)" },
+  { name: "Anchored", value: 1, fill: "hsl(220, 10%, 46%)" },
+];
+
+export const maintenanceStatusDistribution = [
+  { name: "Completed", value: 62, fill: "hsl(152, 55%, 42%)" },
+  { name: "Upcoming", value: 28, fill: "hsl(210, 80%, 52%)" },
+  { name: "Overdue", value: 10, fill: "hsl(0, 72%, 55%)" },
+];
+
+export const budgetUtilization = [
+  { name: "Maintenance", value: 35, fill: "hsl(222, 52%, 23%)" },
+  { name: "Crew", value: 28, fill: "hsl(28, 93%, 54%)" },
+  { name: "Stores & Spares", value: 18, fill: "hsl(152, 55%, 42%)" },
+  { name: "Insurance", value: 12, fill: "hsl(210, 80%, 52%)" },
+  { name: "Other", value: 7, fill: "hsl(340, 65%, 55%)" },
+];
+
 // ─── AI Chat Data ───
 export interface ChatMessage {
   id: string;
