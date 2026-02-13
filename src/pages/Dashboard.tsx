@@ -250,14 +250,14 @@ export default function Dashboard() {
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Incident Type Distribution</h3>
                     <p className="text-xs text-muted-foreground mb-4">Year-to-date breakdown</p>
-                    <div className="h-[220px]">
+                    <div className="h-[280px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={incidentTypeDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                          <Pie data={incidentTypeDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
                             {incidentTypeDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} />
-                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
@@ -265,14 +265,14 @@ export default function Dashboard() {
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Fleet Status</h3>
                     <p className="text-xs text-muted-foreground mb-4">Current vessel operational status</p>
-                    <div className="h-[220px]">
+                    <div className="h-[280px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={vesselStatusDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name} (${value})`}>
+                          <Pie data={vesselStatusDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
                             {vesselStatusDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
                           <Tooltip contentStyle={tip} />
-                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value})`} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
@@ -350,14 +350,14 @@ export default function Dashboard() {
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Task Status Breakdown</h3>
                     <p className="text-xs text-muted-foreground mb-4">Current maintenance task distribution</p>
-                    <div className="h-[220px]">
+                    <div className="h-[280px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={maintenanceStatusDistribution} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={4} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                          <Pie data={maintenanceStatusDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
                             {maintenanceStatusDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} />
-                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
@@ -375,13 +375,14 @@ export default function Dashboard() {
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Certificate Status</h3>
                     <p className="text-xs text-muted-foreground mb-4">Fleet-wide certificate health</p>
-                    <div className="h-[220px]">
+                    <div className="h-[280px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={certStatusData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                          <Pie data={certStatusData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
                             {certStatusData.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
@@ -416,14 +417,14 @@ export default function Dashboard() {
                   <div className="card-elevated p-5">
                     <h3 className="text-sm font-semibold text-foreground mb-1">Budget Utilization</h3>
                     <p className="text-xs text-muted-foreground mb-4">OPEX distribution by category</p>
-                    <div className="h-[220px]">
+                    <div className="h-[280px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={budgetUtilization} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name} ${value}%`}>
+                          <Pie data={budgetUtilization} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
                             {budgetUtilization.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} />
-                          <Legend wrapperStyle={{ fontSize: "11px" }} />
+                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
                     </div>
