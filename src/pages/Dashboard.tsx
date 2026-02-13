@@ -35,8 +35,8 @@ const tip = {
   borderRadius: "8px", fontSize: "12px", color: "hsl(222, 52%, 15%)", boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
 };
 
-function KpiCard({ label, value, unit, trend, severity, index }: {
-  label: string; value: string; unit: string; trend: number; severity: Severity; index: number;
+function KpiCard({ label, value, unit, trend, severity, index, lastMonth, avg6m }: {
+  label: string; value: string; unit: string; trend: number; severity: Severity; index: number; lastMonth?: string; avg6m?: string;
 }) {
   const isNeg = (trend > 0 && severity === "high") || (trend < 0 && severity !== "low");
   const TrendIcon = trend > 0 ? TrendingUp : trend < 0 ? TrendingDown : Activity;
@@ -53,6 +53,22 @@ function KpiCard({ label, value, unit, trend, severity, index }: {
           <span className="text-[10px] font-mono font-semibold">{trend > 0 ? "+" : ""}{trend}%</span>
         </div>
       </div>
+      {(lastMonth || avg6m) && (
+        <div className="flex items-center gap-3 mt-2 pt-2 border-t border-border">
+          {lastMonth && (
+            <div className="flex-1">
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Last Month</p>
+              <p className="text-xs font-semibold font-mono text-foreground">{lastMonth}</p>
+            </div>
+          )}
+          {avg6m && (
+            <div className="flex-1">
+              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">6M Avg</p>
+              <p className="text-xs font-semibold font-mono text-foreground">{avg6m}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
