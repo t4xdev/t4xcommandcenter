@@ -165,20 +165,6 @@ export default function Dashboard() {
       <main className="max-w-[1600px] mx-auto px-6 py-5">
         {activeTab === "overview" ? (
           <div className="space-y-5 animate-fade-in-up">
-            {/* Fleet Summary */}
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-              {summary.map((s, i) => (
-                <div key={s.label} className="card-elevated p-4 animate-fade-in-up" style={{ animationDelay: `${i * 60}ms` }}>
-                  <p className="text-[11px] font-medium text-muted-foreground mb-1">{s.label}</p>
-                  <div className="flex items-end justify-between">
-                    <span className="text-xl font-bold text-foreground font-mono">{s.value}</span>
-                    <SeverityBadge severity={s.severity} />
-                  </div>
-                  <p className="text-[10px] text-muted-foreground mt-1">{s.sub}</p>
-                </div>
-              ))}
-            </div>
-
             {/* Vessel Strip */}
             <div className="card-elevated p-3">
               <div className="flex items-center gap-2 mb-2">
@@ -195,6 +181,20 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Fleet Summary */}
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+              {summary.map((s, i) => (
+                <div key={s.label} className="card-elevated p-4 animate-fade-in-up" style={{ animationDelay: `${i * 60}ms` }}>
+                  <p className="text-[11px] font-medium text-muted-foreground mb-1">{s.label}</p>
+                  <div className="flex items-end justify-between">
+                    <span className="text-xl font-bold text-foreground font-mono">{s.value}</span>
+                    <SeverityBadge severity={s.severity} />
+                  </div>
+                  <p className="text-[10px] text-muted-foreground mt-1">{s.sub}</p>
+                </div>
+              ))}
             </div>
 
             {/* Domain Tabs */}
