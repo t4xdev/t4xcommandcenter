@@ -744,56 +744,101 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-        ) : (
-          /* ─── AI Chat ─── */
-          <div className="flex gap-5 h-[calc(100vh-100px)] animate-fade-in-up">
-            <div className="flex-1 flex flex-col card-elevated overflow-hidden">
-              <div className="flex-1 overflow-auto p-5 space-y-4">
-                {messages.map((msg) => {
-                  const isU = msg.role === "user";
-                  return (
-                    <div key={msg.id} className={`flex gap-3 animate-fade-in-up ${isU ? "flex-row-reverse" : ""}`}>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${isU ? "bg-primary" : "bg-secondary"}`}>
-                        {isU ? <User className="w-4 h-4 text-primary-foreground" /> : <Bot className="w-4 h-4 text-secondary-foreground" />}
-                      </div>
-                      <div className={`max-w-[75%] rounded-xl px-4 py-3 text-sm leading-relaxed ${isU ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
-                        {msg.content.split("\n").map((line, i) => {
-                          if (line.startsWith("**") && line.endsWith("**")) return <p key={i} className="font-bold mb-1">{line.replace(/\*\*/g, "")}</p>;
-                          if (line.startsWith("| ")) return <p key={i} className="font-mono text-[11px] text-muted-foreground">{line}</p>;
-                          if (/^[-\d⚠️🔴🟡📈📋📦]/.test(line.trim())) return <p key={i} className="ml-2 mb-0.5">{line}</p>;
-                          if (!line.trim()) return <br key={i} />;
-                          return <p key={i} className="mb-1">{line.replace(/\*\*/g, "")}</p>;
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-                {isTyping && (
-                  <div className="flex gap-3"><div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center"><Bot className="w-4 h-4 text-secondary-foreground" /></div><div className="bg-accent rounded-xl px-4 py-3 flex gap-1"><span className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse-subtle" /><span className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse-subtle" style={{ animationDelay: "150ms" }} /><span className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse-subtle" style={{ animationDelay: "300ms" }} /></div></div>
-                )}
-                <div ref={chatEndRef} />
-              </div>
-              <div className="p-4 border-t border-border">
-                <div className="flex gap-2">
-                  <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && input.trim() && handleSend(input)} placeholder="Ask about fleet safety, maintenance, compliance..." className="flex-1 px-4 py-2.5 rounded-lg border border-input bg-background text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
-                  <button onClick={() => input.trim() && handleSend(input)} className="px-4 py-2.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"><Send className="w-4 h-4" /></button>
-                </div>
+      </main>
+
+      {/* ─── Floating Chat Button ─── */}
+      {!chatOpen && (
+        <button
+          onClick={() => setChatOpen(true)}
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+          title="Ask Smart Insights AI"
+        >
+          <Bot className="w-6 h-6" />
+        </button>
+      )}
+
+      {/* ─── Floating Chat Panel ─── */}
+      {chatOpen && (
+        <div className="fixed bottom-6 right-6 z-[90] flex flex-col w-[420px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-5rem)] rounded-2xl border border-border bg-card shadow-2xl animate-fade-in-up overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground rounded-t-2xl">
+            <div className="flex items-center gap-2">
+              <Bot className="w-5 h-5" />
+              <div>
+                <p className="text-sm font-bold leading-none">Smart Insights AI</p>
+                <p className="text-[10px] opacity-70 mt-0.5">Fleet Intelligence Assistant</p>
               </div>
             </div>
-            <div className="w-72 shrink-0 overflow-auto hidden lg:block">
-              <div className="flex items-center gap-2 mb-4"><Sparkles className="w-4 h-4 text-secondary" /><h3 className="text-sm font-semibold text-foreground">Quick Insights</h3></div>
-              {Object.entries(groupedQ).map(([cat, qs]) => (
-                <div key={cat} className="mb-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">{chatCategories[cat]}</p>
-                  <div className="space-y-1.5">
-                    {qs.map((q) => <button key={q.id} onClick={() => handleSend(q.question, q.id)} className={`w-full text-left px-3 py-2 rounded-lg text-xs font-medium border transition-all hover:shadow-sm ${chatCatColors[cat]}`}>{q.question}</button>)}
+            <button onClick={() => setChatOpen(false)} className="p-1.5 rounded-lg hover:bg-primary-foreground/20 transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Messages */}
+          <div className="flex-1 overflow-auto p-4 space-y-3">
+            {messages.map((msg) => {
+              const isU = msg.role === "user";
+              return (
+                <div key={msg.id} className={`flex gap-2 animate-fade-in-up ${isU ? "flex-row-reverse" : ""}`}>
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${isU ? "bg-primary" : "bg-secondary"}`}>
+                    {isU ? <User className="w-3.5 h-3.5 text-primary-foreground" /> : <Bot className="w-3.5 h-3.5 text-secondary-foreground" />}
+                  </div>
+                  <div className={`max-w-[80%] rounded-xl px-3 py-2 text-xs leading-relaxed ${isU ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}>
+                    {msg.content.split("\n").map((line, i) => {
+                      if (line.startsWith("**") && line.endsWith("**")) return <p key={i} className="font-bold mb-1">{line.replace(/\*\*/g, "")}</p>;
+                      if (line.startsWith("| ")) return <p key={i} className="font-mono text-[10px] text-muted-foreground">{line}</p>;
+                      if (/^[-\d⚠️🔴🟡📈📋📦]/.test(line.trim())) return <p key={i} className="ml-1 mb-0.5">{line}</p>;
+                      if (!line.trim()) return <br key={i} />;
+                      return <p key={i} className="mb-0.5">{line.replace(/\*\*/g, "")}</p>;
+                    })}
                   </div>
                 </div>
-              ))}
+              );
+            })}
+            {isTyping && (
+              <div className="flex gap-2">
+                <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center"><Bot className="w-3.5 h-3.5 text-secondary-foreground" /></div>
+                <div className="bg-accent rounded-xl px-3 py-2 flex gap-1 items-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-pulse-subtle" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-pulse-subtle" style={{ animationDelay: "150ms" }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-pulse-subtle" style={{ animationDelay: "300ms" }} />
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          {/* Quick Questions Scrollable Strip */}
+          <div className="border-t border-border px-3 py-2 overflow-x-auto">
+            <div className="flex gap-1.5 flex-nowrap">
+              {Object.entries(groupedQ).flatMap(([cat, qs]) =>
+                qs.slice(0, 2).map((q) => (
+                  <button key={q.id} onClick={() => handleSend(q.question, q.id)} className={`shrink-0 text-[10px] px-2.5 py-1 rounded-full border font-medium whitespace-nowrap transition-all hover:shadow-sm ${chatCatColors[cat]}`}>
+                    {q.question.length > 36 ? q.question.slice(0, 36) + "…" : q.question}
+                  </button>
+                ))
+              )}
             </div>
           </div>
-        )}
-      </main>
+
+          {/* Input */}
+          <div className="p-3 border-t border-border">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && input.trim() && handleSend(input)}
+                placeholder="Ask about safety, maintenance, compliance…"
+                className="flex-1 px-3 py-2 rounded-lg border border-input bg-background text-foreground text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button onClick={() => input.trim() && handleSend(input)} className="px-3 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
+                <Send className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Vessel Filter Modal */}
       {vesselFilterOpen && (
