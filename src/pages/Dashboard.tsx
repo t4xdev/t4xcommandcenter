@@ -807,17 +807,16 @@ export default function Dashboard() {
             <div ref={chatEndRef} />
           </div>
 
-          {/* Quick Questions Scrollable Strip */}
-          <div className="border-t border-border px-3 py-2 overflow-x-auto">
-            <div className="flex gap-1.5 flex-nowrap">
-              {Object.entries(groupedQ).flatMap(([cat, qs]) =>
-                qs.slice(0, 2).map((q) => (
-                  <button key={q.id} onClick={() => handleSend(q.question, q.id)} className={`shrink-0 text-[10px] px-2.5 py-1 rounded-full border font-medium whitespace-nowrap transition-all hover:shadow-sm ${chatCatColors[cat]}`}>
-                    {q.question.length > 36 ? q.question.slice(0, 36) + "…" : q.question}
-                  </button>
-                ))
-              )}
-            </div>
+          {/* Quick Questions Vertical List */}
+          <div className="border-t border-border px-3 py-2 space-y-1.5">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Suggested Questions</p>
+            {Object.entries(groupedQ).flatMap(([cat, qs]) =>
+              qs.slice(0, 2).map((q) => (
+                <button key={q.id} onClick={() => handleSend(q.question, q.id)} className={`w-full text-left text-[11px] px-3 py-2 rounded-lg border font-medium transition-all hover:shadow-sm ${chatCatColors[cat]}`}>
+                  {q.question}
+                </button>
+              ))
+            )}
           </div>
 
           {/* Input */}
