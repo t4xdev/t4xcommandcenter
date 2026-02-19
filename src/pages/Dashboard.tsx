@@ -337,7 +337,7 @@ export default function Dashboard() {
                           <Pie data={incidentTypeDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
                             {incidentTypeDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, name]} />
                           <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
@@ -357,7 +357,7 @@ export default function Dashboard() {
                           <Pie data={vesselStatusDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
                             {vesselStatusDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [value, name]} />
                           <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value})`} />
                         </PieChart>
                       </ResponsiveContainer>
@@ -451,7 +451,7 @@ export default function Dashboard() {
                           <Pie data={maintenanceStatusDistribution} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
                             {maintenanceStatusDistribution.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, name]} />
                           <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
@@ -482,7 +482,7 @@ export default function Dashboard() {
                           <Pie data={certStatusData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
                             {certStatusData.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, name]} />
                           <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
@@ -554,7 +554,7 @@ export default function Dashboard() {
                           <Pie data={budgetUtilization} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
                             {budgetUtilization.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, name]} />
                           <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
@@ -635,7 +635,7 @@ export default function Dashboard() {
                           <Pie data={vendorPerformanceData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={4} dataKey="value" label={false}>
                             {vendorPerformanceData.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, name]} />
                           <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
@@ -709,7 +709,7 @@ export default function Dashboard() {
                           <Pie data={dryDockCostBreakdown} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={3} dataKey="value" label={false}>
                             {dryDockCostBreakdown.map((e, i) => <Cell key={i} fill={e.fill} />)}
                           </Pie>
-                          <Tooltip contentStyle={tip} formatter={(value: number) => [`${value}%`, ""]} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, name]} />
                           <Legend wrapperStyle={{ fontSize: "11px" }} formatter={(value: string, entry: any) => `${value} (${entry.payload.value}%)`} />
                         </PieChart>
                       </ResponsiveContainer>
