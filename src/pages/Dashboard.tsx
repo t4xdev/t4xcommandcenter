@@ -800,6 +800,21 @@ export default function Dashboard() {
                 </div>
               );
             })}
+
+            {/* Suggested Questions — inline in chat scroll area */}
+            {!isTyping && (
+              <div className="space-y-1.5 pt-1">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-1">Suggested Questions</p>
+                {Object.entries(groupedQ).flatMap(([cat, qs]) =>
+                  qs.slice(0, 2).map((q) => (
+                    <button key={q.id} onClick={() => handleSend(q.question, q.id)} className={`w-full text-left text-[11px] px-3 py-2 rounded-lg border font-medium transition-all hover:shadow-sm ${chatCatColors[cat]}`}>
+                      {q.question}
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+
             {isTyping && (
               <div className="flex gap-2">
                 <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center"><Bot className="w-3.5 h-3.5 text-secondary-foreground" /></div>
@@ -811,18 +826,6 @@ export default function Dashboard() {
               </div>
             )}
             <div ref={chatEndRef} />
-          </div>
-
-          {/* Quick Questions Vertical List */}
-          <div className="border-t border-border px-3 py-2 space-y-1.5">
-            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">Suggested Questions</p>
-            {Object.entries(groupedQ).flatMap(([cat, qs]) =>
-              qs.slice(0, 2).map((q) => (
-                <button key={q.id} onClick={() => handleSend(q.question, q.id)} className={`w-full text-left text-[11px] px-3 py-2 rounded-lg border font-medium transition-all hover:shadow-sm ${chatCatColors[cat]}`}>
-                  {q.question}
-                </button>
-              ))
-            )}
           </div>
 
           {/* Input */}
