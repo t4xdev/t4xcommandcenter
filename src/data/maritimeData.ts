@@ -13,18 +13,18 @@ export interface Vessel {
   status: "operational" | "dry-dock" | "anchored";
 }
 
-export const fleets = ["All Fleets", "Tahid Narmada", "Tahid Illijan", "Dorat"] as const;
+export const fleets = ["All Fleets", "Pacific", "Atlantic", "Indian"] as const;
 export type FleetName = (typeof fleets)[number];
 
 export const vessels: Vessel[] = [
-  { id: "v1", name: "MT Kaveri", fleet: "Tahid Narmada", type: "Bulk Carrier", flag: "India", imo: "9876543", status: "operational" },
-  { id: "v2", name: "MV Godavari", fleet: "Tahid Narmada", type: "Container", flag: "India", imo: "9876544", status: "operational" },
-  { id: "v3", name: "MV Narmada", fleet: "Tahid Illijan", type: "AHTS", flag: "India", imo: "9876545", status: "dry-dock" },
-  { id: "v4", name: "MV Krishna", fleet: "Tahid Illijan", type: "PSV", flag: "India", imo: "9876546", status: "operational" },
-  { id: "v5", name: "MV Tapti", fleet: "Dorat", type: "Bulk Carrier", flag: "India", imo: "9876547", status: "operational" },
-  { id: "v6", name: "MT Chambal", fleet: "Dorat", type: "Tanker", flag: "India", imo: "9876548", status: "anchored" },
-  { id: "v7", name: "MV Mahanadi", fleet: "Tahid Narmada", type: "Bulk Carrier", flag: "India", imo: "9876549", status: "operational" },
-  { id: "v8", name: "MV Sabarmati", fleet: "Dorat", type: "Bulk Carrier", flag: "India", imo: "9876550", status: "operational" },
+  { id: "v1", name: "MT Kaveri", fleet: "Pacific", type: "Bulk Carrier", flag: "India", imo: "9876543", status: "operational" },
+  { id: "v2", name: "MV Godavari", fleet: "Pacific", type: "Container", flag: "India", imo: "9876544", status: "operational" },
+  { id: "v3", name: "MV Narmada", fleet: "Atlantic", type: "AHTS", flag: "India", imo: "9876545", status: "dry-dock" },
+  { id: "v4", name: "MV Krishna", fleet: "Atlantic", type: "PSV", flag: "India", imo: "9876546", status: "operational" },
+  { id: "v5", name: "MV Tapti", fleet: "Indian", type: "Bulk Carrier", flag: "India", imo: "9876547", status: "operational" },
+  { id: "v6", name: "MT Chambal", fleet: "Indian", type: "Tanker", flag: "India", imo: "9876548", status: "anchored" },
+  { id: "v7", name: "MV Mahanadi", fleet: "Pacific", type: "Bulk Carrier", flag: "India", imo: "9876549", status: "operational" },
+  { id: "v8", name: "MV Sabarmati", fleet: "Indian", type: "Bulk Carrier", flag: "India", imo: "9876550", status: "operational" },
 ];
 
 export function getVesselsByFleet(fleet: FleetName): Vessel[] {
