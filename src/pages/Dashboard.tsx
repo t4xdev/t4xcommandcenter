@@ -118,7 +118,7 @@ const chatCatColors: Record<string, string> = {
 
 // ─── Dashboard ───
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState<"overview" | "chat">("overview");
+  const [chatOpen, setChatOpen] = useState(false);
   const [selectedFleet, setSelectedFleet] = useState<FleetName>("All Fleets");
   const [activeDomain, setActiveDomain] = useState<DomainId>("qhse");
   const [selectedVesselIds, setSelectedVesselIds] = useState<Set<string>>(new Set(vessels.map(v => v.id)));
@@ -216,7 +216,6 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-[1600px] mx-auto px-6 py-5">
-        {activeTab === "overview" ? (
           <div className="space-y-5 animate-fade-in-up">
             {/* Vessel Strip */}
             <div className="card-elevated p-3">
