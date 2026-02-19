@@ -4,7 +4,7 @@ import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
   ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
-  Package, Filter, X, Check,
+  Package, Filter, X, Check, Maximize2, Minimize2,
 } from "lucide-react";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
@@ -120,6 +120,7 @@ const chatCatColors: Record<string, string> = {
 // ─── Dashboard ───
 export default function Dashboard() {
   const [chatOpen, setChatOpen] = useState(false);
+  const [chatFullscreen, setChatFullscreen] = useState(false);
   const [selectedFleet, setSelectedFleet] = useState<FleetName>("All Fleets");
   const [activeDomain, setActiveDomain] = useState<DomainId>("qhse");
   const [selectedVesselIds, setSelectedVesselIds] = useState<Set<string>>(new Set(vessels.map(v => v.id)));
@@ -758,9 +759,9 @@ export default function Dashboard() {
 
       {/* ─── Floating Chat Panel ─── */}
       {chatOpen && (
-        <div className="fixed bottom-6 right-6 z-[90] flex flex-col w-[420px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-5rem)] rounded-2xl border border-border bg-card shadow-2xl animate-fade-in-up overflow-hidden">
+        <div className={`fixed z-[90] flex flex-col bg-card border border-border shadow-2xl animate-fade-in-up overflow-hidden transition-all duration-300 ${chatFullscreen ? "inset-0 rounded-none" : "bottom-6 right-6 w-[420px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-5rem)] rounded-2xl"}`}>
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground rounded-t-2xl">
+          <div className={`flex items-center justify-between px-4 py-3 bg-primary text-primary-foreground ${chatFullscreen ? "" : "rounded-t-2xl"}`}>
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               <div>
@@ -768,9 +769,14 @@ export default function Dashboard() {
                 <p className="text-[10px] opacity-70 mt-0.5">Fleet Intelligence Assistant</p>
               </div>
             </div>
-            <button onClick={() => setChatOpen(false)} className="p-1.5 rounded-lg hover:bg-primary-foreground/20 transition-colors">
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button onClick={() => setChatFullscreen(f => !f)} className="p-1.5 rounded-lg hover:bg-primary-foreground/20 transition-colors" title={chatFullscreen ? "Exit fullscreen" : "Fullscreen"}>
+                {chatFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </button>
+              <button onClick={() => { setChatOpen(false); setChatFullscreen(false); }} className="p-1.5 rounded-lg hover:bg-primary-foreground/20 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
