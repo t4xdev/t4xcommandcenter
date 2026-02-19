@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
+import t4xLogo from "@/assets/t4x_logo.png";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
@@ -191,11 +192,9 @@ export default function Dashboard() {
       <header className="sticky top-0 z-50 bg-card border-b border-border px-6 py-3">
         <div className="max-w-[1600px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <Anchor className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-foreground">Smart Insights <span className="text-gradient-brand">MIS</span></h1>
+            <img src={t4xLogo} alt="Twenty4X Logo" className="h-10 w-auto object-contain" />
+            <div className="border-l border-border pl-3">
+              <h1 className="text-sm font-bold text-foreground">Smart Insights <span className="text-gradient-brand">MIS</span></h1>
               <p className="text-[10px] text-muted-foreground">Maritime Fleet Analytics</p>
             </div>
           </div>

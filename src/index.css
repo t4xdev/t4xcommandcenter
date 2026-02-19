@@ -6,28 +6,31 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%;
-    --foreground: 222 52% 15%;
+    /* Twenty4X brand: Navy #1c3557 | Red #e30613 */
+    --background: 216 22% 97%;
+    --foreground: 215 50% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 52% 15%;
+    --card-foreground: 215 50% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 52% 15%;
+    --popover-foreground: 215 50% 15%;
 
-    --primary: 222 52% 23%;
+    /* Primary = T4X Navy */
+    --primary: 215 50% 23%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 28 93% 54%;
+    /* Secondary = T4X Red */
+    --secondary: 357 96% 46%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 15% 93%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 216 15% 93%;
+    --muted-foreground: 216 10% 46%;
 
-    --accent: 222 30% 95%;
-    --accent-foreground: 222 52% 23%;
+    --accent: 215 30% 95%;
+    --accent-foreground: 215 50% 23%;
 
-    --destructive: 0 72% 55%;
+    --destructive: 357 96% 46%;
     --destructive-foreground: 0 0% 100%;
 
     --success: 152 55% 42%;
@@ -39,51 +42,51 @@
     --info: 210 80% 52%;
     --info-foreground: 0 0% 100%;
 
-    --border: 220 15% 90%;
-    --input: 220 15% 90%;
-    --ring: 222 52% 23%;
+    --border: 216 15% 89%;
+    --input: 216 15% 89%;
+    --ring: 215 50% 23%;
 
     --radius: 0.625rem;
 
-    --sidebar-background: 220 20% 97%;
-    --sidebar-foreground: 222 52% 23%;
-    --sidebar-primary: 28 93% 54%;
+    --sidebar-background: 216 22% 97%;
+    --sidebar-foreground: 215 50% 23%;
+    --sidebar-primary: 357 96% 46%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 30% 93%;
-    --sidebar-accent-foreground: 222 52% 23%;
-    --sidebar-border: 220 15% 90%;
-    --sidebar-ring: 28 93% 54%;
+    --sidebar-accent: 215 30% 93%;
+    --sidebar-accent-foreground: 215 50% 23%;
+    --sidebar-border: 216 15% 89%;
+    --sidebar-ring: 357 96% 46%;
 
-    --chart-1: 222 52% 23%;
-    --chart-2: 28 93% 54%;
+    --chart-1: 215 50% 23%;
+    --chart-2: 357 96% 46%;
     --chart-3: 152 55% 42%;
     --chart-4: 210 80% 52%;
-    --chart-5: 340 65% 55%;
+    --chart-5: 38 92% 50%;
   }
 
   .dark {
-    --background: 222 52% 8%;
-    --foreground: 220 15% 93%;
+    --background: 215 50% 8%;
+    --foreground: 216 15% 93%;
 
-    --card: 222 45% 12%;
-    --card-foreground: 220 15% 93%;
+    --card: 215 45% 12%;
+    --card-foreground: 216 15% 93%;
 
-    --popover: 222 45% 12%;
-    --popover-foreground: 220 15% 93%;
+    --popover: 215 45% 12%;
+    --popover-foreground: 216 15% 93%;
 
-    --primary: 28 93% 54%;
+    --primary: 357 96% 46%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 52% 23%;
+    --secondary: 215 50% 23%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 222 30% 18%;
-    --muted-foreground: 220 10% 55%;
+    --muted: 215 30% 18%;
+    --muted-foreground: 216 10% 55%;
 
-    --accent: 222 35% 20%;
-    --accent-foreground: 220 15% 93%;
+    --accent: 215 35% 20%;
+    --accent-foreground: 216 15% 93%;
 
-    --destructive: 0 72% 55%;
+    --destructive: 357 96% 46%;
     --destructive-foreground: 0 0% 100%;
 
     --success: 152 55% 42%;
@@ -95,18 +98,18 @@
     --info: 210 80% 52%;
     --info-foreground: 0 0% 100%;
 
-    --border: 222 30% 20%;
-    --input: 222 30% 20%;
-    --ring: 28 93% 54%;
+    --border: 215 30% 20%;
+    --input: 215 30% 20%;
+    --ring: 357 96% 46%;
 
-    --sidebar-background: 222 52% 8%;
-    --sidebar-foreground: 222 15% 75%;
-    --sidebar-primary: 28 93% 54%;
+    --sidebar-background: 215 50% 8%;
+    --sidebar-foreground: 215 15% 75%;
+    --sidebar-primary: 357 96% 46%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 40% 15%;
+    --sidebar-accent: 215 40% 15%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 222 35% 15%;
-    --sidebar-ring: 28 93% 54%;
+    --sidebar-border: 215 35% 15%;
+    --sidebar-ring: 357 96% 46%;
   }
 }
 
@@ -131,7 +134,7 @@
   }
 
   .text-gradient-brand {
-    background: linear-gradient(135deg, hsl(222 52% 23%), hsl(28 93% 54%));
+    background: linear-gradient(135deg, hsl(215 50% 23%), hsl(357 96% 46%));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
