@@ -818,6 +818,53 @@ export default function IotDashboard() {
             </div>
           </div>
 
+          {/* All Sensors Table by Component */}
+          <div className="bg-card rounded-xl border border-border p-5">
+            <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+              <BarChart3 className="w-3.5 h-3.5 text-primary" /> All Sensor Readings — {selectedVessel.vesselName}
+            </h3>
+            <p className="text-[10px] text-muted-foreground mb-4">Complete list of {selectedVessel.sensors.length} onboard sensors grouped by system. Green = Normal, Yellow = Attention Needed, Red = Action Required.</p>
+            {(() => {
+              const grouped = getSensorsByComponent(selectedVessel);
+              return (
+                <div className="space-y-4 max-h-[500px] overflow-y-auto">
+                  {Object.entries(grouped).map(([comp, sensors]) => (
+                    <div key={comp}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[11px] font-bold text-foreground">{componentLabels[comp] || comp}</span>
+                        <span className="text-[9px] text-muted-foreground">({sensors.length} sensors)</span>
+                        {sensors.some(s => s.status === "critical") && <span className="w-2 h-2 rounded-full bg-destructive" />}
+                        {!sensors.some(s => s.status === "critical") && sensors.some(s => s.status === "warning") && <span className="w-2 h-2 rounded-full bg-warning" />}
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead>
+                            <tr className="border-b border-border/50">
+                              <th className="text-left py-1.5 text-muted-foreground font-medium w-[30%]">Sensor</th>
+                              <th className="text-left py-1.5 text-muted-foreground font-medium w-[35%]">Description</th>
+                              <th className="text-right py-1.5 text-muted-foreground font-medium">Value</th>
+                              <th className="text-center py-1.5 text-muted-foreground font-medium">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {sensors.map(s => (
+                              <tr key={s.id} className="border-b border-border/30 hover:bg-accent/30 transition-colors">
+                                <td className="py-2 font-medium text-foreground">{s.name}</td>
+                                <td className="py-2 text-[10px] text-muted-foreground">{s.description}</td>
+                                <td className={`py-2 text-right font-mono font-bold ${getStatusText(s.status)}`}>{s.value} {s.unit}</td>
+                                <td className="py-2 text-center"><StatusBadge status={s.status} /></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+          </div>
+
           {/* Vessel Alerts */}
           {filteredAlerts.length > 0 && (
             <div className="bg-card rounded-xl border border-border p-5">
