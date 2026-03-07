@@ -267,15 +267,19 @@ function FleetVesselTable({ vessels }: { vessels: VesselSensors[] }) {
 type TimeRange = "1h" | "6h" | "24h";
 
 // ─── Main Dashboard ───
-export default function IotDashboard() {
-  const [selectedFleet, setSelectedFleet] = useState<string>("All Fleets");
+export default function IotDashboard({ fleet }: { fleet: string }) {
   const [selectedVesselId, setSelectedVesselId] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>("24h");
+
+  const selectedFleet = fleet;
 
   const filteredVessels = useMemo(() =>
     selectedFleet === "All Fleets" ? allVesselSensors : allVesselSensors.filter(v => v.fleet === selectedFleet),
     [selectedFleet]
   );
+
+  // Reset vessel selection when fleet changes
+  useMemo(() => { setSelectedVesselId(null); }, [selectedFleet]);
 
   const selectedVessel = useMemo(() =>
     selectedVesselId ? allVesselSensors.find(v => v.vesselId === selectedVesselId) || null : null,
@@ -300,7 +304,7 @@ export default function IotDashboard() {
 
   return (
     <div className="space-y-5 animate-fade-in-up">
-      {/* Fleet Selector + Info Bar */}
+      {/* Info Bar */}
       <div className="bg-card rounded-xl border border-border p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -313,12 +317,6 @@ export default function IotDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <select value={selectedFleet} onChange={(e) => { setSelectedFleet(e.target.value); setSelectedVesselId(null); }} className="appearance-none card-elevated pl-3 pr-8 py-1.5 text-xs font-medium text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-lg">
-                {fleetOptions.map(f => <option key={f} value={f}>{f}</option>)}
-              </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-            </div>
             <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <Clock className="w-3 h-3" />
               Live
