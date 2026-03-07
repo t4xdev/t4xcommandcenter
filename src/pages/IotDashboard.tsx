@@ -325,11 +325,11 @@ export default function IotDashboard({ fleet }: { fleet: string }) {
         </div>
       </div>
 
-      {/* Fleet Summary KPIs */}
-      <FleetOverviewCards fleet={selectedFleet === "All Fleets" ? undefined : selectedFleet} />
-
       {/* Vessel Selector Strip */}
       <VesselSelector vessels={filteredVessels} selectedId={selectedVesselId} onSelect={setSelectedVesselId} />
+
+      {/* Fleet Summary KPIs */}
+      <FleetOverviewCards fleet={selectedFleet === "All Fleets" ? undefined : selectedFleet} />
 
       {/* Fleet view */}
       {!selectedVessel && (
