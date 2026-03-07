@@ -2,40 +2,50 @@ import { useState, useMemo } from "react";
 import {
   Activity, AlertTriangle, Anchor, Droplets, Gauge, Thermometer, Waves,
   Zap, Wifi, WifiOff, Clock, Circle, BarChart3, Fuel, Cog, Fan,
+  Ship, ChevronDown, Heart, Info, Shield, HelpCircle, Signal,
 } from "lucide-react";
 import {
   LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, PieChart, Pie, Cell, RadialBarChart, RadialBar,
+  Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
 import {
-  vesselSensorData, kpiMetrics, recentAlerts, fuelTrendData,
-  telemetryData24h, telemetryData6h, telemetryData1h,
-  getGaugeColor, getStatusBg, getStatusText,
-  type SensorStatus, type SensorPoint,
+  allVesselSensors, recentAlerts, getFleetIotSummary, getVesselKpiMetrics,
+  getVesselTelemetry, getGaugeColor, getStatusBg, getStatusText,
+  getHealthColor, getHealthLabel, fleetOptions,
+  type SensorStatus, type SensorPoint, type VesselSensors,
 } from "@/data/iotSensorData";
 
-// ─── Helpers ───
+// ─── Tooltip Styles ───
 const tip = {
-  backgroundColor: "hsl(215, 50%, 8%)", border: "1px solid hsl(215, 30%, 20%)",
-  borderRadius: "8px", fontSize: "12px", color: "hsl(216, 15%, 93%)", boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
+  backgroundColor: "hsl(0, 0%, 100%)", border: "1px solid hsl(220, 15%, 90%)",
+  borderRadius: "8px", fontSize: "12px", color: "hsl(222, 52%, 15%)", boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
 };
 
-function StatusIndicator({ status }: { status: SensorStatus }) {
+// ─── Reusable Components ───
+function StatusIndicator({ status, size = "sm" }: { status: SensorStatus; size?: "sm" | "md" }) {
   const color = status === "critical" ? "bg-destructive" : status === "warning" ? "bg-warning" : "bg-success";
+  const dim = size === "md" ? "h-3 w-3" : "h-2.5 w-2.5";
   return (
-    <span className="relative flex h-2.5 w-2.5">
-      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${color} opacity-75`} />
-      <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${color}`} />
+    <span className={`relative flex ${dim}`}>
+      {status !== "normal" && <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${color} opacity-75`} />}
+      <span className={`relative inline-flex rounded-full ${dim} ${color}`} />
     </span>
   );
 }
 
-function GaugeCard({ label, value, unit, max, status }: { label: string; value: number; unit: string; max: number; status: SensorStatus }) {
+function StatusBadge({ status }: { status: SensorStatus }) {
+  const labels = { normal: "Normal", warning: "Attention Needed", critical: "Action Required" };
+  const cls = status === "critical" ? "severity-high" : status === "warning" ? "severity-medium" : "severity-low";
+  return <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider border ${cls}`}>{labels[status]}</span>;
+}
+
+function GaugeCard({ label, description, value, unit, max, status }: { label: string; description?: string; value: number; unit: string; max: number; status: SensorStatus }) {
   const pct = Math.min((value / max) * 100, 100);
-  const gaugeData = [{ value: pct, fill: getGaugeColor(status) }, { value: 100 - pct, fill: "hsl(215, 30%, 18%)" }];
+  const gaugeData = [{ value: pct, fill: getGaugeColor(status) }, { value: 100 - pct, fill: "hsl(216, 15%, 93%)" }];
+  const statusLabel = status === "critical" ? "Critical" : status === "warning" ? "Caution" : "OK";
   return (
-    <div className="bg-card rounded-xl border border-border p-4 flex flex-col items-center">
-      <p className="text-[11px] font-medium text-muted-foreground mb-2">{label}</p>
+    <div className="bg-card rounded-xl border border-border p-4 flex flex-col items-center group relative">
+      <p className="text-[11px] font-medium text-muted-foreground mb-1">{label}</p>
       <div className="w-24 h-24 relative">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -49,22 +59,30 @@ function GaugeCard({ label, value, unit, max, status }: { label: string; value: 
           <span className="text-[9px] text-muted-foreground">{unit}</span>
         </div>
       </div>
+      <span className={`text-[9px] font-semibold mt-1 ${getStatusText(status)}`}>{statusLabel}</span>
+      {description && (
+        <div className="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-48">
+          <div className="bg-card border border-border rounded-lg shadow-xl p-2.5 text-[10px] text-muted-foreground">
+            {description}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 // ─── Sensor Diagram ───
-const sensorPositions: Record<string, { top: string; left: string; icon: typeof Cog }> = {
-  engine: { top: "30%", left: "40%", icon: Cog },
-  fuel: { top: "55%", left: "25%", icon: Fuel },
-  propeller: { top: "75%", left: "70%", icon: Fan },
-  thruster: { top: "65%", left: "15%", icon: Zap },
-  vibration: { top: "40%", left: "60%", icon: Waves },
-  pressure: { top: "50%", left: "75%", icon: Gauge },
-  temperature: { top: "25%", left: "55%", icon: Thermometer },
+const sensorPositions: Record<string, { top: string; left: string; icon: typeof Cog; label: string }> = {
+  engine: { top: "30%", left: "40%", icon: Cog, label: "Engine" },
+  fuel: { top: "55%", left: "25%", icon: Fuel, label: "Fuel System" },
+  propeller: { top: "75%", left: "70%", icon: Fan, label: "Propeller" },
+  thruster: { top: "65%", left: "15%", icon: Zap, label: "Thruster" },
+  vibration: { top: "40%", left: "60%", icon: Waves, label: "Vibration" },
+  pressure: { top: "50%", left: "75%", icon: Gauge, label: "Pressure" },
+  temperature: { top: "25%", left: "55%", icon: Thermometer, label: "Temperature" },
 };
 
-function VesselDiagram({ sensors }: { sensors: SensorPoint[] }) {
+function VesselDiagram({ sensors, vesselName }: { sensors: SensorPoint[]; vesselName: string }) {
   const grouped = useMemo(() => {
     const map: Record<string, SensorPoint[]> = {};
     sensors.forEach((s) => { (map[s.component] ??= []).push(s); });
@@ -73,11 +91,11 @@ function VesselDiagram({ sensors }: { sensors: SensorPoint[] }) {
 
   return (
     <div className="bg-card rounded-xl border border-border p-5 relative min-h-[320px]">
-      <h3 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-2">
-        <Anchor className="w-3.5 h-3.5 text-primary" /> Vessel Sensor Map
+      <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+        <Anchor className="w-3.5 h-3.5 text-primary" /> Sensor Map — {vesselName}
       </h3>
-      <div className="relative h-[260px] bg-accent/30 rounded-lg border border-border/50 overflow-hidden">
-        {/* Ship silhouette shape */}
+      <p className="text-[10px] text-muted-foreground mb-3">Hover over each sensor point to see live readings and what they mean</p>
+      <div className="relative h-[250px] bg-accent/30 rounded-lg border border-border/50 overflow-hidden">
         <div className="absolute inset-4 border-2 border-dashed border-border/40 rounded-[40%_40%_5%_5%]" />
         <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[9px] text-muted-foreground font-medium uppercase tracking-widest">Bow</div>
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] text-muted-foreground font-medium uppercase tracking-widest">Stern</div>
@@ -89,17 +107,20 @@ function VesselDiagram({ sensors }: { sensors: SensorPoint[] }) {
           const Icon = pos.icon;
           return (
             <div key={component} className="absolute group" style={{ top: pos.top, left: pos.left, transform: "translate(-50%, -50%)" }}>
-              <div className={`w-9 h-9 rounded-full border-2 flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${getStatusBg(worstStatus)}`}>
+              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${getStatusBg(worstStatus)}`}>
                 <Icon className={`w-4 h-4 ${getStatusText(worstStatus)}`} />
               </div>
-              {/* Tooltip on hover */}
+              <span className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 text-[8px] font-medium text-muted-foreground whitespace-nowrap">{pos.label}</span>
               <div className="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block">
-                <div className="bg-card border border-border rounded-lg shadow-xl p-2.5 min-w-[140px]">
-                  <p className="text-[10px] font-bold text-foreground capitalize mb-1">{component}</p>
+                <div className="bg-card border border-border rounded-lg shadow-xl p-3 min-w-[200px]">
+                  <p className="text-[11px] font-bold text-foreground mb-1.5">{pos.label}</p>
                   {sensorList.map(s => (
-                    <div key={s.id} className="flex items-center justify-between gap-3 py-0.5">
-                      <span className="text-[9px] text-muted-foreground truncate">{s.name}</span>
-                      <span className={`text-[10px] font-mono font-semibold ${getStatusText(s.status)}`}>{s.value}{s.unit}</span>
+                    <div key={s.id} className="py-1 border-t border-border/50">
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-[10px] text-foreground font-medium">{s.name}</span>
+                        <span className={`text-[11px] font-mono font-bold ${getStatusText(s.status)}`}>{s.value} {s.unit}</span>
+                      </div>
+                      <p className="text-[9px] text-muted-foreground mt-0.5">{s.description}</p>
                     </div>
                   ))}
                 </div>
@@ -112,194 +133,454 @@ function VesselDiagram({ sensors }: { sensors: SensorPoint[] }) {
   );
 }
 
-// Time filter options
+// ─── Fleet Overview Card ───
+function FleetOverviewCards({ fleet }: { fleet: string | undefined }) {
+  const summary = getFleetIotSummary(fleet);
+  const cards = [
+    { label: "Total Vessels", value: `${summary.totalVessels}`, description: "Number of monitored vessels", icon: Ship, color: "text-primary" },
+    { label: "Online", value: `${summary.online}/${summary.totalVessels}`, description: "Vessels sending live data", icon: Wifi, color: "text-success" },
+    { label: "Fleet Health", value: `${summary.avgHealth}%`, description: getHealthLabel(summary.avgHealth), icon: Heart, color: getHealthColor(summary.avgHealth) },
+    { label: "Active Alerts", value: `${summary.totalAlerts}`, description: "Across all vessels", icon: AlertTriangle, color: summary.totalAlerts > 5 ? "text-destructive" : "text-warning" },
+    { label: "Critical Sensors", value: `${summary.criticalSensors}`, description: "Needs immediate attention", icon: Shield, color: summary.criticalSensors > 0 ? "text-destructive" : "text-success" },
+    { label: "Warnings", value: `${summary.warningSensors}`, description: "Monitor closely", icon: Info, color: summary.warningSensors > 0 ? "text-warning" : "text-success" },
+  ];
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+      {cards.map((c, i) => (
+        <div key={c.label} className="card-elevated p-4 animate-fade-in-up" style={{ animationDelay: `${i * 50}ms` }}>
+          <div className="flex items-center gap-2 mb-2">
+            <c.icon className={`w-4 h-4 ${c.color}`} />
+            <span className="text-[10px] font-medium text-muted-foreground">{c.label}</span>
+          </div>
+          <p className="text-xl font-bold font-mono text-foreground">{c.value}</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{c.description}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Vessel Strip ───
+function VesselSelector({ vessels, selectedId, onSelect }: { vessels: VesselSensors[]; selectedId: string | null; onSelect: (id: string | null) => void }) {
+  return (
+    <div className="bg-card rounded-xl border border-border p-3">
+      <div className="flex items-center gap-2 mb-2">
+        <Ship className="w-4 h-4 text-primary" />
+        <span className="text-xs font-semibold text-foreground">Select Vessel</span>
+        <span className="text-[10px] text-muted-foreground">— click a vessel to see detailed sensor data, or view combined fleet overview</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => onSelect(null)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedId === null ? "bg-primary text-primary-foreground" : "bg-muted/50 border border-border text-muted-foreground hover:bg-accent"}`}>
+          <Activity className="w-3 h-3" />
+          Fleet Overview
+        </button>
+        {vessels.map((v) => {
+          const isSelected = selectedId === v.vesselId;
+          const connColor = v.connectionStatus === "online" ? "bg-success" : v.connectionStatus === "intermittent" ? "bg-warning" : "bg-destructive";
+          return (
+            <button key={v.vesselId} onClick={() => onSelect(v.vesselId)} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all ${isSelected ? "bg-primary/10 border border-primary/30 text-foreground font-semibold" : "bg-muted/50 border border-transparent text-muted-foreground hover:bg-accent"}`}>
+              <span className={`w-2 h-2 rounded-full ${connColor}`} />
+              <span>{v.vesselName}</span>
+              <span className={`text-[9px] font-mono font-bold ${getHealthColor(v.healthScore)}`}>{v.healthScore}%</span>
+              {v.alertCount > 0 && (
+                <span className="bg-destructive/15 text-destructive text-[9px] font-bold px-1.5 py-0.5 rounded-full">{v.alertCount}</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Vessel Health Table (fleet view) ───
+function FleetVesselTable({ vessels }: { vessels: VesselSensors[] }) {
+  return (
+    <div className="bg-card rounded-xl border border-border p-5">
+      <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+        <Ship className="w-3.5 h-3.5 text-primary" /> Vessel Health Overview
+      </h3>
+      <p className="text-[10px] text-muted-foreground mb-3">Health score shows overall vessel condition. Click a vessel above for detailed sensor readings.</p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="text-left py-2 text-muted-foreground font-medium">Vessel</th>
+              <th className="text-left py-2 text-muted-foreground font-medium">Type</th>
+              <th className="text-left py-2 text-muted-foreground font-medium">Fleet</th>
+              <th className="text-center py-2 text-muted-foreground font-medium">Connection</th>
+              <th className="text-center py-2 text-muted-foreground font-medium">Health</th>
+              <th className="text-center py-2 text-muted-foreground font-medium">Alerts</th>
+              <th className="text-center py-2 text-muted-foreground font-medium">Critical</th>
+              <th className="text-center py-2 text-muted-foreground font-medium">Warnings</th>
+              <th className="text-right py-2 text-muted-foreground font-medium">Last Sync</th>
+            </tr>
+          </thead>
+          <tbody>
+            {vessels.map(v => {
+              const critCount = v.sensors.filter(s => s.status === "critical").length;
+              const warnCount = v.sensors.filter(s => s.status === "warning").length;
+              const connIcon = v.connectionStatus === "online" ? "🟢" : v.connectionStatus === "intermittent" ? "🟡" : "🔴";
+              return (
+                <tr key={v.vesselId} className="border-b border-border/50 hover:bg-accent/30 transition-colors">
+                  <td className="py-2.5 font-semibold text-foreground">{v.vesselName}</td>
+                  <td className="py-2.5 text-muted-foreground">{v.type}</td>
+                  <td className="py-2.5 text-muted-foreground">{v.fleet}</td>
+                  <td className="py-2.5 text-center">
+                    <span className="text-[10px]">{connIcon} {v.connectionStatus}</span>
+                  </td>
+                  <td className="py-2.5 text-center">
+                    <span className={`font-bold font-mono ${getHealthColor(v.healthScore)}`}>{v.healthScore}%</span>
+                    <span className={`block text-[9px] ${getHealthColor(v.healthScore)}`}>{getHealthLabel(v.healthScore)}</span>
+                  </td>
+                  <td className="py-2.5 text-center">
+                    {v.alertCount > 0 ? <span className="bg-destructive/15 text-destructive text-[10px] font-bold px-2 py-0.5 rounded-full">{v.alertCount}</span> : <span className="text-muted-foreground">0</span>}
+                  </td>
+                  <td className="py-2.5 text-center">
+                    {critCount > 0 ? <span className="text-destructive font-bold">{critCount}</span> : <span className="text-success">0</span>}
+                  </td>
+                  <td className="py-2.5 text-center">
+                    {warnCount > 0 ? <span className="text-warning font-bold">{warnCount}</span> : <span className="text-success">0</span>}
+                  </td>
+                  <td className="py-2.5 text-right text-muted-foreground text-[10px]">{new Date(v.lastSync).toLocaleTimeString()}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 type TimeRange = "1h" | "6h" | "24h";
 
+// ─── Main Dashboard ───
 export default function IotDashboard() {
+  const [selectedFleet, setSelectedFleet] = useState<string>("All Fleets");
+  const [selectedVesselId, setSelectedVesselId] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>("24h");
-  const vessel = vesselSensorData;
 
-  const telemetry = timeRange === "1h" ? telemetryData1h : timeRange === "6h" ? telemetryData6h : telemetryData24h;
+  const filteredVessels = useMemo(() =>
+    selectedFleet === "All Fleets" ? allVesselSensors : allVesselSensors.filter(v => v.fleet === selectedFleet),
+    [selectedFleet]
+  );
 
-  const statusIcon = vessel.connectionStatus === "online" ? Wifi : WifiOff;
-  const StatusIcon = statusIcon;
+  const selectedVessel = useMemo(() =>
+    selectedVesselId ? allVesselSensors.find(v => v.vesselId === selectedVesselId) || null : null,
+    [selectedVesselId]
+  );
+
+  const vesselIndex = selectedVessel ? allVesselSensors.indexOf(selectedVessel) : 0;
+  const hours = timeRange === "1h" ? 1 : timeRange === "6h" ? 6 : 24;
+  const telemetry = useMemo(() => getVesselTelemetry(vesselIndex, hours), [vesselIndex, hours]);
+
+  const fuelTrendData = useMemo(() => telemetry.map(d => ({
+    time: d.time,
+    consumption: Math.round(d.fuelConsumption * 10) / 10,
+  })), [telemetry]);
+
+  const filteredAlerts = useMemo(() => {
+    if (selectedVessel) return recentAlerts.filter(a => a.vessel === selectedVessel.vesselName);
+    if (selectedFleet === "All Fleets") return recentAlerts;
+    const vesselNames = new Set(filteredVessels.map(v => v.vesselName));
+    return recentAlerts.filter(a => vesselNames.has(a.vessel));
+  }, [selectedVessel, selectedFleet, filteredVessels]);
 
   return (
-    <div className="space-y-5">
-      {/* Header Bar */}
+    <div className="space-y-5 animate-fade-in-up">
+      {/* Fleet Selector + Info Bar */}
       <div className="bg-card rounded-xl border border-border p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-4">
-            <div>
-              <h2 className="text-sm font-bold text-foreground">{vessel.vesselName}</h2>
-              <p className="text-[10px] text-muted-foreground">IMO {vessel.imo} · {vessel.fleet} Fleet</p>
-            </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success/15 border border-success/30">
-              <StatusIcon className="w-3 h-3 text-success" />
-              <span className="text-[10px] font-semibold text-success capitalize">{vessel.connectionStatus}</span>
-            </div>
+          <div>
+            <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Signal className="w-4 h-4 text-primary" />
+              IoT Vessel Monitoring
+            </h2>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              Live sensor data from onboard IoT devices — monitor vessel health, fuel, engine, and equipment status
+            </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <select value={selectedFleet} onChange={(e) => { setSelectedFleet(e.target.value); setSelectedVesselId(null); }} className="appearance-none card-elevated pl-3 pr-8 py-1.5 text-xs font-medium text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-lg">
+                {fleetOptions.map(f => <option key={f} value={f}>{f}</option>)}
+              </select>
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+            </div>
             <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <Clock className="w-3 h-3" />
-              Last sync: {new Date(vessel.lastSync).toLocaleTimeString()}
-            </div>
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30">
-              <AlertTriangle className="w-3 h-3 text-destructive" />
-              <span className="text-[10px] font-semibold text-destructive">{vessel.alertCount} Alerts</span>
+              Live
             </div>
           </div>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3">
-        {kpiMetrics.map((m, i) => (
-          <div key={m.label} className={`bg-card rounded-xl border p-3 text-center animate-fade-in-up ${m.status === "critical" ? "border-destructive/40" : m.status === "warning" ? "border-warning/40" : "border-border"}`} style={{ animationDelay: `${i * 40}ms` }}>
-            <StatusIndicator status={m.status} />
-            <p className="text-lg font-bold font-mono text-foreground mt-1">{m.value}</p>
-            <p className="text-[9px] text-muted-foreground">{m.unit}</p>
-            <p className="text-[10px] font-medium text-muted-foreground mt-1">{m.label}</p>
-          </div>
-        ))}
-      </div>
+      {/* Fleet Summary KPIs */}
+      <FleetOverviewCards fleet={selectedFleet === "All Fleets" ? undefined : selectedFleet} />
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-        {/* Vessel Diagram */}
-        <VesselDiagram sensors={vessel.sensors} />
+      {/* Vessel Selector Strip */}
+      <VesselSelector vessels={filteredVessels} selectedId={selectedVesselId} onSelect={setSelectedVesselId} />
 
-        {/* Fuel Monitoring */}
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Droplets className="w-3.5 h-3.5 text-info" /> Fuel Monitoring
-          </h3>
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <GaugeCard label="Fuel Level" value={72} unit="%" max={100} status="normal" />
-            <GaugeCard label="Flow Rate" value={42.5} unit="L/h" max={65} status="normal" />
-            <GaugeCard label="Efficiency" value={88} unit="%" max={100} status="normal" />
-          </div>
-          <div className="h-[130px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={fuelTrendData.slice(-20)}>
-                <defs>
-                  <linearGradient id="fuelGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(210, 80%, 52%)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(210, 80%, 52%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(215, 30%, 20%)" />
-                <XAxis dataKey="time" tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 9 }} interval="preserveStartEnd" />
-                <YAxis tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 9 }} width={30} />
-                <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}`, name]} />
-                <Area type="monotone" dataKey="consumption" stroke="hsl(210, 80%, 52%)" fill="url(#fuelGrad)" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+      {/* Fleet view */}
+      {!selectedVessel && (
+        <>
+          <FleetVesselTable vessels={filteredVessels} />
 
-        {/* Engine Monitoring */}
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Cog className="w-3.5 h-3.5 text-warning" /> Engine Monitoring
-          </h3>
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            <GaugeCard label="RPM" value={1480} unit="RPM" max={2000} status="normal" />
-            <GaugeCard label="Temperature" value={82} unit="°C" max={105} status="normal" />
-            <GaugeCard label="Oil Pressure" value={3.2} unit="bar" max={6} status="warning" />
-            <GaugeCard label="Vibration" value={4.8} unit="mm/s" max={6} status="critical" />
-          </div>
-        </div>
-      </div>
-
-      {/* Propeller & Thruster + Sensor Charts */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
-        {/* Propeller & Thruster */}
-        <div className="bg-card rounded-xl border border-border p-5">
-          <h3 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Fan className="w-3.5 h-3.5 text-success" /> Propeller & Thruster
-          </h3>
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <GaugeCard label="Propeller RPM" value={125} unit="RPM" max={180} status="normal" />
-            <GaugeCard label="Thruster Power" value={68} unit="%" max={100} status="normal" />
-            <GaugeCard label="Load" value={54} unit="%" max={100} status="normal" />
-          </div>
-          <div className="h-[140px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={telemetry.slice(-20)}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(215, 30%, 20%)" />
-                <XAxis dataKey="time" tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 9 }} interval="preserveStartEnd" />
-                <YAxis tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 9 }} width={35} />
-                <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${Math.round(value * 10) / 10}`, name]} />
-                <Line type="monotone" dataKey="propellerRPM" stroke="hsl(152, 55%, 42%)" strokeWidth={2} dot={false} name="Propeller RPM" />
-                <Line type="monotone" dataKey="thrusterPower" stroke="hsl(38, 92%, 50%)" strokeWidth={2} dot={false} name="Thruster %" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Real-Time Sensor Charts */}
-        <div className="bg-card rounded-xl border border-border p-5">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
-              <BarChart3 className="w-3.5 h-3.5 text-primary" /> Real-Time Telemetry
+          {/* Alert Panel */}
+          <div className="bg-card rounded-xl border border-border p-5">
+            <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+              <AlertTriangle className="w-3.5 h-3.5 text-destructive" /> Recent Alerts Across Fleet
             </h3>
-            <div className="flex items-center gap-1">
-              {(["1h", "6h", "24h"] as TimeRange[]).map((t) => (
-                <button key={t} onClick={() => setTimeRange(t)} className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${timeRange === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"}`}>
-                  {t}
-                </button>
+            <p className="text-[10px] text-muted-foreground mb-3">Alerts sorted by severity — critical issues appear first and need immediate attention</p>
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              {filteredAlerts.map((alert) => (
+                <div key={alert.id} className={`flex items-start gap-3 p-3 rounded-lg border ${getStatusBg(alert.severity)}`}>
+                  <StatusIndicator status={alert.severity} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[11px] font-semibold text-foreground">{alert.sensorName}</span>
+                      <StatusBadge status={alert.severity} />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">{alert.message}</p>
+                    <div className="flex items-center gap-2 mt-1 text-[9px] text-muted-foreground">
+                      <Ship className="w-2.5 h-2.5" /><span className="font-medium">{alert.vessel}</span>
+                      <span>·</span><span>{alert.alertType}</span>
+                      <span>·</span><span>{new Date(alert.timestamp).toLocaleTimeString()}</span>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
-          <div className="h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={telemetry}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(215, 30%, 20%)" />
-                <XAxis dataKey="time" tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 9 }} interval="preserveStartEnd" />
-                <YAxis tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 9 }} width={35} />
-                <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${Math.round(value * 10) / 10}`, name]} />
-                <Line type="monotone" dataKey="engineTemp" stroke="hsl(357, 96%, 46%)" strokeWidth={1.5} dot={false} name="Engine Temp (°C)" />
-                <Line type="monotone" dataKey="fuelConsumption" stroke="hsl(210, 80%, 52%)" strokeWidth={1.5} dot={false} name="Fuel (L/h)" />
-                <Line type="monotone" dataKey="vibration" stroke="hsl(38, 92%, 50%)" strokeWidth={1.5} dot={false} name="Vibration (mm/s)" />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex items-center justify-center gap-4 mt-2">
-            <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded bg-destructive" /><span className="text-[9px] text-muted-foreground">Engine Temp</span></div>
-            <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded bg-info" /><span className="text-[9px] text-muted-foreground">Fuel</span></div>
-            <div className="flex items-center gap-1.5"><div className="w-2.5 h-0.5 rounded bg-warning" /><span className="text-[9px] text-muted-foreground">Vibration</span></div>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
 
-      {/* Alert Panel */}
-      <div className="bg-card rounded-xl border border-border p-5">
-        <h3 className="text-xs font-semibold text-foreground mb-3 flex items-center gap-2">
-          <AlertTriangle className="w-3.5 h-3.5 text-destructive" /> Recent Alerts
-        </h3>
-        <div className="space-y-2 max-h-[280px] overflow-y-auto">
-          {recentAlerts.map((alert) => (
-            <div key={alert.id} className={`flex items-start gap-3 p-3 rounded-lg border ${getStatusBg(alert.severity)}`}>
-              <StatusIndicator status={alert.severity} />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[11px] font-semibold text-foreground">{alert.sensorName}</span>
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase tracking-wider border ${alert.severity === "critical" ? "severity-high" : alert.severity === "warning" ? "severity-medium" : "severity-low"}`}>{alert.severity}</span>
+      {/* Individual Vessel View */}
+      {selectedVessel && (
+        <>
+          {/* Vessel Info Bar */}
+          <div className="bg-card rounded-xl border border-border p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-4">
+                <div>
+                  <h2 className="text-sm font-bold text-foreground">{selectedVessel.vesselName}</h2>
+                  <p className="text-[10px] text-muted-foreground">IMO {selectedVessel.imo} · {selectedVessel.type} · {selectedVessel.fleet} Fleet</p>
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{alert.message}</p>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className="text-[9px] text-muted-foreground">{alert.vessel}</span>
-                  <span className="text-[9px] text-muted-foreground">·</span>
-                  <span className="text-[9px] text-muted-foreground">{alert.alertType}</span>
-                  <span className="text-[9px] text-muted-foreground">·</span>
-                  <span className="text-[9px] text-muted-foreground">{new Date(alert.timestamp).toLocaleTimeString()}</span>
+                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${selectedVessel.connectionStatus === "online" ? "bg-success/15 border border-success/30" : selectedVessel.connectionStatus === "intermittent" ? "bg-warning/15 border border-warning/30" : "bg-destructive/15 border border-destructive/30"}`}>
+                  {selectedVessel.connectionStatus === "online" ? <Wifi className="w-3 h-3 text-success" /> : selectedVessel.connectionStatus === "intermittent" ? <Signal className="w-3 h-3 text-warning" /> : <WifiOff className="w-3 h-3 text-destructive" />}
+                  <span className={`text-[10px] font-semibold capitalize ${selectedVessel.connectionStatus === "online" ? "text-success" : selectedVessel.connectionStatus === "intermittent" ? "text-warning" : "text-destructive"}`}>
+                    {selectedVessel.connectionStatus === "intermittent" ? "Unstable Connection" : selectedVessel.connectionStatus}
+                  </span>
                 </div>
               </div>
+              <div className="flex items-center gap-4">
+                <div className="text-center">
+                  <p className={`text-lg font-bold font-mono ${getHealthColor(selectedVessel.healthScore)}`}>{selectedVessel.healthScore}%</p>
+                  <p className={`text-[9px] font-medium ${getHealthColor(selectedVessel.healthScore)}`}>{getHealthLabel(selectedVessel.healthScore)}</p>
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Clock className="w-3 h-3" />
+                  Last sync: {new Date(selectedVessel.lastSync).toLocaleTimeString()}
+                </div>
+                {selectedVessel.alertCount > 0 && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-destructive/15 border border-destructive/30">
+                    <AlertTriangle className="w-3 h-3 text-destructive" />
+                    <span className="text-[10px] font-semibold text-destructive">{selectedVessel.alertCount} Alert{selectedVessel.alertCount > 1 ? "s" : ""}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+
+          {/* KPI Cards with descriptions */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-8 gap-3">
+            {getVesselKpiMetrics(selectedVessel).map((m, i) => (
+              <div key={m.label} className={`bg-card rounded-xl border p-3 text-center animate-fade-in-up group relative ${m.status === "critical" ? "border-destructive/40" : m.status === "warning" ? "border-warning/40" : "border-border"}`} style={{ animationDelay: `${i * 40}ms` }}>
+                <div className="flex items-center justify-center gap-1">
+                  <StatusIndicator status={m.status} />
+                  <HelpCircle className="w-2.5 h-2.5 text-muted-foreground/50" />
+                </div>
+                <p className="text-lg font-bold font-mono text-foreground mt-1">{m.value}</p>
+                <p className="text-[9px] text-muted-foreground">{m.unit}</p>
+                <p className="text-[10px] font-medium text-muted-foreground mt-1">{m.label}</p>
+                {/* Tooltip */}
+                <div className="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-40">
+                  <div className="bg-card border border-border rounded-lg shadow-xl p-2 text-[10px] text-muted-foreground text-left">
+                    <p className="font-semibold text-foreground mb-0.5">{m.label}</p>
+                    <p>{m.description}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+            <VesselDiagram sensors={selectedVessel.sensors} vesselName={selectedVessel.vesselName} />
+
+            {/* Fuel Monitoring */}
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                <Droplets className="w-3.5 h-3.5 text-info" /> Fuel Monitoring
+              </h3>
+              <p className="text-[10px] text-muted-foreground mb-3">Current fuel status and consumption trend</p>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {(() => {
+                  const fuel = selectedVessel.sensors.find(s => s.name === "Fuel Level");
+                  const flow = selectedVessel.sensors.find(s => s.name === "Fuel Flow Rate");
+                  return (
+                    <>
+                      <GaugeCard label="Fuel Level" description="Remaining fuel percentage" value={fuel?.value || 72} unit="%" max={100} status={fuel?.status || "normal"} />
+                      <GaugeCard label="Flow Rate" description="Current fuel consumption rate" value={flow?.value || 42.5} unit="L/h" max={65} status={flow?.status || "normal"} />
+                      <GaugeCard label="Efficiency" description="How efficiently fuel is being used" value={88} unit="%" max={100} status="normal" />
+                    </>
+                  );
+                })()}
+              </div>
+              <div className="h-[130px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={fuelTrendData.slice(-20)}>
+                    <defs>
+                      <linearGradient id="fuelGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(210, 80%, 52%)" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="hsl(210, 80%, 52%)" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                    <XAxis dataKey="time" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} interval="preserveStartEnd" />
+                    <YAxis tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} width={30} />
+                    <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value} L/h`, "Fuel Consumption"]} />
+                    <Area type="monotone" dataKey="consumption" stroke="hsl(210, 80%, 52%)" fill="url(#fuelGrad)" strokeWidth={2} name="Fuel Consumption" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Engine Monitoring */}
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                <Cog className="w-3.5 h-3.5 text-warning" /> Engine Monitoring
+              </h3>
+              <p className="text-[10px] text-muted-foreground mb-3">Key engine parameters — watch for yellow/red indicators</p>
+              <div className="grid grid-cols-2 gap-3">
+                {(() => {
+                  const rpm = selectedVessel.sensors.find(s => s.name === "Engine RPM");
+                  const temp = selectedVessel.sensors.find(s => s.name === "Main Engine Temp");
+                  const oil = selectedVessel.sensors.find(s => s.name === "Oil Pressure");
+                  const vib = selectedVessel.sensors.find(s => s.name === "Vibration Level");
+                  return (
+                    <>
+                      <GaugeCard label="RPM" description="Engine rotation speed" value={rpm?.value || 1480} unit="RPM" max={2000} status={rpm?.status || "normal"} />
+                      <GaugeCard label="Temperature" description="Main engine temperature" value={temp?.value || 82} unit="°C" max={105} status={temp?.status || "normal"} />
+                      <GaugeCard label="Oil Pressure" description="Engine oil lubrication pressure" value={oil?.value || 4.1} unit="bar" max={6} status={oil?.status || "normal"} />
+                      <GaugeCard label="Vibration" description="Engine vibration — high = potential issue" value={vib?.value || 2.1} unit="mm/s" max={6} status={vib?.status || "normal"} />
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          {/* Propeller & Telemetry */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                <Fan className="w-3.5 h-3.5 text-success" /> Propeller & Thruster
+              </h3>
+              <p className="text-[10px] text-muted-foreground mb-3">Propulsion system status — propeller drives forward, thruster assists steering</p>
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {(() => {
+                  const prop = selectedVessel.sensors.find(s => s.name === "Propeller RPM");
+                  const thrust = selectedVessel.sensors.find(s => s.name === "Thruster Power");
+                  return (
+                    <>
+                      <GaugeCard label="Propeller" description="Main propeller speed" value={prop?.value || 125} unit="RPM" max={180} status={prop?.status || "normal"} />
+                      <GaugeCard label="Thruster" description="Side thruster power usage" value={thrust?.value || 68} unit="%" max={100} status={thrust?.status || "normal"} />
+                      <GaugeCard label="Load" description="Overall propulsion system load" value={54} unit="%" max={100} status="normal" />
+                    </>
+                  );
+                })()}
+              </div>
+              <div className="h-[140px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={telemetry.slice(-20)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                    <XAxis dataKey="time" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} interval="preserveStartEnd" />
+                    <YAxis tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} width={35} />
+                    <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${Math.round(value * 10) / 10}`, name]} />
+                    <Line type="monotone" dataKey="propellerRPM" stroke="hsl(152, 55%, 42%)" strokeWidth={2} dot={false} name="Propeller RPM" />
+                    <Line type="monotone" dataKey="thrusterPower" stroke="hsl(38, 92%, 50%)" strokeWidth={2} dot={false} name="Thruster %" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="bg-card rounded-xl border border-border p-5">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-xs font-semibold text-foreground flex items-center gap-2">
+                  <BarChart3 className="w-3.5 h-3.5 text-primary" /> Sensor Trends Over Time
+                </h3>
+                <div className="flex items-center gap-1">
+                  {(["1h", "6h", "24h"] as TimeRange[]).map((t) => (
+                    <button key={t} onClick={() => setTimeRange(t)} className={`px-2.5 py-1 rounded-md text-[10px] font-semibold transition-colors ${timeRange === t ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-accent"}`}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground mb-3">Historical sensor readings — spot patterns or unusual spikes</p>
+              <div className="h-[210px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={telemetry}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                    <XAxis dataKey="time" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} interval="preserveStartEnd" />
+                    <YAxis tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} width={35} />
+                    <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${Math.round(value * 10) / 10}`, name]} />
+                    <Line type="monotone" dataKey="engineTemp" stroke="hsl(357, 96%, 46%)" strokeWidth={1.5} dot={false} name="Engine Temp (°C)" />
+                    <Line type="monotone" dataKey="fuelConsumption" stroke="hsl(210, 80%, 52%)" strokeWidth={1.5} dot={false} name="Fuel (L/h)" />
+                    <Line type="monotone" dataKey="vibration" stroke="hsl(38, 92%, 50%)" strokeWidth={1.5} dot={false} name="Vibration (mm/s)" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="flex items-center justify-center gap-4 mt-2">
+                <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded bg-destructive" /><span className="text-[9px] text-muted-foreground">Engine Temp</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded bg-info" /><span className="text-[9px] text-muted-foreground">Fuel Consumption</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded bg-warning" /><span className="text-[9px] text-muted-foreground">Vibration</span></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Vessel Alerts */}
+          {filteredAlerts.length > 0 && (
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 text-destructive" /> Alerts for {selectedVessel.vesselName}
+              </h3>
+              <p className="text-[10px] text-muted-foreground mb-3">Sensor readings that exceeded safe operating thresholds</p>
+              <div className="space-y-2 max-h-[250px] overflow-y-auto">
+                {filteredAlerts.map((alert) => (
+                  <div key={alert.id} className={`flex items-start gap-3 p-3 rounded-lg border ${getStatusBg(alert.severity)}`}>
+                    <StatusIndicator status={alert.severity} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-semibold text-foreground">{alert.sensorName}</span>
+                        <StatusBadge status={alert.severity} />
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{alert.message}</p>
+                      <div className="flex items-center gap-2 mt-1 text-[9px] text-muted-foreground">
+                        <span>{alert.alertType}</span>
+                        <span>·</span>
+                        <span>{new Date(alert.timestamp).toLocaleTimeString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
