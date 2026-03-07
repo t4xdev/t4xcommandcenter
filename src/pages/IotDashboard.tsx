@@ -185,35 +185,126 @@ function FleetOverviewCards({ fleet }: { fleet: string | undefined }) {
 }
 
 // ─── Vessel Strip ───
-function VesselSelector({ vessels, selectedId, onSelect }: { vessels: VesselSensors[]; selectedId: string | null; onSelect: (id: string | null) => void }) {
+const MAX_VISIBLE_VESSELS = 8;
+
+function VesselButton({ v, isSelected, onClick }: { v: VesselSensors; isSelected: boolean; onClick: () => void }) {
+  const connColor = v.connectionStatus === "online" ? "bg-success" : v.connectionStatus === "intermittent" ? "bg-warning" : "bg-destructive";
   return (
-    <div className="bg-card rounded-xl border border-border p-3">
-      <div className="flex items-center gap-2 mb-2">
-        <Ship className="w-4 h-4 text-primary" />
-        <span className="text-xs font-semibold text-foreground">Select Vessel</span>
-        <span className="text-[10px] text-muted-foreground">— click a vessel to see detailed sensor data, or view combined fleet overview</span>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        <button onClick={() => onSelect(null)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedId === null ? "bg-primary text-primary-foreground" : "bg-muted/50 border border-border text-muted-foreground hover:bg-accent"}`}>
-          <Activity className="w-3 h-3" />
-          Fleet Overview
-        </button>
-        {vessels.map((v) => {
-          const isSelected = selectedId === v.vesselId;
-          const connColor = v.connectionStatus === "online" ? "bg-success" : v.connectionStatus === "intermittent" ? "bg-warning" : "bg-destructive";
-          return (
-            <button key={v.vesselId} onClick={() => onSelect(v.vesselId)} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all ${isSelected ? "bg-primary/10 border border-primary/30 text-foreground font-semibold" : "bg-muted/50 border border-transparent text-muted-foreground hover:bg-accent"}`}>
-              <span className={`w-2 h-2 rounded-full ${connColor}`} />
-              <span>{v.vesselName}</span>
-              <span className={`text-[9px] font-mono font-bold ${getHealthColor(v.healthScore)}`}>{v.healthScore}%</span>
-              {v.alertCount > 0 && (
-                <span className="bg-destructive/15 text-destructive text-[9px] font-bold px-1.5 py-0.5 rounded-full">{v.alertCount}</span>
-              )}
+    <button onClick={onClick} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all ${isSelected ? "bg-primary/10 border border-primary/30 text-foreground font-semibold" : "bg-muted/50 border border-transparent text-muted-foreground hover:bg-accent"}`}>
+      <span className={`w-2 h-2 rounded-full ${connColor}`} />
+      <span>{v.vesselName}</span>
+      <span className={`text-[9px] font-mono font-bold ${getHealthColor(v.healthScore)}`}>{v.healthScore}%</span>
+      {v.alertCount > 0 && (
+        <span className="bg-destructive/15 text-destructive text-[9px] font-bold px-1.5 py-0.5 rounded-full">{v.alertCount}</span>
+      )}
+    </button>
+  );
+}
+
+function VesselSelector({ vessels, selectedId, onSelect }: { vessels: VesselSensors[]; selectedId: string | null; onSelect: (id: string | null) => void }) {
+  const [showAll, setShowAll] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const visibleVessels = vessels.slice(0, MAX_VISIBLE_VESSELS);
+  const hasMore = vessels.length > MAX_VISIBLE_VESSELS;
+
+  const filteredVesselsInModal = useMemo(() => {
+    if (!search.trim()) return vessels;
+    const q = search.toLowerCase();
+    return vessels.filter((v) => v.vesselName.toLowerCase().includes(q) || v.vesselId.toLowerCase().includes(q) || v.fleet.toLowerCase().includes(q));
+  }, [vessels, search]);
+
+  return (
+    <>
+      <div className="bg-card rounded-xl border border-border p-3">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Ship className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-foreground">Select Vessel</span>
+            <span className="text-[10px] text-muted-foreground">({vessels.length} vessels)</span>
+          </div>
+          {hasMore && (
+            <button onClick={() => setShowAll(true)} className="text-[10px] font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1">
+              View All
+              <ChevronDown className="w-3 h-3" />
             </button>
-          );
-        })}
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button onClick={() => onSelect(null)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${selectedId === null ? "bg-primary text-primary-foreground" : "bg-muted/50 border border-border text-muted-foreground hover:bg-accent"}`}>
+            <Activity className="w-3 h-3" />
+            Fleet Overview
+          </button>
+          {visibleVessels.map((v) => (
+            <VesselButton key={v.vesselId} v={v} isSelected={selectedId === v.vesselId} onClick={() => onSelect(v.vesselId)} />
+          ))}
+          {hasMore && (
+            <button onClick={() => setShowAll(true)} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/5 border border-primary/20 text-primary hover:bg-primary/10 transition-all">
+              +{vessels.length - MAX_VISIBLE_VESSELS} more
+            </button>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* View All Modal */}
+      {showAll && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm" onClick={() => setShowAll(false)}>
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col m-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Ship className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold text-foreground">Select Vessel</span>
+                <span className="text-xs text-muted-foreground">({vessels.length} vessels)</span>
+              </div>
+              <button onClick={() => setShowAll(false)} className="text-muted-foreground hover:text-foreground text-lg leading-none px-2">×</button>
+            </div>
+            <div className="px-4 pt-3 pb-2">
+              <input
+                type="text"
+                placeholder="Search vessels by name, ID, or fleet..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                autoFocus
+              />
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  onClick={() => { onSelect(null); setShowAll(false); }}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all ${selectedId === null ? "bg-primary text-primary-foreground" : "bg-muted/50 border border-border text-muted-foreground hover:bg-accent"}`}
+                >
+                  <Activity className="w-3.5 h-3.5" />
+                  Fleet Overview
+                </button>
+                {filteredVesselsInModal.map((v) => {
+                  const isSelected = selectedId === v.vesselId;
+                  const connColor = v.connectionStatus === "online" ? "bg-success" : v.connectionStatus === "intermittent" ? "bg-warning" : "bg-destructive";
+                  return (
+                    <button
+                      key={v.vesselId}
+                      onClick={() => { onSelect(v.vesselId); setShowAll(false); }}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs transition-all text-left ${isSelected ? "bg-primary/10 border border-primary/30 text-foreground font-semibold ring-1 ring-primary/30" : "bg-muted/50 border border-transparent text-muted-foreground hover:bg-accent"}`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${connColor}`} />
+                      <span className="flex-1 truncate">{v.vesselName}</span>
+                      <span className="text-[9px] text-muted-foreground font-mono">{v.fleet}</span>
+                      <span className={`text-[9px] font-mono font-bold ${getHealthColor(v.healthScore)}`}>{v.healthScore}%</span>
+                      {v.alertCount > 0 && (
+                        <span className="bg-destructive/15 text-destructive text-[9px] font-bold px-1.5 py-0.5 rounded-full">{v.alertCount}</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              {filteredVesselsInModal.length === 0 && (
+                <p className="text-center text-xs text-muted-foreground py-8">No vessels match "{search}"</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
