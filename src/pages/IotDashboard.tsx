@@ -14,7 +14,7 @@ import {
   getHealthColor, getHealthLabel, fleetOptions,
   healthProgressionData, getSensorStatusDistribution, getAlertsByCategory,
   getFleetHealthComparison, getVesselHealthBars, getComponentHealthBreakdown,
-  monthlyProgressionData,
+  monthlyProgressionData, getSensorsByComponent, componentLabels,
   type SensorStatus, type SensorPoint, type VesselSensors,
 } from "@/data/iotSensorData";
 
@@ -76,13 +76,21 @@ function GaugeCard({ label, description, value, unit, max, status }: { label: st
 
 // ─── Sensor Diagram ───
 const sensorPositions: Record<string, { top: string; left: string; icon: typeof Cog; label: string }> = {
-  engine: { top: "30%", left: "40%", icon: Cog, label: "Engine" },
-  fuel: { top: "55%", left: "25%", icon: Fuel, label: "Fuel System" },
-  propeller: { top: "75%", left: "70%", icon: Fan, label: "Propeller" },
-  thruster: { top: "65%", left: "15%", icon: Zap, label: "Thruster" },
-  vibration: { top: "40%", left: "60%", icon: Waves, label: "Vibration" },
+  engine: { top: "22%", left: "40%", icon: Cog, label: "Engine" },
+  fuel: { top: "45%", left: "20%", icon: Fuel, label: "Fuel" },
+  propeller: { top: "82%", left: "50%", icon: Fan, label: "Propeller" },
+  thruster: { top: "70%", left: "18%", icon: Zap, label: "Thruster" },
+  vibration: { top: "35%", left: "60%", icon: Waves, label: "Vibration" },
   pressure: { top: "50%", left: "75%", icon: Gauge, label: "Pressure" },
-  temperature: { top: "25%", left: "55%", icon: Thermometer, label: "Temperature" },
+  environment: { top: "15%", left: "75%", icon: Thermometer, label: "Environment" },
+  auxiliary: { top: "45%", left: "55%", icon: Cog, label: "Aux Engine" },
+  electrical: { top: "55%", left: "40%", icon: Zap, label: "Electrical" },
+  steering: { top: "72%", left: "45%", icon: Anchor, label: "Steering" },
+  tanks: { top: "60%", left: "60%", icon: Droplets, label: "Tanks" },
+  cargo: { top: "30%", left: "25%", icon: Ship, label: "Cargo" },
+  navigation: { top: "12%", left: "50%", icon: Signal, label: "Navigation" },
+  boiler: { top: "58%", left: "28%", icon: Thermometer, label: "Boiler" },
+  safety: { top: "25%", left: "80%", icon: Shield, label: "Safety" },
 };
 
 function VesselDiagram({ sensors, vesselName }: { sensors: SensorPoint[]; vesselName: string }) {
