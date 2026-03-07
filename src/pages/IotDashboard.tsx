@@ -14,7 +14,7 @@ import {
   getHealthColor, getHealthLabel, fleetOptions,
   healthProgressionData, getSensorStatusDistribution, getAlertsByCategory,
   getFleetHealthComparison, getVesselHealthBars, getComponentHealthBreakdown,
-  monthlyProgressionData,
+  monthlyProgressionData, getSensorsByComponent, componentLabels,
   type SensorStatus, type SensorPoint, type VesselSensors,
 } from "@/data/iotSensorData";
 
@@ -76,13 +76,21 @@ function GaugeCard({ label, description, value, unit, max, status }: { label: st
 
 // ─── Sensor Diagram ───
 const sensorPositions: Record<string, { top: string; left: string; icon: typeof Cog; label: string }> = {
-  engine: { top: "30%", left: "40%", icon: Cog, label: "Engine" },
-  fuel: { top: "55%", left: "25%", icon: Fuel, label: "Fuel System" },
-  propeller: { top: "75%", left: "70%", icon: Fan, label: "Propeller" },
-  thruster: { top: "65%", left: "15%", icon: Zap, label: "Thruster" },
-  vibration: { top: "40%", left: "60%", icon: Waves, label: "Vibration" },
+  engine: { top: "22%", left: "40%", icon: Cog, label: "Engine" },
+  fuel: { top: "45%", left: "20%", icon: Fuel, label: "Fuel" },
+  propeller: { top: "82%", left: "50%", icon: Fan, label: "Propeller" },
+  thruster: { top: "70%", left: "18%", icon: Zap, label: "Thruster" },
+  vibration: { top: "35%", left: "60%", icon: Waves, label: "Vibration" },
   pressure: { top: "50%", left: "75%", icon: Gauge, label: "Pressure" },
-  temperature: { top: "25%", left: "55%", icon: Thermometer, label: "Temperature" },
+  environment: { top: "15%", left: "75%", icon: Thermometer, label: "Environment" },
+  auxiliary: { top: "45%", left: "55%", icon: Cog, label: "Aux Engine" },
+  electrical: { top: "55%", left: "40%", icon: Zap, label: "Electrical" },
+  steering: { top: "72%", left: "45%", icon: Anchor, label: "Steering" },
+  tanks: { top: "60%", left: "60%", icon: Droplets, label: "Tanks" },
+  cargo: { top: "30%", left: "25%", icon: Ship, label: "Cargo" },
+  navigation: { top: "12%", left: "50%", icon: Signal, label: "Navigation" },
+  boiler: { top: "58%", left: "28%", icon: Thermometer, label: "Boiler" },
+  safety: { top: "25%", left: "80%", icon: Shield, label: "Safety" },
 };
 
 function VesselDiagram({ sensors, vesselName }: { sensors: SensorPoint[]; vesselName: string }) {
@@ -808,6 +816,53 @@ export default function IotDashboard() {
                 <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded bg-warning" /><span className="text-[9px] text-muted-foreground">Vibration</span></div>
               </div>
             </div>
+          </div>
+
+          {/* All Sensors Table by Component */}
+          <div className="bg-card rounded-xl border border-border p-5">
+            <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+              <BarChart3 className="w-3.5 h-3.5 text-primary" /> All Sensor Readings — {selectedVessel.vesselName}
+            </h3>
+            <p className="text-[10px] text-muted-foreground mb-4">Complete list of {selectedVessel.sensors.length} onboard sensors grouped by system. Green = Normal, Yellow = Attention Needed, Red = Action Required.</p>
+            {(() => {
+              const grouped = getSensorsByComponent(selectedVessel);
+              return (
+                <div className="space-y-4 max-h-[500px] overflow-y-auto">
+                  {Object.entries(grouped).map(([comp, sensors]) => (
+                    <div key={comp}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-[11px] font-bold text-foreground">{componentLabels[comp] || comp}</span>
+                        <span className="text-[9px] text-muted-foreground">({sensors.length} sensors)</span>
+                        {sensors.some(s => s.status === "critical") && <span className="w-2 h-2 rounded-full bg-destructive" />}
+                        {!sensors.some(s => s.status === "critical") && sensors.some(s => s.status === "warning") && <span className="w-2 h-2 rounded-full bg-warning" />}
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs">
+                          <thead>
+                            <tr className="border-b border-border/50">
+                              <th className="text-left py-1.5 text-muted-foreground font-medium w-[30%]">Sensor</th>
+                              <th className="text-left py-1.5 text-muted-foreground font-medium w-[35%]">Description</th>
+                              <th className="text-right py-1.5 text-muted-foreground font-medium">Value</th>
+                              <th className="text-center py-1.5 text-muted-foreground font-medium">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {sensors.map(s => (
+                              <tr key={s.id} className="border-b border-border/30 hover:bg-accent/30 transition-colors">
+                                <td className="py-2 font-medium text-foreground">{s.name}</td>
+                                <td className="py-2 text-[10px] text-muted-foreground">{s.description}</td>
+                                <td className={`py-2 text-right font-mono font-bold ${getStatusText(s.status)}`}>{s.value} {s.unit}</td>
+                                <td className="py-2 text-center"><StatusBadge status={s.status} /></td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Vessel Alerts */}

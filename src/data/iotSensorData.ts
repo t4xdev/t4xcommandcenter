@@ -89,22 +89,104 @@ const sensorDescriptions: Record<string, string> = {
   "Vibration Level": "Amount of engine vibration — high vibration signals mechanical issues",
   "Hull Pressure": "Pressure on the hull — monitors structural integrity",
   "Ambient Temp": "Outside air temperature around the vessel",
+  // New sensors
+  "Turbocharger RPM": "Speed of turbocharger — boosts engine power output",
+  "Turbocharger Temp": "Exhaust side temperature of the turbocharger",
+  "Fuel Viscosity": "Thickness of fuel — affects combustion quality",
+  "Fuel Temp": "Temperature of fuel before injection — affects flow rate",
+  "Aux Engine 1 Temp": "Temperature of auxiliary engine #1 — powers onboard systems",
+  "Aux Engine 2 Temp": "Temperature of auxiliary engine #2 — backup power",
+  "Aux Engine 1 RPM": "Rotation speed of auxiliary engine #1",
+  "Generator Load": "How much electrical load the generator is carrying",
+  "Generator Voltage": "Voltage output of the main generator",
+  "Generator Frequency": "Frequency of generator output — should be steady at 60Hz",
+  "Steering Gear Pressure": "Hydraulic pressure in steering system — critical for navigation",
+  "Rudder Angle": "Current position of the rudder in degrees",
+  "Ballast Tank Level": "Water level in ballast tanks — affects vessel stability",
+  "Bilge Level": "Water level in the bilge — high levels indicate leakage",
+  "Fresh Water Level": "Remaining fresh water supply for crew and operations",
+  "Sea Water Temp": "Temperature of surrounding sea water",
+  "Cargo Hold Temp": "Temperature inside cargo hold — important for sensitive cargo",
+  "Cargo Hold Humidity": "Moisture level in cargo hold — prevents cargo damage",
+  "Wind Speed": "Current wind speed at vessel location",
+  "Wind Direction": "Direction wind is coming from — affects vessel handling",
+  "GPS Speed": "Vessel speed over ground from GPS",
+  "GPS Heading": "Vessel compass heading from GPS navigation",
+  "Bow Thruster Power": "Power usage of the forward thruster",
+  "Stern Tube Temp": "Temperature of stern tube bearing — protects propeller shaft",
+  "Shaft Power": "Total power transmitted through the propeller shaft",
+  "Inclinometer Roll": "Vessel roll angle — monitors stability",
+  "Inclinometer Pitch": "Vessel pitch angle — monitors fore/aft tilt",
+  "Air Compressor Pressure": "Compressed air system pressure — used for engine starting",
+  "Boiler Steam Pressure": "Steam pressure in the boiler — powers heating systems",
+  "Boiler Water Temp": "Water temperature inside the boiler",
+  "Fire Detection Zone 1": "Fire/smoke detection status in engine room",
+  "Fire Detection Zone 2": "Fire/smoke detection status in cargo area",
+  "CO2 Level Engine Room": "Carbon dioxide concentration in engine room",
+  "O2 Level Engine Room": "Oxygen level in engine room — safety monitoring",
 };
 
 function makeSensors(overrides: Partial<Record<string, { value: number; status: SensorStatus }>>): SensorPoint[] {
   const base: Omit<SensorPoint, "description">[] = [
+    // Engine
     { id: "s1", name: "Main Engine Temp", component: "engine", status: "normal", value: 82, unit: "°C", threshold: { warning: 90, critical: 105 } },
     { id: "s2", name: "Engine RPM", component: "engine", status: "normal", value: 1480, unit: "RPM", threshold: { warning: 1800, critical: 2000 } },
     { id: "s3", name: "Oil Pressure", component: "engine", status: "normal", value: 4.1, unit: "bar", threshold: { warning: 3.5, critical: 2.5 } },
-    { id: "s4", name: "Fuel Level", component: "fuel", status: "normal", value: 72, unit: "%", threshold: { warning: 30, critical: 15 } },
-    { id: "s5", name: "Fuel Flow Rate", component: "fuel", status: "normal", value: 42.5, unit: "L/h", threshold: { warning: 55, critical: 65 } },
-    { id: "s6", name: "Propeller RPM", component: "propeller", status: "normal", value: 125, unit: "RPM", threshold: { warning: 160, critical: 180 } },
-    { id: "s7", name: "Thruster Power", component: "thruster", status: "normal", value: 68, unit: "%", threshold: { warning: 85, critical: 95 } },
     { id: "s8", name: "Exhaust Temp", component: "engine", status: "normal", value: 290, unit: "°C", threshold: { warning: 320, critical: 380 } },
     { id: "s9", name: "Coolant Temp", component: "engine", status: "normal", value: 65, unit: "°C", threshold: { warning: 80, critical: 95 } },
+    { id: "s13", name: "Turbocharger RPM", component: "engine", status: "normal", value: 18500, unit: "RPM", threshold: { warning: 22000, critical: 25000 } },
+    { id: "s14", name: "Turbocharger Temp", component: "engine", status: "normal", value: 520, unit: "°C", threshold: { warning: 580, critical: 650 } },
+    // Fuel
+    { id: "s4", name: "Fuel Level", component: "fuel", status: "normal", value: 72, unit: "%", threshold: { warning: 30, critical: 15 } },
+    { id: "s5", name: "Fuel Flow Rate", component: "fuel", status: "normal", value: 42.5, unit: "L/h", threshold: { warning: 55, critical: 65 } },
+    { id: "s15", name: "Fuel Viscosity", component: "fuel", status: "normal", value: 12.5, unit: "cSt", threshold: { warning: 18, critical: 22 } },
+    { id: "s16", name: "Fuel Temp", component: "fuel", status: "normal", value: 98, unit: "°C", threshold: { warning: 120, critical: 140 } },
+    // Propulsion
+    { id: "s6", name: "Propeller RPM", component: "propeller", status: "normal", value: 125, unit: "RPM", threshold: { warning: 160, critical: 180 } },
+    { id: "s30", name: "Stern Tube Temp", component: "propeller", status: "normal", value: 42, unit: "°C", threshold: { warning: 55, critical: 70 } },
+    { id: "s31", name: "Shaft Power", component: "propeller", status: "normal", value: 4200, unit: "kW", threshold: { warning: 5500, critical: 6500 } },
+    // Thruster
+    { id: "s7", name: "Thruster Power", component: "thruster", status: "normal", value: 68, unit: "%", threshold: { warning: 85, critical: 95 } },
+    { id: "s29", name: "Bow Thruster Power", component: "thruster", status: "normal", value: 45, unit: "%", threshold: { warning: 85, critical: 95 } },
+    // Auxiliary engines & electrical
+    { id: "s17", name: "Aux Engine 1 Temp", component: "auxiliary", status: "normal", value: 75, unit: "°C", threshold: { warning: 88, critical: 100 } },
+    { id: "s18", name: "Aux Engine 2 Temp", component: "auxiliary", status: "normal", value: 72, unit: "°C", threshold: { warning: 88, critical: 100 } },
+    { id: "s19", name: "Aux Engine 1 RPM", component: "auxiliary", status: "normal", value: 720, unit: "RPM", threshold: { warning: 900, critical: 1000 } },
+    { id: "s20", name: "Generator Load", component: "electrical", status: "normal", value: 65, unit: "%", threshold: { warning: 85, critical: 95 } },
+    { id: "s21", name: "Generator Voltage", component: "electrical", status: "normal", value: 440, unit: "V", threshold: { warning: 460, critical: 480 } },
+    { id: "s22", name: "Generator Frequency", component: "electrical", status: "normal", value: 60, unit: "Hz", threshold: { warning: 62, critical: 64 } },
+    // Steering
+    { id: "s23", name: "Steering Gear Pressure", component: "steering", status: "normal", value: 120, unit: "bar", threshold: { warning: 150, critical: 175 } },
+    { id: "s24", name: "Rudder Angle", component: "steering", status: "normal", value: 2, unit: "°", threshold: { warning: 30, critical: 35 } },
+    // Tanks & levels
+    { id: "s25", name: "Ballast Tank Level", component: "tanks", status: "normal", value: 55, unit: "%", threshold: { warning: 85, critical: 95 } },
+    { id: "s26", name: "Bilge Level", component: "tanks", status: "normal", value: 12, unit: "%", threshold: { warning: 40, critical: 60 } },
+    { id: "s27", name: "Fresh Water Level", component: "tanks", status: "normal", value: 68, unit: "%", threshold: { warning: 25, critical: 10 } },
+    // Vibration
     { id: "s10", name: "Vibration Level", component: "vibration", status: "normal", value: 2.1, unit: "mm/s", threshold: { warning: 3.5, critical: 4.5 } },
+    // Pressure
     { id: "s11", name: "Hull Pressure", component: "pressure", status: "normal", value: 1.02, unit: "atm", threshold: { warning: 1.5, critical: 2.0 } },
-    { id: "s12", name: "Ambient Temp", component: "temperature", status: "normal", value: 28, unit: "°C", threshold: { warning: 40, critical: 50 } },
+    { id: "s35", name: "Air Compressor Pressure", component: "pressure", status: "normal", value: 28, unit: "bar", threshold: { warning: 32, critical: 35 } },
+    // Environmental & weather
+    { id: "s12", name: "Ambient Temp", component: "environment", status: "normal", value: 28, unit: "°C", threshold: { warning: 40, critical: 50 } },
+    { id: "s28", name: "Sea Water Temp", component: "environment", status: "normal", value: 26, unit: "°C", threshold: { warning: 32, critical: 36 } },
+    { id: "s33", name: "Wind Speed", component: "environment", status: "normal", value: 18, unit: "kn", threshold: { warning: 35, critical: 50 } },
+    { id: "s34", name: "Wind Direction", component: "environment", status: "normal", value: 225, unit: "°", threshold: { warning: 999, critical: 999 } },
+    // Cargo
+    { id: "s36", name: "Cargo Hold Temp", component: "cargo", status: "normal", value: 22, unit: "°C", threshold: { warning: 30, critical: 38 } },
+    { id: "s37", name: "Cargo Hold Humidity", component: "cargo", status: "normal", value: 55, unit: "%", threshold: { warning: 75, critical: 85 } },
+    // Navigation
+    { id: "s38", name: "GPS Speed", component: "navigation", status: "normal", value: 12.4, unit: "kn", threshold: { warning: 18, critical: 22 } },
+    { id: "s39", name: "GPS Heading", component: "navigation", status: "normal", value: 142, unit: "°", threshold: { warning: 999, critical: 999 } },
+    { id: "s32", name: "Inclinometer Roll", component: "navigation", status: "normal", value: 1.2, unit: "°", threshold: { warning: 15, critical: 25 } },
+    { id: "s40", name: "Inclinometer Pitch", component: "navigation", status: "normal", value: 0.8, unit: "°", threshold: { warning: 10, critical: 20 } },
+    // Boiler & safety
+    { id: "s41", name: "Boiler Steam Pressure", component: "boiler", status: "normal", value: 7.5, unit: "bar", threshold: { warning: 9, critical: 10.5 } },
+    { id: "s42", name: "Boiler Water Temp", component: "boiler", status: "normal", value: 165, unit: "°C", threshold: { warning: 180, critical: 200 } },
+    { id: "s43", name: "Fire Detection Zone 1", component: "safety", status: "normal", value: 0, unit: "", threshold: { warning: 1, critical: 1 } },
+    { id: "s44", name: "Fire Detection Zone 2", component: "safety", status: "normal", value: 0, unit: "", threshold: { warning: 1, critical: 1 } },
+    { id: "s45", name: "CO2 Level Engine Room", component: "safety", status: "normal", value: 450, unit: "ppm", threshold: { warning: 1000, critical: 2000 } },
+    { id: "s46", name: "O2 Level Engine Room", component: "safety", status: "normal", value: 20.8, unit: "%", threshold: { warning: 19.5, critical: 18 } },
   ];
   return base.map((s) => {
     const o = overrides[s.name];
@@ -116,34 +198,39 @@ function makeSensors(overrides: Partial<Record<string, { value: number; status: 
 export const allVesselSensors: VesselSensors[] = [
   {
     vesselId: "v1", vesselName: "MT Kaveri", fleet: "Pacific", imo: "9876543", type: "Bulk Carrier",
-    lastSync: new Date(Date.now() - 12000).toISOString(), connectionStatus: "online", alertCount: 3, healthScore: 74,
+    lastSync: new Date(Date.now() - 12000).toISOString(), connectionStatus: "online", alertCount: 5, healthScore: 71,
     sensors: makeSensors({
       "Oil Pressure": { value: 3.2, status: "warning" },
       "Exhaust Temp": { value: 340, status: "warning" },
       "Vibration Level": { value: 4.8, status: "critical" },
+      "Bilge Level": { value: 45, status: "warning" },
+      "CO2 Level Engine Room": { value: 1100, status: "warning" },
     }),
   },
   {
     vesselId: "v2", vesselName: "MV Godavari", fleet: "Pacific", imo: "9876544", type: "Container",
-    lastSync: new Date(Date.now() - 30000).toISOString(), connectionStatus: "online", alertCount: 1, healthScore: 91,
+    lastSync: new Date(Date.now() - 30000).toISOString(), connectionStatus: "online", alertCount: 2, healthScore: 88,
     sensors: makeSensors({
       "Thruster Power": { value: 88, status: "warning" },
+      "Cargo Hold Humidity": { value: 78, status: "warning" },
     }),
   },
   {
     vesselId: "v3", vesselName: "MV Narmada", fleet: "Atlantic", imo: "9876545", type: "AHTS",
-    lastSync: new Date(Date.now() - 600000).toISOString(), connectionStatus: "intermittent", alertCount: 0, healthScore: 45,
+    lastSync: new Date(Date.now() - 600000).toISOString(), connectionStatus: "intermittent", alertCount: 1, healthScore: 45,
     sensors: makeSensors({
       "Fuel Level": { value: 22, status: "warning" },
       "Engine RPM": { value: 0, status: "normal" },
+      "Generator Load": { value: 92, status: "warning" },
     }),
   },
   {
     vesselId: "v4", vesselName: "MV Krishna", fleet: "Atlantic", imo: "9876546", type: "PSV",
-    lastSync: new Date(Date.now() - 8000).toISOString(), connectionStatus: "online", alertCount: 2, healthScore: 82,
+    lastSync: new Date(Date.now() - 8000).toISOString(), connectionStatus: "online", alertCount: 3, healthScore: 79,
     sensors: makeSensors({
       "Main Engine Temp": { value: 94, status: "warning" },
       "Coolant Temp": { value: 82, status: "warning" },
+      "Boiler Steam Pressure": { value: 9.2, status: "warning" },
     }),
   },
   {
@@ -153,19 +240,22 @@ export const allVesselSensors: VesselSensors[] = [
   },
   {
     vesselId: "v6", vesselName: "MT Chambal", fleet: "Indian", imo: "9876548", type: "Tanker",
-    lastSync: new Date(Date.now() - 900000).toISOString(), connectionStatus: "offline", alertCount: 4, healthScore: 58,
+    lastSync: new Date(Date.now() - 900000).toISOString(), connectionStatus: "offline", alertCount: 6, healthScore: 52,
     sensors: makeSensors({
       "Main Engine Temp": { value: 102, status: "critical" },
       "Vibration Level": { value: 4.2, status: "warning" },
       "Oil Pressure": { value: 2.8, status: "critical" },
       "Fuel Level": { value: 18, status: "warning" },
+      "Steering Gear Pressure": { value: 155, status: "warning" },
+      "O2 Level Engine Room": { value: 19.2, status: "warning" },
     }),
   },
   {
     vesselId: "v7", vesselName: "MV Mahanadi", fleet: "Pacific", imo: "9876549", type: "Bulk Carrier",
-    lastSync: new Date(Date.now() - 20000).toISOString(), connectionStatus: "online", alertCount: 1, healthScore: 88,
+    lastSync: new Date(Date.now() - 20000).toISOString(), connectionStatus: "online", alertCount: 2, healthScore: 85,
     sensors: makeSensors({
       "Exhaust Temp": { value: 325, status: "warning" },
+      "Turbocharger Temp": { value: 590, status: "warning" },
     }),
   },
   {
@@ -186,7 +276,7 @@ export function getFleetIotSummary(fleet?: string) {
   return { totalVessels: vessels.length, totalAlerts, online, avgHealth, criticalSensors, warningSensors };
 }
 
-// KPI metrics for a specific vessel
+// KPI metrics for a specific vessel — top-level summary
 export function getVesselKpiMetrics(vessel: VesselSensors) {
   const find = (name: string) => vessel.sensors.find(s => s.name === name);
   const fuel = find("Fuel Level");
@@ -196,17 +286,35 @@ export function getVesselKpiMetrics(vessel: VesselSensors) {
   const prop = find("Propeller RPM");
   const thrust = find("Thruster Power");
   const vib = find("Vibration Level");
+  const genLoad = find("Generator Load");
+  const gpsSpeed = find("GPS Speed");
+  const bilge = find("Bilge Level");
   return [
     { label: "Fuel Level", description: "Remaining fuel in tank", value: fuel ? `${fuel.value}` : "N/A", unit: "%", status: fuel?.status || "normal" as SensorStatus },
     { label: "Engine RPM", description: "Engine rotation speed", value: rpm ? rpm.value.toLocaleString() : "N/A", unit: "RPM", status: rpm?.status || "normal" as SensorStatus },
     { label: "Engine Temp", description: "Main engine temperature", value: temp ? `${temp.value}` : "N/A", unit: "°C", status: temp?.status || "normal" as SensorStatus },
     { label: "Oil Pressure", description: "Lubricating oil pressure", value: oil ? `${oil.value}` : "N/A", unit: "bar", status: oil?.status || "normal" as SensorStatus },
     { label: "Propeller RPM", description: "Propeller rotation speed", value: prop ? `${prop.value}` : "N/A", unit: "RPM", status: prop?.status || "normal" as SensorStatus },
-    { label: "Thruster Power", description: "Side thruster usage", value: thrust ? `${thrust.value}` : "N/A", unit: "%", status: thrust?.status || "normal" as SensorStatus },
     { label: "Vibration", description: "Engine vibration level", value: vib ? `${vib.value}` : "N/A", unit: "mm/s", status: vib?.status || "normal" as SensorStatus },
+    { label: "Speed", description: "Vessel speed over ground", value: gpsSpeed ? `${gpsSpeed.value}` : "N/A", unit: "kn", status: gpsSpeed?.status || "normal" as SensorStatus },
     { label: "Connection", description: "Data link status", value: vessel.connectionStatus === "online" ? "Online" : vessel.connectionStatus === "intermittent" ? "Unstable" : "Offline", unit: "", status: vessel.connectionStatus === "online" ? "normal" as SensorStatus : vessel.connectionStatus === "intermittent" ? "warning" as SensorStatus : "critical" as SensorStatus },
   ];
 }
+
+// Get all sensors grouped by component for display
+export function getSensorsByComponent(vessel: VesselSensors): Record<string, SensorPoint[]> {
+  const map: Record<string, SensorPoint[]> = {};
+  vessel.sensors.forEach(s => { (map[s.component] ??= []).push(s); });
+  return map;
+}
+
+export const componentLabels: Record<string, string> = {
+  engine: "Main Engine", fuel: "Fuel System", propeller: "Propulsion", thruster: "Thrusters",
+  auxiliary: "Auxiliary Engines", electrical: "Electrical & Generator", steering: "Steering System",
+  tanks: "Tanks & Levels", vibration: "Vibration Monitoring", pressure: "Pressure Systems",
+  environment: "Environment & Weather", cargo: "Cargo Monitoring", navigation: "Navigation & GPS",
+  boiler: "Boiler System", safety: "Safety & Fire Detection",
+};
 
 export const recentAlerts: Alert[] = [
   { id: "a1", sensorName: "Vibration Sensor", alertType: "Threshold Exceeded", severity: "critical", timestamp: new Date(Date.now() - 180000).toISOString(), vessel: "MT Kaveri", message: "Vibration level exceeded critical threshold (4.8 mm/s > 4.5 mm/s)" },
