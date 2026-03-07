@@ -4,8 +4,9 @@ import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
   ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
-  Package, Filter, X, Check, Maximize2, Minimize2,
+  Package, Filter, X, Check, Maximize2, Minimize2, Radio,
 } from "lucide-react";
+import IotDashboard from "@/pages/IotDashboard";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -133,6 +134,7 @@ export default function Dashboard() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [activeView, setActiveView] = useState<"dashboard" | "iot">("dashboard");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -203,7 +205,16 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div />
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+            <button onClick={() => setActiveView("dashboard")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "dashboard" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+              <BarChart3 className="w-3.5 h-3.5" />
+              Dashboard
+            </button>
+            <button onClick={() => setActiveView("iot")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "iot" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+              <Radio className="w-3.5 h-3.5" />
+              IoT Sensors
+            </button>
+          </div>
 
           <div className="flex items-center gap-3">
             <div className="relative">
