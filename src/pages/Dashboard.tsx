@@ -761,6 +761,7 @@ export default function Dashboard() {
               </div>
             )}
           </div>
+        )}
       </main>
 
       {/* ─── Floating Chat Button ─── */}
