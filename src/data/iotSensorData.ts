@@ -249,3 +249,98 @@ export function getHealthLabel(score: number): string {
 }
 
 export const fleetOptions = ["All Fleets", "Pacific", "Atlantic", "Indian"] as const;
+
+// ─── Executive Charts Data ───
+
+// Health progression over 7 days
+export const healthProgressionData = [
+  { day: "Mon", Pacific: 88, Atlantic: 72, Indian: 82, fleet: 81 },
+  { day: "Tue", Pacific: 86, Atlantic: 74, Indian: 84, fleet: 82 },
+  { day: "Wed", Pacific: 90, Atlantic: 70, Indian: 80, fleet: 80 },
+  { day: "Thu", Pacific: 85, Atlantic: 68, Indian: 86, fleet: 80 },
+  { day: "Fri", Pacific: 88, Atlantic: 75, Indian: 88, fleet: 84 },
+  { day: "Sat", Pacific: 91, Atlantic: 64, Indian: 85, fleet: 80 },
+  { day: "Today", Pacific: 91, Atlantic: 64, Indian: 82, fleet: 79 },
+];
+
+// Sensor status distribution across fleet
+export function getSensorStatusDistribution(fleet?: string) {
+  const vessels = fleet ? allVesselSensors.filter(v => v.fleet === fleet) : allVesselSensors;
+  let normal = 0, warning = 0, critical = 0;
+  vessels.forEach(v => v.sensors.forEach(s => {
+    if (s.status === "normal") normal++;
+    else if (s.status === "warning") warning++;
+    else critical++;
+  }));
+  return [
+    { name: "Normal", value: normal, fill: "hsl(152, 55%, 42%)" },
+    { name: "Warning", value: warning, fill: "hsl(38, 92%, 50%)" },
+    { name: "Critical", value: critical, fill: "hsl(357, 96%, 46%)" },
+  ];
+}
+
+// Alerts by category (pie chart)
+export function getAlertsByCategory(fleet?: string) {
+  const vesselNames = fleet ? new Set(allVesselSensors.filter(v => v.fleet === fleet).map(v => v.vesselName)) : null;
+  const alerts = vesselNames ? recentAlerts.filter(a => vesselNames.has(a.vessel)) : recentAlerts;
+  const cats: Record<string, number> = {};
+  alerts.forEach(a => { cats[a.alertType] = (cats[a.alertType] || 0) + 1; });
+  const colors = ["hsl(357, 96%, 46%)", "hsl(38, 92%, 50%)", "hsl(210, 80%, 52%)", "hsl(152, 55%, 42%)", "hsl(280, 60%, 55%)", "hsl(15, 80%, 55%)"];
+  return Object.entries(cats).map(([name, value], i) => ({ name, value, fill: colors[i % colors.length] }));
+}
+
+// Fleet-wise health comparison (bar chart)
+export function getFleetHealthComparison() {
+  const fleets = ["Pacific", "Atlantic", "Indian"];
+  return fleets.map(f => {
+    const vessels = allVesselSensors.filter(v => v.fleet === f);
+    const avg = Math.round(vessels.reduce((s, v) => s + v.healthScore, 0) / vessels.length);
+    const alerts = vessels.reduce((s, v) => s + v.alertCount, 0);
+    const online = vessels.filter(v => v.connectionStatus === "online").length;
+    return { fleet: f, health: avg, alerts, online, vessels: vessels.length };
+  });
+}
+
+// Vessel health bar chart
+export function getVesselHealthBars(fleet?: string) {
+  const vessels = fleet ? allVesselSensors.filter(v => v.fleet === fleet) : allVesselSensors;
+  return vessels.map(v => ({
+    vessel: v.vesselName.replace(/^(MT|MV)\s/, ""),
+    health: v.healthScore,
+    alerts: v.alertCount,
+    fill: v.healthScore >= 85 ? "hsl(152, 55%, 42%)" : v.healthScore >= 60 ? "hsl(38, 92%, 50%)" : "hsl(357, 96%, 46%)",
+  }));
+}
+
+// Component health breakdown (donut)
+export function getComponentHealthBreakdown(fleet?: string) {
+  const vessels = fleet ? allVesselSensors.filter(v => v.fleet === fleet) : allVesselSensors;
+  const components: Record<string, { total: number; issues: number }> = {};
+  vessels.forEach(v => v.sensors.forEach(s => {
+    if (!components[s.component]) components[s.component] = { total: 0, issues: 0 };
+    components[s.component].total++;
+    if (s.status !== "normal") components[s.component].issues++;
+  }));
+  const colors: Record<string, string> = {
+    engine: "hsl(357, 96%, 46%)", fuel: "hsl(210, 80%, 52%)", propeller: "hsl(152, 55%, 42%)",
+    thruster: "hsl(38, 92%, 50%)", vibration: "hsl(280, 60%, 55%)", pressure: "hsl(215, 50%, 23%)",
+    temperature: "hsl(15, 80%, 55%)",
+  };
+  return Object.entries(components).map(([name, data]) => ({
+    name: name.charAt(0).toUpperCase() + name.slice(1),
+    healthy: data.total - data.issues,
+    issues: data.issues,
+    total: data.total,
+    fill: colors[name] || "hsl(216, 10%, 46%)",
+  }));
+}
+
+// Monthly progression data
+export const monthlyProgressionData = [
+  { month: "Oct", health: 76, alerts: 18, uptime: 91 },
+  { month: "Nov", health: 79, alerts: 14, uptime: 93 },
+  { month: "Dec", health: 74, alerts: 22, uptime: 88 },
+  { month: "Jan", health: 81, alerts: 12, uptime: 94 },
+  { month: "Feb", health: 83, alerts: 9, uptime: 96 },
+  { month: "Mar", health: 79, alerts: 11, uptime: 95 },
+];
