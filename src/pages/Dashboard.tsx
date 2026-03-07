@@ -4,7 +4,7 @@ import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
   ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
-  Package, Filter, X, Check, Maximize2, Minimize2, Radio,
+  Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3,
 } from "lucide-react";
 import IotDashboard from "@/pages/IotDashboard";
 import {
