@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import {
   Activity, AlertTriangle, Anchor, Droplets, Gauge, Thermometer, Waves,
   Zap, Wifi, WifiOff, Clock, Circle, BarChart3, Fuel, Cog, Fan,
-  Ship, ChevronDown, Heart, Info, Shield, HelpCircle, Signal,
+  Ship, ChevronDown, Heart, Info, Shield, HelpCircle, Signal, TrendingUp, Target, CheckCircle,
 } from "lucide-react";
 import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
