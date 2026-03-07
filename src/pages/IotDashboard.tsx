@@ -334,8 +334,6 @@ export default function IotDashboard({ fleet }: { fleet: string }) {
       {/* Fleet view */}
       {!selectedVessel && (
         <>
-          <FleetVesselTable vessels={filteredVessels} />
-
           {/* ─── Executive Charts Section ─── */}
           {(() => {
             const fleetFilter = selectedFleet === "All Fleets" ? undefined : selectedFleet;
@@ -593,6 +591,9 @@ export default function IotDashboard({ fleet }: { fleet: string }) {
             );
           })()}
 
+          <FleetVesselTable vessels={filteredVessels} />
+
+          {/* Alert Panel */}
           <div className="bg-card rounded-xl border border-border p-5">
             <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
               <AlertTriangle className="w-3.5 h-3.5 text-destructive" /> Recent Alerts Across Fleet
