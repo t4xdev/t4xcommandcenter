@@ -5,13 +5,16 @@ import {
   Ship, ChevronDown, Heart, Info, Shield, HelpCircle, Signal,
 } from "lucide-react";
 import {
-  LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+  LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,
 } from "recharts";
 import {
   allVesselSensors, recentAlerts, getFleetIotSummary, getVesselKpiMetrics,
   getVesselTelemetry, getGaugeColor, getStatusBg, getStatusText,
   getHealthColor, getHealthLabel, fleetOptions,
+  healthProgressionData, getSensorStatusDistribution, getAlertsByCategory,
+  getFleetHealthComparison, getVesselHealthBars, getComponentHealthBreakdown,
+  monthlyProgressionData,
   type SensorStatus, type SensorPoint, type VesselSensors,
 } from "@/data/iotSensorData";
 
