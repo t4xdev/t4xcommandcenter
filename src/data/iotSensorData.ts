@@ -198,34 +198,39 @@ function makeSensors(overrides: Partial<Record<string, { value: number; status: 
 export const allVesselSensors: VesselSensors[] = [
   {
     vesselId: "v1", vesselName: "MT Kaveri", fleet: "Pacific", imo: "9876543", type: "Bulk Carrier",
-    lastSync: new Date(Date.now() - 12000).toISOString(), connectionStatus: "online", alertCount: 3, healthScore: 74,
+    lastSync: new Date(Date.now() - 12000).toISOString(), connectionStatus: "online", alertCount: 5, healthScore: 71,
     sensors: makeSensors({
       "Oil Pressure": { value: 3.2, status: "warning" },
       "Exhaust Temp": { value: 340, status: "warning" },
       "Vibration Level": { value: 4.8, status: "critical" },
+      "Bilge Level": { value: 45, status: "warning" },
+      "CO2 Level Engine Room": { value: 1100, status: "warning" },
     }),
   },
   {
     vesselId: "v2", vesselName: "MV Godavari", fleet: "Pacific", imo: "9876544", type: "Container",
-    lastSync: new Date(Date.now() - 30000).toISOString(), connectionStatus: "online", alertCount: 1, healthScore: 91,
+    lastSync: new Date(Date.now() - 30000).toISOString(), connectionStatus: "online", alertCount: 2, healthScore: 88,
     sensors: makeSensors({
       "Thruster Power": { value: 88, status: "warning" },
+      "Cargo Hold Humidity": { value: 78, status: "warning" },
     }),
   },
   {
     vesselId: "v3", vesselName: "MV Narmada", fleet: "Atlantic", imo: "9876545", type: "AHTS",
-    lastSync: new Date(Date.now() - 600000).toISOString(), connectionStatus: "intermittent", alertCount: 0, healthScore: 45,
+    lastSync: new Date(Date.now() - 600000).toISOString(), connectionStatus: "intermittent", alertCount: 1, healthScore: 45,
     sensors: makeSensors({
       "Fuel Level": { value: 22, status: "warning" },
       "Engine RPM": { value: 0, status: "normal" },
+      "Generator Load": { value: 92, status: "warning" },
     }),
   },
   {
     vesselId: "v4", vesselName: "MV Krishna", fleet: "Atlantic", imo: "9876546", type: "PSV",
-    lastSync: new Date(Date.now() - 8000).toISOString(), connectionStatus: "online", alertCount: 2, healthScore: 82,
+    lastSync: new Date(Date.now() - 8000).toISOString(), connectionStatus: "online", alertCount: 3, healthScore: 79,
     sensors: makeSensors({
       "Main Engine Temp": { value: 94, status: "warning" },
       "Coolant Temp": { value: 82, status: "warning" },
+      "Boiler Steam Pressure": { value: 9.2, status: "warning" },
     }),
   },
   {
@@ -235,19 +240,22 @@ export const allVesselSensors: VesselSensors[] = [
   },
   {
     vesselId: "v6", vesselName: "MT Chambal", fleet: "Indian", imo: "9876548", type: "Tanker",
-    lastSync: new Date(Date.now() - 900000).toISOString(), connectionStatus: "offline", alertCount: 4, healthScore: 58,
+    lastSync: new Date(Date.now() - 900000).toISOString(), connectionStatus: "offline", alertCount: 6, healthScore: 52,
     sensors: makeSensors({
       "Main Engine Temp": { value: 102, status: "critical" },
       "Vibration Level": { value: 4.2, status: "warning" },
       "Oil Pressure": { value: 2.8, status: "critical" },
       "Fuel Level": { value: 18, status: "warning" },
+      "Steering Gear Pressure": { value: 155, status: "warning" },
+      "O2 Level Engine Room": { value: 19.2, status: "warning" },
     }),
   },
   {
     vesselId: "v7", vesselName: "MV Mahanadi", fleet: "Pacific", imo: "9876549", type: "Bulk Carrier",
-    lastSync: new Date(Date.now() - 20000).toISOString(), connectionStatus: "online", alertCount: 1, healthScore: 88,
+    lastSync: new Date(Date.now() - 20000).toISOString(), connectionStatus: "online", alertCount: 2, healthScore: 85,
     sensors: makeSensors({
       "Exhaust Temp": { value: 325, status: "warning" },
+      "Turbocharger Temp": { value: 590, status: "warning" },
     }),
   },
   {
@@ -268,7 +276,7 @@ export function getFleetIotSummary(fleet?: string) {
   return { totalVessels: vessels.length, totalAlerts, online, avgHealth, criticalSensors, warningSensors };
 }
 
-// KPI metrics for a specific vessel
+// KPI metrics for a specific vessel — top-level summary
 export function getVesselKpiMetrics(vessel: VesselSensors) {
   const find = (name: string) => vessel.sensors.find(s => s.name === name);
   const fuel = find("Fuel Level");
@@ -278,17 +286,35 @@ export function getVesselKpiMetrics(vessel: VesselSensors) {
   const prop = find("Propeller RPM");
   const thrust = find("Thruster Power");
   const vib = find("Vibration Level");
+  const genLoad = find("Generator Load");
+  const gpsSpeed = find("GPS Speed");
+  const bilge = find("Bilge Level");
   return [
     { label: "Fuel Level", description: "Remaining fuel in tank", value: fuel ? `${fuel.value}` : "N/A", unit: "%", status: fuel?.status || "normal" as SensorStatus },
     { label: "Engine RPM", description: "Engine rotation speed", value: rpm ? rpm.value.toLocaleString() : "N/A", unit: "RPM", status: rpm?.status || "normal" as SensorStatus },
     { label: "Engine Temp", description: "Main engine temperature", value: temp ? `${temp.value}` : "N/A", unit: "°C", status: temp?.status || "normal" as SensorStatus },
     { label: "Oil Pressure", description: "Lubricating oil pressure", value: oil ? `${oil.value}` : "N/A", unit: "bar", status: oil?.status || "normal" as SensorStatus },
     { label: "Propeller RPM", description: "Propeller rotation speed", value: prop ? `${prop.value}` : "N/A", unit: "RPM", status: prop?.status || "normal" as SensorStatus },
-    { label: "Thruster Power", description: "Side thruster usage", value: thrust ? `${thrust.value}` : "N/A", unit: "%", status: thrust?.status || "normal" as SensorStatus },
     { label: "Vibration", description: "Engine vibration level", value: vib ? `${vib.value}` : "N/A", unit: "mm/s", status: vib?.status || "normal" as SensorStatus },
+    { label: "Speed", description: "Vessel speed over ground", value: gpsSpeed ? `${gpsSpeed.value}` : "N/A", unit: "kn", status: gpsSpeed?.status || "normal" as SensorStatus },
     { label: "Connection", description: "Data link status", value: vessel.connectionStatus === "online" ? "Online" : vessel.connectionStatus === "intermittent" ? "Unstable" : "Offline", unit: "", status: vessel.connectionStatus === "online" ? "normal" as SensorStatus : vessel.connectionStatus === "intermittent" ? "warning" as SensorStatus : "critical" as SensorStatus },
   ];
 }
+
+// Get all sensors grouped by component for display
+export function getSensorsByComponent(vessel: VesselSensors): Record<string, SensorPoint[]> {
+  const map: Record<string, SensorPoint[]> = {};
+  vessel.sensors.forEach(s => { (map[s.component] ??= []).push(s); });
+  return map;
+}
+
+export const componentLabels: Record<string, string> = {
+  engine: "Main Engine", fuel: "Fuel System", propeller: "Propulsion", thruster: "Thrusters",
+  auxiliary: "Auxiliary Engines", electrical: "Electrical & Generator", steering: "Steering System",
+  tanks: "Tanks & Levels", vibration: "Vibration Monitoring", pressure: "Pressure Systems",
+  environment: "Environment & Weather", cargo: "Cargo Monitoring", navigation: "Navigation & GPS",
+  boiler: "Boiler System", safety: "Safety & Fire Detection",
+};
 
 export const recentAlerts: Alert[] = [
   { id: "a1", sensorName: "Vibration Sensor", alertType: "Threshold Exceeded", severity: "critical", timestamp: new Date(Date.now() - 180000).toISOString(), vessel: "MT Kaveri", message: "Vibration level exceeded critical threshold (4.8 mm/s > 4.5 mm/s)" },
