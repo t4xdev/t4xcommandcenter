@@ -230,6 +230,9 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-[1600px] mx-auto px-6 py-5">
+        {activeView === "iot" ? (
+          <IotDashboard />
+        ) : (
           <div className="space-y-5 animate-fade-in-up">
             {/* Vessel Strip */}
             <div className="card-elevated p-3">
