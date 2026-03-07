@@ -330,7 +330,263 @@ export default function IotDashboard() {
         <>
           <FleetVesselTable vessels={filteredVessels} />
 
-          {/* Alert Panel */}
+          {/* ─── Executive Charts Section ─── */}
+          {(() => {
+            const fleetFilter = selectedFleet === "All Fleets" ? undefined : selectedFleet;
+            const sensorDist = getSensorStatusDistribution(fleetFilter);
+            const alertsByCat = getAlertsByCategory(fleetFilter);
+            const fleetComparison = getFleetHealthComparison();
+            const vesselBars = getVesselHealthBars(fleetFilter);
+            const componentHealth = getComponentHealthBreakdown(fleetFilter);
+            const totalSensors = sensorDist.reduce((s, d) => s + d.value, 0);
+            const normalPct = totalSensors > 0 ? Math.round((sensorDist[0]?.value || 0) / totalSensors * 100) : 0;
+
+            return (
+              <>
+                {/* Row 1: Health Progression + Sensor Status Donut + Alert Pie */}
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+                  {/* Health Progression Over Time */}
+                  <div className="bg-card rounded-xl border border-border p-5 xl:col-span-2">
+                    <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <TrendingUp className="w-3.5 h-3.5 text-primary" /> Fleet Health Progression
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mb-3">Weekly health score trend by fleet — higher is better (target: above 80%)</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={healthProgressionData}>
+                          <defs>
+                            <linearGradient id="healthGradP" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(210, 80%, 52%)" stopOpacity={0.2} />
+                              <stop offset="95%" stopColor="hsl(210, 80%, 52%)" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="healthGradA" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0.2} />
+                              <stop offset="95%" stopColor="hsl(38, 92%, 50%)" stopOpacity={0} />
+                            </linearGradient>
+                            <linearGradient id="healthGradI" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="hsl(152, 55%, 42%)" stopOpacity={0.2} />
+                              <stop offset="95%" stopColor="hsl(152, 55%, 42%)" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                          <XAxis dataKey="day" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }} />
+                          <YAxis domain={[50, 100]} tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }} width={30} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, name]} />
+                          <Area type="monotone" dataKey="Pacific" stroke="hsl(210, 80%, 52%)" fill="url(#healthGradP)" strokeWidth={2} name="Pacific Fleet" />
+                          <Area type="monotone" dataKey="Atlantic" stroke="hsl(38, 92%, 50%)" fill="url(#healthGradA)" strokeWidth={2} name="Atlantic Fleet" />
+                          <Area type="monotone" dataKey="Indian" stroke="hsl(152, 55%, 42%)" fill="url(#healthGradI)" strokeWidth={2} name="Indian Fleet" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex items-center justify-center gap-5 mt-2">
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded" style={{ backgroundColor: "hsl(210, 80%, 52%)" }} /><span className="text-[9px] text-muted-foreground">Pacific</span></div>
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded" style={{ backgroundColor: "hsl(38, 92%, 50%)" }} /><span className="text-[9px] text-muted-foreground">Atlantic</span></div>
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded" style={{ backgroundColor: "hsl(152, 55%, 42%)" }} /><span className="text-[9px] text-muted-foreground">Indian</span></div>
+                    </div>
+                    {/* Summary cards */}
+                    <div className="grid grid-cols-3 gap-3 mt-3">
+                      <div className="rounded-lg border px-3 py-2 bg-info/10 text-info border-info/20">
+                        <div className="flex items-center gap-1.5 mb-0.5"><TrendingUp className="w-3 h-3" /><span className="text-[10px] font-bold uppercase tracking-wider">Best</span></div>
+                        <p className="text-sm font-bold font-mono">Pacific 91%</p>
+                        <p className="text-[9px] opacity-80">Consistently highest health scores</p>
+                      </div>
+                      <div className="rounded-lg border px-3 py-2 bg-warning/10 text-warning border-warning/20">
+                        <div className="flex items-center gap-1.5 mb-0.5"><AlertTriangle className="w-3 h-3" /><span className="text-[10px] font-bold uppercase tracking-wider">Needs Attention</span></div>
+                        <p className="text-sm font-bold font-mono">Atlantic 64%</p>
+                        <p className="text-[9px] opacity-80">Declining trend — MT Chambal impacting score</p>
+                      </div>
+                      <div className="rounded-lg border px-3 py-2 bg-success/10 text-success border-success/20">
+                        <div className="flex items-center gap-1.5 mb-0.5"><Target className="w-3 h-3" /><span className="text-[10px] font-bold uppercase tracking-wider">Target</span></div>
+                        <p className="text-sm font-bold font-mono">80%+</p>
+                        <p className="text-[9px] opacity-80">Fleet health target — 2 of 3 fleets meeting</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sensor Status Distribution Donut */}
+                  <div className="bg-card rounded-xl border border-border p-5">
+                    <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <Shield className="w-3.5 h-3.5 text-success" /> Sensor Status
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mb-3">Distribution of all sensor readings across fleet</p>
+                    <div className="h-[180px] relative">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={sensorDist} cx="50%" cy="50%" innerRadius={50} outerRadius={75} dataKey="value" stroke="none" paddingAngle={2}>
+                            {sensorDist.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value} sensors`, name]} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-bold font-mono text-foreground">{normalPct}%</span>
+                        <span className="text-[9px] text-muted-foreground">Healthy</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center gap-4 mt-2">
+                      {sensorDist.map(d => (
+                        <div key={d.name} className="flex items-center gap-1.5">
+                          <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: d.fill }} />
+                          <span className="text-[9px] text-muted-foreground">{d.name} ({d.value})</span>
+                        </div>
+                      ))}
+                    </div>
+                    {/* Insight */}
+                    <div className="mt-3 rounded-lg border px-3 py-2 bg-success/10 text-success border-success/20">
+                      <div className="flex items-center gap-1.5 mb-0.5"><CheckCircle className="w-3 h-3" /><span className="text-[10px] font-bold uppercase tracking-wider">Status</span></div>
+                      <p className="text-[10px]">{normalPct >= 85 ? "Fleet sensors are mostly healthy" : normalPct >= 70 ? "Some sensors need monitoring" : "Multiple sensors require attention"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 2: Vessel Health Bars + Fleet Comparison + Alert Type Pie */}
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+                  {/* Vessel Health Bar Chart */}
+                  <div className="bg-card rounded-xl border border-border p-5">
+                    <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <BarChart3 className="w-3.5 h-3.5 text-primary" /> Vessel Health Scores
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mb-3">Individual vessel health — green ≥85%, yellow ≥60%, red &lt;60%</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={vesselBars} layout="vertical">
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" horizontal={false} />
+                          <XAxis type="number" domain={[0, 100]} tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} />
+                          <YAxis type="category" dataKey="vessel" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }} width={70} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value}%`, "Health Score"]} />
+                          <Bar dataKey="health" radius={[0, 4, 4, 0]} barSize={16}>
+                            {vesselBars.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Fleet Comparison Bar Chart */}
+                  <div className="bg-card rounded-xl border border-border p-5">
+                    <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <Ship className="w-3.5 h-3.5 text-info" /> Fleet Comparison
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mb-3">Compare health, alerts, and online vessels across fleets</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={fleetComparison}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                          <XAxis dataKey="fleet" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }} />
+                          <YAxis tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} width={30} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [name === "Health Score" ? `${value}%` : value, name]} />
+                          <Bar dataKey="health" fill="hsl(210, 80%, 52%)" radius={[4, 4, 0, 0]} barSize={20} name="Health Score" />
+                          <Bar dataKey="alerts" fill="hsl(357, 96%, 46%)" radius={[4, 4, 0, 0]} barSize={20} name="Alerts" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex items-center justify-center gap-4 mt-2">
+                      <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded" style={{ backgroundColor: "hsl(210, 80%, 52%)" }} /><span className="text-[9px] text-muted-foreground">Health %</span></div>
+                      <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded" style={{ backgroundColor: "hsl(357, 96%, 46%)" }} /><span className="text-[9px] text-muted-foreground">Alerts</span></div>
+                    </div>
+                  </div>
+
+                  {/* Alert Types Pie Chart */}
+                  <div className="bg-card rounded-xl border border-border p-5">
+                    <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <AlertTriangle className="w-3.5 h-3.5 text-warning" /> Alert Categories
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mb-3">Breakdown of alerts by type — shows most common issues</p>
+                    <div className="h-[180px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie data={alertsByCat} cx="50%" cy="50%" outerRadius={70} dataKey="value" stroke="hsl(0, 0%, 100%)" strokeWidth={2} label={({ name, value }) => `${name} (${value})`} labelLine={false}>
+                            {alertsByCat.map((e, i) => <Cell key={i} fill={e.fill} />)}
+                          </Pie>
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [`${value} alerts`, name]} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+                      {alertsByCat.map(d => (
+                        <div key={d.name} className="flex items-center gap-1">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: d.fill }} />
+                          <span className="text-[8px] text-muted-foreground">{d.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 3: Component Health + Monthly Progression */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                  {/* Component Health Breakdown */}
+                  <div className="bg-card rounded-xl border border-border p-5">
+                    <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <Cog className="w-3.5 h-3.5 text-warning" /> Component Health Breakdown
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mb-3">Healthy vs issue sensors by equipment type</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={componentHealth}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                          <XAxis dataKey="name" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} />
+                          <YAxis tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} width={25} />
+                          <Tooltip contentStyle={tip} />
+                          <Bar dataKey="healthy" stackId="a" fill="hsl(152, 55%, 42%)" radius={[0, 0, 0, 0]} name="Healthy" />
+                          <Bar dataKey="issues" stackId="a" fill="hsl(357, 96%, 46%)" radius={[4, 4, 0, 0]} name="Issues" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex items-center justify-center gap-4 mt-2">
+                      <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded" style={{ backgroundColor: "hsl(152, 55%, 42%)" }} /><span className="text-[9px] text-muted-foreground">Healthy</span></div>
+                      <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded" style={{ backgroundColor: "hsl(357, 96%, 46%)" }} /><span className="text-[9px] text-muted-foreground">Issues</span></div>
+                    </div>
+                  </div>
+
+                  {/* Monthly Progression */}
+                  <div className="bg-card rounded-xl border border-border p-5">
+                    <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
+                      <TrendingUp className="w-3.5 h-3.5 text-success" /> 6-Month Progression
+                    </h3>
+                    <p className="text-[10px] text-muted-foreground mb-3">Fleet health, alerts, and uptime trends over the past 6 months</p>
+                    <div className="h-[220px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={monthlyProgressionData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                          <XAxis dataKey="month" tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }} />
+                          <YAxis tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }} width={30} />
+                          <Tooltip contentStyle={tip} formatter={(value: number, name: string) => [name.includes("Alert") ? value : `${value}%`, name]} />
+                          <Line type="monotone" dataKey="health" stroke="hsl(210, 80%, 52%)" strokeWidth={2} dot={{ r: 4 }} name="Health %" />
+                          <Line type="monotone" dataKey="uptime" stroke="hsl(152, 55%, 42%)" strokeWidth={2} dot={{ r: 4 }} name="Uptime %" />
+                          <Line type="monotone" dataKey="alerts" stroke="hsl(357, 96%, 46%)" strokeWidth={2} dot={{ r: 4 }} name="Alerts" />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="flex items-center justify-center gap-5 mt-2">
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded bg-info" /><span className="text-[9px] text-muted-foreground">Health</span></div>
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded bg-success" /><span className="text-[9px] text-muted-foreground">Uptime</span></div>
+                      <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 rounded bg-destructive" /><span className="text-[9px] text-muted-foreground">Alerts</span></div>
+                    </div>
+                    {/* Summary cards */}
+                    <div className="grid grid-cols-3 gap-3 mt-3">
+                      <div className="rounded-lg border px-3 py-2 bg-info/10 text-info border-info/20">
+                        <div className="flex items-center gap-1.5 mb-0.5"><TrendingUp className="w-3 h-3" /><span className="text-[10px] font-bold uppercase tracking-wider">Health</span></div>
+                        <p className="text-sm font-bold font-mono">+3%</p>
+                        <p className="text-[9px] opacity-80">Improved from Oct baseline</p>
+                      </div>
+                      <div className="rounded-lg border px-3 py-2 bg-success/10 text-success border-success/20">
+                        <div className="flex items-center gap-1.5 mb-0.5"><CheckCircle className="w-3 h-3" /><span className="text-[10px] font-bold uppercase tracking-wider">Uptime</span></div>
+                        <p className="text-sm font-bold font-mono">95%</p>
+                        <p className="text-[9px] opacity-80">Above 93% target</p>
+                      </div>
+                      <div className="rounded-lg border px-3 py-2 bg-destructive/10 text-destructive border-destructive/20">
+                        <div className="flex items-center gap-1.5 mb-0.5"><AlertTriangle className="w-3 h-3" /><span className="text-[10px] font-bold uppercase tracking-wider">Alerts</span></div>
+                        <p className="text-sm font-bold font-mono">-39%</p>
+                        <p className="text-[9px] opacity-80">Reduced from 18 to 11 avg/month</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+
           <div className="bg-card rounded-xl border border-border p-5">
             <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
               <AlertTriangle className="w-3.5 h-3.5 text-destructive" /> Recent Alerts Across Fleet
