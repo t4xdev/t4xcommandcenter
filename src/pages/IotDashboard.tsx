@@ -74,26 +74,27 @@ function GaugeCard({ label, description, value, unit, max, status }: { label: st
   );
 }
 
-// ─── Sensor Diagram ───
-const sensorPositions: Record<string, { top: string; left: string; icon: typeof Cog; label: string }> = {
-  engine: { top: "22%", left: "40%", icon: Cog, label: "Engine" },
-  fuel: { top: "45%", left: "20%", icon: Fuel, label: "Fuel" },
-  propeller: { top: "82%", left: "50%", icon: Fan, label: "Propeller" },
-  thruster: { top: "70%", left: "18%", icon: Zap, label: "Thruster" },
-  vibration: { top: "35%", left: "60%", icon: Waves, label: "Vibration" },
-  pressure: { top: "50%", left: "75%", icon: Gauge, label: "Pressure" },
-  environment: { top: "15%", left: "75%", icon: Thermometer, label: "Environment" },
-  auxiliary: { top: "45%", left: "55%", icon: Cog, label: "Aux Engine" },
-  electrical: { top: "55%", left: "40%", icon: Zap, label: "Electrical" },
-  steering: { top: "72%", left: "45%", icon: Anchor, label: "Steering" },
-  tanks: { top: "60%", left: "60%", icon: Droplets, label: "Tanks" },
-  cargo: { top: "30%", left: "25%", icon: Ship, label: "Cargo" },
-  navigation: { top: "12%", left: "50%", icon: Signal, label: "Navigation" },
-  boiler: { top: "58%", left: "28%", icon: Thermometer, label: "Boiler" },
-  safety: { top: "25%", left: "80%", icon: Shield, label: "Safety" },
+// ─── Sensor Map (grid-based) ───
+const componentIcons: Record<string, { icon: typeof Cog; label: string }> = {
+  engine: { icon: Cog, label: "Main Engine" },
+  fuel: { icon: Fuel, label: "Fuel System" },
+  propeller: { icon: Fan, label: "Propulsion" },
+  thruster: { icon: Zap, label: "Thrusters" },
+  vibration: { icon: Waves, label: "Vibration" },
+  pressure: { icon: Gauge, label: "Pressure" },
+  environment: { icon: Thermometer, label: "Environment" },
+  auxiliary: { icon: Cog, label: "Aux Engines" },
+  electrical: { icon: Zap, label: "Electrical" },
+  steering: { icon: Anchor, label: "Steering" },
+  tanks: { icon: Droplets, label: "Tanks & Levels" },
+  cargo: { icon: Ship, label: "Cargo" },
+  navigation: { icon: Signal, label: "Navigation" },
+  boiler: { icon: Thermometer, label: "Boiler" },
+  safety: { icon: Shield, label: "Safety" },
 };
 
 function VesselDiagram({ sensors, vesselName }: { sensors: SensorPoint[]; vesselName: string }) {
+  const [expandedComp, setExpandedComp] = useState<string | null>(null);
   const grouped = useMemo(() => {
     const map: Record<string, SensorPoint[]> = {};
     sensors.forEach((s) => { (map[s.component] ??= []).push(s); });
@@ -101,45 +102,57 @@ function VesselDiagram({ sensors, vesselName }: { sensors: SensorPoint[]; vessel
   }, [sensors]);
 
   return (
-    <div className="bg-card rounded-xl border border-border p-5 relative min-h-[320px]">
+    <div className="bg-card rounded-xl border border-border p-5">
       <h3 className="text-xs font-semibold text-foreground mb-1 flex items-center gap-2">
         <Anchor className="w-3.5 h-3.5 text-primary" /> Sensor Map — {vesselName}
       </h3>
-      <p className="text-[10px] text-muted-foreground mb-3">Hover over each sensor point to see live readings and what they mean</p>
-      <div className="relative h-[250px] bg-accent/30 rounded-lg border border-border/50 overflow-hidden">
-        <div className="absolute inset-4 border-2 border-dashed border-border/40 rounded-[40%_40%_5%_5%]" />
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 text-[9px] text-muted-foreground font-medium uppercase tracking-widest">Bow</div>
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[9px] text-muted-foreground font-medium uppercase tracking-widest">Stern</div>
-
+      <p className="text-[10px] text-muted-foreground mb-3">Click any system to expand sensor details. Colored indicators show status at a glance.</p>
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
         {Object.entries(grouped).map(([component, sensorList]) => {
-          const pos = sensorPositions[component];
-          if (!pos) return null;
+          const meta = componentIcons[component] || { icon: Circle, label: component };
+          const Icon = meta.icon;
           const worstStatus = sensorList.some(s => s.status === "critical") ? "critical" : sensorList.some(s => s.status === "warning") ? "warning" : "normal";
-          const Icon = pos.icon;
+          const isExpanded = expandedComp === component;
+          const issueCount = sensorList.filter(s => s.status !== "normal").length;
           return (
-            <div key={component} className="absolute group" style={{ top: pos.top, left: pos.left, transform: "translate(-50%, -50%)" }}>
-              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center cursor-pointer transition-transform hover:scale-110 ${getStatusBg(worstStatus)}`}>
-                <Icon className={`w-4 h-4 ${getStatusText(worstStatus)}`} />
-              </div>
-              <span className="absolute top-full left-1/2 -translate-x-1/2 mt-0.5 text-[8px] font-medium text-muted-foreground whitespace-nowrap">{pos.label}</span>
-              <div className="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block">
-                <div className="bg-card border border-border rounded-lg shadow-xl p-3 min-w-[200px]">
-                  <p className="text-[11px] font-bold text-foreground mb-1.5">{pos.label}</p>
-                  {sensorList.map(s => (
-                    <div key={s.id} className="py-1 border-t border-border/50">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-[10px] text-foreground font-medium">{s.name}</span>
-                        <span className={`text-[11px] font-mono font-bold ${getStatusText(s.status)}`}>{s.value} {s.unit}</span>
-                      </div>
-                      <p className="text-[9px] text-muted-foreground mt-0.5">{s.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div key={component} className="relative">
+              <button
+                onClick={() => setExpandedComp(isExpanded ? null : component)}
+                className={`w-full p-2.5 rounded-lg border-2 text-center transition-all hover:scale-[1.02] ${isExpanded ? "ring-2 ring-primary/40" : ""} ${getStatusBg(worstStatus)}`}
+              >
+                <Icon className={`w-4 h-4 mx-auto mb-1 ${getStatusText(worstStatus)}`} />
+                <p className="text-[9px] font-semibold text-foreground leading-tight">{meta.label}</p>
+                <p className="text-[8px] text-muted-foreground">{sensorList.length} sensors</p>
+                {issueCount > 0 && (
+                  <span className={`absolute -top-1 -right-1 w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center text-primary-foreground ${worstStatus === "critical" ? "bg-destructive" : "bg-warning"}`}>{issueCount}</span>
+                )}
+              </button>
             </div>
           );
         })}
       </div>
+      {/* Expanded detail panel */}
+      {expandedComp && grouped[expandedComp] && (
+        <div className="mt-3 rounded-lg border border-border bg-accent/20 p-3 animate-fade-in-up">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-[11px] font-bold text-foreground">{componentIcons[expandedComp]?.label || expandedComp}</h4>
+            <button onClick={() => setExpandedComp(null)} className="text-[9px] text-muted-foreground hover:text-foreground">Close ✕</button>
+          </div>
+          <div className="space-y-1.5">
+            {grouped[expandedComp].map(s => (
+              <div key={s.id} className={`flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md border ${getStatusBg(s.status)}`}>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-medium text-foreground">{s.name}</span>
+                  <p className="text-[8px] text-muted-foreground truncate">{s.description}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className={`text-[11px] font-mono font-bold ${getStatusText(s.status)}`}>{s.value} {s.unit}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
