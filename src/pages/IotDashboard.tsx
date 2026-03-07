@@ -332,11 +332,9 @@ export default function IotDashboard({ fleet }: { fleet: string }) {
       <VesselSelector vessels={filteredVessels} selectedId={selectedVesselId} onSelect={setSelectedVesselId} />
 
       {/* Fleet view */}
-      {!selectedVessel && (
         <>
-          <FleetVesselTable vessels={filteredVessels} />
-
           {/* ─── Executive Charts Section ─── */}
+          {(() => {
           {(() => {
             const fleetFilter = selectedFleet === "All Fleets" ? undefined : selectedFleet;
             const sensorDist = getSensorStatusDistribution(fleetFilter);
