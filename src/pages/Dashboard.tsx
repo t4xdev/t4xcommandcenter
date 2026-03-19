@@ -135,7 +135,7 @@ export default function Dashboard() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [activeView, setActiveView] = useState<"dashboard" | "iot">("dashboard");
+  const [activeView, setActiveView] = useState<"dashboard" | "iot" | "survey">("dashboard");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
