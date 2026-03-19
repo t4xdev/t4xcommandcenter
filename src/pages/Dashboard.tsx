@@ -215,6 +215,10 @@ export default function Dashboard() {
               <Radio className="w-3.5 h-3.5" />
               IoT Sensors
             </button>
+            <button onClick={() => setActiveView("survey")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "survey" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+              <ClipboardList className="w-3.5 h-3.5" />
+              Survey Planner
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
