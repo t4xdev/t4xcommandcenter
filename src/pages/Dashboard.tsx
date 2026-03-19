@@ -7,6 +7,7 @@ import {
   Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3,
 } from "lucide-react";
 import IotDashboard from "@/pages/IotDashboard";
+import SurveyPlanner from "@/pages/SurveyPlanner";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend,
