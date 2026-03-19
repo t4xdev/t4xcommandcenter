@@ -7,6 +7,7 @@ import {
   Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3,
 } from "lucide-react";
 import IotDashboard from "@/pages/IotDashboard";
+import SurveyPlanner from "@/pages/SurveyPlanner";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -134,7 +135,7 @@ export default function Dashboard() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [activeView, setActiveView] = useState<"dashboard" | "iot">("dashboard");
+  const [activeView, setActiveView] = useState<"dashboard" | "iot" | "survey">("dashboard");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -214,6 +215,10 @@ export default function Dashboard() {
               <Radio className="w-3.5 h-3.5" />
               IoT Sensors
             </button>
+            <button onClick={() => setActiveView("survey")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "survey" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+              <ClipboardList className="w-3.5 h-3.5" />
+              Survey Planner
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
@@ -232,6 +237,8 @@ export default function Dashboard() {
       <main className="max-w-[1600px] mx-auto px-6 py-5">
         {activeView === "iot" ? (
           <IotDashboard fleet={selectedFleet} />
+        ) : activeView === "survey" ? (
+          <SurveyPlanner />
         ) : (
           <div className="space-y-5 animate-fade-in-up">
             {/* Vessel Strip */}
