@@ -237,6 +237,8 @@ export default function Dashboard() {
       <main className="max-w-[1600px] mx-auto px-6 py-5">
         {activeView === "iot" ? (
           <IotDashboard fleet={selectedFleet} />
+        ) : activeView === "survey" ? (
+          <SurveyPlanner />
         ) : (
           <div className="space-y-5 animate-fade-in-up">
             {/* Vessel Strip */}
