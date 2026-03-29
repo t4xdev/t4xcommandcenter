@@ -1,11 +1,11 @@
 import { useState, useMemo } from "react";
+import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
+import t4xLogo from "@/assets/t4x_logo.png";
 import {
   Users, UserPlus, Search, ChevronRight, ChevronLeft, Edit2, X, Check,
-  Phone, Mail, MapPin, Building2, Calendar, CreditCard, Shield, IndianRupee,
-  FileText, AlertTriangle, Eye, EyeOff, Plus, Trash2, Filter,
-  LayoutDashboard, Wallet, CheckSquare, Receipt, Landmark, BarChart3,
-  Settings, HelpCircle, Award, Upload, Download, Clock, ChevronDown,
-  FileCheck, Anchor, TrendingUp, TrendingDown, CircleDollarSign,
+  Calendar, CreditCard, IndianRupee, FileText, AlertTriangle, Plus,
+  Wallet, Bell, User, Award, Upload, Download, Clock, Shield, Receipt,
+  Landmark, BarChart3, Settings, HelpCircle, CheckSquare,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -151,87 +151,117 @@ const payrollHistory = [
 ];
 
 const payrollCostData = [
-  { month: "Apr 2025", cost: 0 }, { month: "May 2025", cost: 0 }, { month: "Jun 2025", cost: 0 },
-  { month: "Jul 2025", cost: 0 }, { month: "Aug 2025", cost: 0 }, { month: "Sep 2025", cost: 0 },
-  { month: "Oct 2025", cost: 0 }, { month: "Nov 2025", cost: 680000 }, { month: "Dec 2025", cost: 750000 },
-  { month: "Jan 2026", cost: 920000 }, { month: "Feb 2026", cost: 1050000 }, { month: "Mar 2026", cost: 1107000 },
+  { month: "Apr", cost: 0 }, { month: "May", cost: 0 }, { month: "Jun", cost: 0 },
+  { month: "Jul", cost: 0 }, { month: "Aug", cost: 0 }, { month: "Sep", cost: 0 },
+  { month: "Oct", cost: 0 }, { month: "Nov", cost: 680000 }, { month: "Dec", cost: 750000 },
+  { month: "Jan", cost: 920000 }, { month: "Feb", cost: 1050000 }, { month: "Mar", cost: 1107000 },
 ];
 
 const departments = ["All", "Engineering", "Operations", "QHSE", "Management"];
 const statuses = ["All", "Active", "Inactive", "On Leave"];
 const fmt = (n: number) => "₹" + n.toLocaleString("en-IN");
 
-type SidebarPage = "dashboard" | "employees" | "payRuns" | "approvals" | "taxesForms" | "loans" | "reports" | "settings" | "documents";
+type SidebarPage = "dashboard" | "employees" | "pay-runs" | "approvals" | "taxes" | "loans" | "reports" | "settings";
 
-const sidebarItems: { id: SidebarPage; label: string; icon: typeof LayoutDashboard }[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "employees", label: "Employees", icon: Users },
-  { id: "documents", label: "Documents & Certificates", icon: FileCheck },
-  { id: "payRuns", label: "Pay Runs", icon: Wallet },
-  { id: "approvals", label: "Approvals", icon: CheckSquare },
-  { id: "taxesForms", label: "Taxes & Forms", icon: Receipt },
-  { id: "loans", label: "Loans", icon: Landmark },
-  { id: "reports", label: "Reports", icon: BarChart3 },
-  { id: "settings", label: "Settings", icon: Settings },
+const sidebarItems: { id: SidebarPage; label: string; path: string }[] = [
+  { id: "dashboard", label: "Dashboard", path: "/payroll" },
+  { id: "employees", label: "Employees", path: "/payroll/employees" },
+  { id: "pay-runs", label: "Pay Runs", path: "/payroll/pay-runs" },
+  { id: "approvals", label: "Approvals", path: "/payroll/approvals" },
+  { id: "taxes", label: "Taxes & Forms", path: "/payroll/taxes" },
+  { id: "loans", label: "Loans", path: "/payroll/loans" },
+  { id: "reports", label: "Reports", path: "/payroll/reports" },
+  { id: "settings", label: "Settings", path: "/payroll/settings" },
 ];
 
 const tip = { backgroundColor: "hsl(0, 0%, 100%)", border: "1px solid hsl(220, 15%, 90%)", borderRadius: "8px", fontSize: "12px", color: "hsl(222, 52%, 15%)", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" };
 
 // ═══════════════════════════════════════════════════════
-// MAIN COMPONENT
+// MAIN COMPONENT — with its own header & sidebar layout
 // ═══════════════════════════════════════════════════════
 export default function CrewManagement() {
-  const [page, setPage] = useState<SidebarPage>("dashboard");
   const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [showAddWizard, setShowAddWizard] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const currentPage = (() => {
+    const p = location.pathname.replace("/payroll", "").replace(/^\//, "");
+    if (!p || p === "") return "dashboard";
+    const base = p.split("/")[0];
+    return (sidebarItems.find(s => s.id === base)?.id || "dashboard") as SidebarPage;
+  })();
 
   return (
-    <div className="flex gap-0 -mx-6 -mt-5 min-h-[calc(100vh-64px)]">
-      {/* Sidebar */}
-      <aside className="w-52 shrink-0 bg-[hsl(222,47%,16%)] text-white flex flex-col">
-        <div className="px-4 py-5 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <Anchor className="w-5 h-5 text-primary" />
-            <span className="text-sm font-bold">Crew & Payroll</span>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header — consistent with main dashboard */}
+      <header className="sticky top-0 z-50 bg-card border-b border-border px-6 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src={t4xLogo} alt="Twenty4X Logo" className="h-10 w-auto object-contain" />
+            <div className="border-l border-border pl-3">
+              <h1 className="text-sm font-bold text-foreground">Smart Insights <span className="text-gradient-brand">MIS</span></h1>
+              <p className="text-[10px] text-muted-foreground">Payroll Management</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link to="/" className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors">
+              ← Back to Dashboard
+            </Link>
+            <div className="relative flex items-center gap-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <input placeholder="Search in Employee" className="pl-9 pr-3 py-1.5 text-xs border border-border rounded-lg bg-transparent w-56 focus:ring-2 focus:ring-ring outline-none" />
+              </div>
+            </div>
+            <button className="relative p-2 rounded-lg hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" /></button>
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><User className="w-4 h-4 text-primary-foreground" /></div>
           </div>
         </div>
-        <nav className="flex-1 py-2 space-y-0.5 px-2">
-          {sidebarItems.map(item => (
-            <button key={item.id} onClick={() => { setPage(item.id); setSelectedEmployee(null); }}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${page === item.id ? "bg-primary text-primary-foreground" : "text-white/70 hover:text-white hover:bg-white/10"}`}>
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </button>
-          ))}
-        </nav>
-        <div className="p-3 border-t border-white/10">
-          <button className="text-[11px] text-white/50 hover:text-white/80 flex items-center gap-1.5">
-            <HelpCircle className="w-3.5 h-3.5" /> Contact Support ›
-          </button>
-        </div>
-      </aside>
+      </header>
 
-      {/* Main Content */}
-      <main className="flex-1 bg-background p-6 overflow-y-auto">
-        {page === "dashboard" && <PayrollDashboard employees={employees} onNavigate={setPage} />}
-        {page === "employees" && !selectedEmployee && !showAddWizard && (
-          <EmployeeList employees={employees} onSelect={setSelectedEmployee} onAdd={() => setShowAddWizard(true)} />
-        )}
-        {page === "employees" && selectedEmployee && (
-          <EmployeeProfile employee={selectedEmployee} onBack={() => setSelectedEmployee(null)} />
-        )}
-        {page === "employees" && showAddWizard && (
-          <AddEmployeeWizard onClose={() => setShowAddWizard(false)} onSave={emp => { setEmployees(p => [...p, emp]); setShowAddWizard(false); }} />
-        )}
-        {page === "documents" && <DocumentsPage employees={employees} />}
-        {page === "payRuns" && <PayRunsPage />}
-        {page === "approvals" && <PlaceholderPage title="Approvals" description="Pending payroll approvals and review queue will appear here." icon={CheckSquare} />}
-        {page === "taxesForms" && <TaxesFormsPage />}
-        {page === "loans" && <LoansPage employees={employees} />}
-        {page === "reports" && <PlaceholderPage title="Reports" description="Generate payroll register, TDS, PF, rank-wise wage reports, vessel-wise payroll, and more." icon={BarChart3} />}
-        {page === "settings" && <PlaceholderPage title="Settings" description="Configure payroll cycles, statutory rates, rank & wage masters, and payment modes." icon={Settings} />}
-      </main>
+      <div className="flex flex-1">
+        {/* Sidebar — text-only, no icons */}
+        <aside className="w-48 shrink-0 bg-primary border-r border-primary/80 flex flex-col">
+          <div className="px-4 py-4 border-b border-primary-foreground/10">
+            <div className="flex items-center gap-2">
+              <Wallet className="w-4 h-4 text-primary-foreground" />
+              <span className="text-sm font-bold text-primary-foreground">Payroll</span>
+            </div>
+          </div>
+          <nav className="flex-1 py-2 px-2 space-y-0.5">
+            {sidebarItems.map(item => {
+              const active = currentPage === item.id;
+              return (
+                <Link key={item.id} to={item.path}
+                  className={`block w-full px-3 py-2 rounded-md text-xs font-medium transition-colors ${active ? "bg-primary-foreground text-primary" : "text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10"}`}>
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="p-3 border-t border-primary-foreground/10">
+            <button className="text-[11px] text-primary-foreground/50 hover:text-primary-foreground/80">Contact Support ›</button>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 p-6 overflow-y-auto">
+          <Routes>
+            <Route index element={<PayrollDashboard employees={employees} />} />
+            <Route path="employees" element={<EmployeeList employees={employees} />} />
+            <Route path="employees/add" element={<AddEmployeeWizard onSave={emp => { setEmployees(p => [...p, emp]); navigate("/payroll/employees"); }} />} />
+            <Route path="employees/:id" element={<EmployeeProfileRoute employees={employees} />} />
+            <Route path="pay-runs" element={<PayRunsPage />} />
+            <Route path="pay-runs/:id" element={<PayRunDetailRoute />} />
+            <Route path="approvals" element={<PlaceholderPage title="Approvals" description="Pending payroll approvals and review queue will appear here." />} />
+            <Route path="taxes" element={<TaxesFormsPage />} />
+            <Route path="taxes/:tab" element={<TaxesFormsPage />} />
+            <Route path="loans" element={<LoansPage />} />
+            <Route path="reports" element={<PlaceholderPage title="Reports" description="Generate payroll register, TDS, PF, rank-wise wage and vessel-wise payroll reports." />} />
+            <Route path="settings" element={<PlaceholderPage title="Settings" description="Configure payroll cycles, statutory rates, rank & wage masters, and payment modes." />} />
+          </Routes>
+        </main>
+      </div>
     </div>
   );
 }
@@ -239,13 +269,12 @@ export default function CrewManagement() {
 // ═══════════════════════════════════════════════════════
 // PAYROLL DASHBOARD
 // ═══════════════════════════════════════════════════════
-function PayrollDashboard({ employees, onNavigate }: { employees: Employee[]; onNavigate: (p: SidebarPage) => void }) {
+function PayrollDashboard({ employees }: { employees: Employee[] }) {
   const activeCount = employees.filter(e => e.status === "Active").length;
   return (
     <div className="space-y-5 animate-fade-in-up">
       <h2 className="text-lg font-bold text-foreground">Welcome!</h2>
 
-      {/* Upcoming Payrun */}
       <div className="card-elevated p-5">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Upcoming Payrun</p>
         <div className="rounded-lg border border-border p-4 flex items-center justify-between">
@@ -261,12 +290,11 @@ function PayrollDashboard({ employees, onNavigate }: { employees: Employee[]; on
             </div>
             <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Please approve this payroll on or before 31/03/2026.</p>
           </div>
-          <button onClick={() => onNavigate("payRuns")} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90">View Details</button>
+          <Link to="/payroll/pay-runs" className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90">View Details</Link>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Benefits & Deductions */}
         <div className="lg:col-span-2 card-elevated p-5">
           <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-bold text-foreground">Benefits and Deductions</p>
@@ -274,30 +302,27 @@ function PayrollDashboard({ employees, onNavigate }: { employees: Employee[]; on
           </div>
           <div className="grid grid-cols-3 gap-4">
             {[
-              { label: "EPF", value: fmt(49554.07), icon: Shield, color: "text-primary bg-primary/10" },
-              { label: "ESI", value: "—", icon: Shield, color: "text-success bg-success/10" },
-              { label: "TDS", value: fmt(0), icon: Receipt, color: "text-warning bg-warning/10" },
+              { label: "EPF", value: fmt(49554.07), color: "border-primary/20 bg-primary/5" },
+              { label: "ESI", value: "—", color: "border-success/20 bg-success/5" },
+              { label: "TDS", value: fmt(0), color: "border-warning/20 bg-warning/5" },
             ].map((item, i) => (
-              <div key={i} className="rounded-lg border border-border p-4">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${item.color}`}><item.icon className="w-4 h-4" /></div>
+              <div key={i} className={`rounded-lg border p-4 ${item.color}`}>
                 <p className="text-xs text-muted-foreground">{item.label}</p>
-                <p className="text-base font-bold font-mono text-foreground">{item.value}</p>
-                <button className="text-[10px] text-primary font-medium mt-1">View Details</button>
+                <p className="text-base font-bold font-mono text-foreground mt-1">{item.value}</p>
+                <button className="text-[10px] text-primary font-medium mt-2">View Details</button>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Employee Summary */}
         <div className="card-elevated p-5 flex flex-col items-center justify-center text-center">
           <p className="text-sm font-bold text-foreground mb-1">Employee Summary</p>
-          <p className="text-[10px] text-warning uppercase font-bold tracking-wider">ACTIVE EMPLOYEES ⚠</p>
+          <p className="text-[10px] text-warning uppercase font-bold tracking-wider">ACTIVE EMPLOYEES</p>
           <p className="text-5xl font-bold text-primary my-3 font-mono">{activeCount}</p>
-          <button onClick={() => onNavigate("employees")} className="text-xs text-primary font-medium">View Employees</button>
+          <Link to="/payroll/employees" className="text-xs text-primary font-medium hover:underline">View Employees</Link>
         </div>
       </div>
 
-      {/* Payroll Cost Summary */}
       <div className="card-elevated p-5">
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm font-bold text-foreground">Payroll Cost Summary</p>
@@ -310,7 +335,7 @@ function PayrollDashboard({ employees, onNavigate }: { employees: Employee[]; on
             <YAxis tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" tickFormatter={v => v >= 100000 ? `${(v / 100000).toFixed(0)}L` : `${(v / 1000).toFixed(0)}K`} />
             <Tooltip contentStyle={tip} formatter={(v: number) => fmt(v)} />
             <Bar dataKey="cost" radius={[4, 4, 0, 0]}>
-              {payrollCostData.map((_, i) => <Cell key={i} fill={i >= 10 ? "hsl(142,72%,40%)" : "hsl(142,72%,55%)"} />)}
+              {payrollCostData.map((_, i) => <Cell key={i} fill={`hsl(215, 50%, ${i >= 10 ? "23%" : "40%"})`} />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -322,14 +347,14 @@ function PayrollDashboard({ employees, onNavigate }: { employees: Employee[]; on
 // ═══════════════════════════════════════════════════════
 // EMPLOYEE LIST
 // ═══════════════════════════════════════════════════════
-function EmployeeList({ employees, onSelect, onAdd }: { employees: Employee[]; onSelect: (e: Employee) => void; onAdd: () => void }) {
+function EmployeeList({ employees }: { employees: Employee[] }) {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
 
   const filtered = useMemo(() => employees.filter(e => {
     const q = search.toLowerCase();
-    const m = !q || e.firstName.toLowerCase().includes(q) || e.lastName.toLowerCase().includes(q) || e.employeeId.toLowerCase().includes(q) || e.email.toLowerCase().includes(q);
+    const m = !q || e.firstName.toLowerCase().includes(q) || e.lastName.toLowerCase().includes(q) || e.employeeId.toLowerCase().includes(q);
     return m && (deptFilter === "All" || e.department === deptFilter) && (statusFilter === "All" || e.status === statusFilter);
   }), [employees, search, deptFilter, statusFilter]);
 
@@ -337,9 +362,9 @@ function EmployeeList({ employees, onSelect, onAdd }: { employees: Employee[]; o
     <div className="space-y-4 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-foreground">Active Employees ▾</h2>
-        <button onClick={onAdd} className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90">
+        <Link to="/payroll/employees/add" className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90">
           <UserPlus className="w-3.5 h-3.5" /> Add Employee
-        </button>
+        </Link>
       </div>
 
       <div className="flex items-center gap-3">
@@ -369,27 +394,23 @@ function EmployeeList({ employees, onSelect, onAdd }: { employees: Employee[]; o
           <tbody>
             {filtered.map(emp => {
               const fullName = [emp.firstName, emp.middleName, emp.lastName].filter(Boolean).join(" ");
-              const colors = ["bg-primary/20 text-primary", "bg-success/20 text-success", "bg-warning/20 text-warning", "bg-info/20 text-info", "bg-destructive/20 text-destructive"];
-              const colorIdx = emp.firstName.charCodeAt(0) % colors.length;
+              const colors = ["bg-primary/20 text-primary", "bg-success/20 text-success", "bg-warning/20 text-warning", "bg-info/20 text-info"];
+              const cIdx = emp.firstName.charCodeAt(0) % colors.length;
               return (
-                <tr key={emp.id} className="border-b border-border hover:bg-accent/50 cursor-pointer" onClick={() => onSelect(emp)}>
+                <tr key={emp.id} className="border-b border-border hover:bg-accent/50 cursor-pointer">
                   <td className="px-4 py-3"><input type="checkbox" className="rounded border-border" onClick={e => e.stopPropagation()} /></td>
                   <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colors[colorIdx]}`}>{emp.firstName[0]}</div>
+                    <Link to={`/payroll/employees/${emp.id}`} className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colors[cIdx]}`}>{emp.firstName[0]}</div>
                       <div>
-                        <p className="font-semibold text-primary cursor-pointer">{fullName} - {emp.employeeId}</p>
+                        <p className="font-semibold text-primary hover:underline">{fullName} - {emp.employeeId}</p>
                         <p className="text-[10px] text-muted-foreground">{emp.designation}</p>
                       </div>
-                    </div>
+                    </Link>
                   </td>
-                  <td className="px-4 py-3">
-                    <Badge variant={emp.employmentType === "seafarer" ? "default" : "secondary"} className="text-[10px]">{emp.employmentType === "seafarer" ? "Seafarer" : "Shore"}</Badge>
-                  </td>
+                  <td className="px-4 py-3"><Badge variant={emp.employmentType === "seafarer" ? "default" : "secondary"} className="text-[10px]">{emp.employmentType === "seafarer" ? "Seafarer" : "Shore"}</Badge></td>
                   <td className="px-4 py-3 text-primary">{emp.email}</td>
-                  <td className="px-4 py-3">
-                    <Badge variant={emp.status === "Active" ? "default" : emp.status === "On Leave" ? "secondary" : "destructive"} className="text-[10px]">{emp.status}</Badge>
-                  </td>
+                  <td className="px-4 py-3"><Badge variant={emp.status === "Active" ? "default" : emp.status === "On Leave" ? "secondary" : "destructive"} className="text-[10px]">{emp.status}</Badge></td>
                 </tr>
               );
             })}
@@ -401,9 +422,17 @@ function EmployeeList({ employees, onSelect, onAdd }: { employees: Employee[]; o
 }
 
 // ═══════════════════════════════════════════════════════
-// EMPLOYEE PROFILE
+// EMPLOYEE PROFILE ROUTE
 // ═══════════════════════════════════════════════════════
-function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () => void }) {
+function EmployeeProfileRoute({ employees }: { employees: Employee[] }) {
+  const location = useLocation();
+  const id = location.pathname.split("/").pop();
+  const emp = employees.find(e => e.id === id);
+  if (!emp) return <PlaceholderPage title="Employee Not Found" description="The requested employee could not be found." />;
+  return <EmployeeProfile employee={emp} />;
+}
+
+function EmployeeProfile({ employee }: { employee: Employee }) {
   const [tab, setTab] = useState<"overview" | "salary" | "seafarer" | "investments" | "payslips" | "loans">("overview");
   const fullName = [employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(" ");
   const tabs = employee.employmentType === "seafarer"
@@ -415,7 +444,7 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
     <div className="space-y-4 animate-fade-in-up">
       <div className="card-elevated p-5">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></button>
+          <Link to="/payroll/employees" className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></Link>
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">{employee.firstName[0]}</div>
           <div>
             <div className="flex items-center gap-2">
@@ -571,156 +600,10 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
 }
 
 // ═══════════════════════════════════════════════════════
-// DOCUMENTS & CERTIFICATES
-// ═══════════════════════════════════════════════════════
-function DocumentsPage({ employees }: { employees: Employee[] }) {
-  const allCerts = useMemo(() => {
-    const certs: { employee: Employee; cert: NonNullable<Employee["certificates"]>[0] }[] = [];
-    employees.forEach(e => e.certificates?.forEach(c => certs.push({ employee: e, cert: c })));
-    return certs;
-  }, [employees]);
-
-  const stats = { total: allCerts.length, valid: allCerts.filter(c => c.cert.status === "Valid").length, expiring: allCerts.filter(c => c.cert.status === "Expiring").length, expired: allCerts.filter(c => c.cert.status === "Expired").length };
-
-  return (
-    <div className="space-y-5 animate-fade-in-up">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold text-foreground">Documents & Certificates</h2>
-        <button className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Upload className="w-3.5 h-3.5" /> Upload Document</button>
-      </div>
-
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: "Total Certificates", value: stats.total, icon: FileCheck, color: "text-primary" },
-          { label: "Valid", value: stats.valid, icon: Check, color: "text-success" },
-          { label: "Expiring Soon", value: stats.expiring, icon: Clock, color: "text-warning" },
-          { label: "Expired", value: stats.expired, icon: AlertTriangle, color: "text-destructive" },
-        ].map((k, i) => (
-          <div key={i} className="card-elevated p-4">
-            <div className="flex items-center justify-between mb-2"><p className="text-[11px] font-medium text-muted-foreground">{k.label}</p><k.icon className={`w-4 h-4 ${k.color}`} /></div>
-            <p className="text-xl font-bold font-mono text-foreground">{k.value}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="card-elevated overflow-hidden">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-muted border-b border-border">
-              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
-              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Certificate</th>
-              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Number</th>
-              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Issue Date</th>
-              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Expiry Date</th>
-              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allCerts.map((item, i) => (
-              <tr key={i} className="border-b border-border hover:bg-accent/50">
-                <td className="px-4 py-3 font-semibold text-foreground">{item.employee.firstName} {item.employee.lastName}</td>
-                <td className="px-4 py-3 text-foreground">{item.cert.name}</td>
-                <td className="px-4 py-3 font-mono text-muted-foreground">{item.cert.number}</td>
-                <td className="px-4 py-3 text-foreground">{item.cert.issueDate}</td>
-                <td className="px-4 py-3 text-foreground">{item.cert.expiryDate}</td>
-                <td className="px-4 py-3">
-                  <Badge variant={item.cert.status === "Valid" ? "default" : item.cert.status === "Expiring" ? "secondary" : "destructive"} className="text-[10px]">{item.cert.status}</Badge>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════
 // PAY RUNS
 // ═══════════════════════════════════════════════════════
 function PayRunsPage() {
   const [tab, setTab] = useState<"run" | "history">("run");
-  const [selectedRun, setSelectedRun] = useState<typeof payrollHistory[0] | null>(null);
-
-  if (selectedRun) {
-    return (
-      <div className="space-y-5 animate-fade-in-up">
-        <div className="flex items-center gap-3">
-          <button onClick={() => setSelectedRun(null)} className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></button>
-          <h2 className="text-lg font-bold text-foreground">{selectedRun.type}</h2>
-          <Badge className="text-[10px] bg-success text-success-foreground">{selectedRun.status}</Badge>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div className="card-elevated p-4">
-            <p className="text-[10px] text-primary uppercase font-semibold">Period: {selectedRun.details.split("\n")[0].split(" - ")[0].split("/").reverse().join("/")}</p>
-            <p className="text-[10px] text-muted-foreground">28 Base Days</p>
-            <div className="flex gap-6 mt-2">
-              <div><p className="text-base font-bold font-mono">{fmt(selectedRun.payrollCost)}</p><p className="text-[9px] text-muted-foreground uppercase">Payroll Cost</p></div>
-              <div><p className="text-base font-bold font-mono">{fmt(selectedRun.netPay)}</p><p className="text-[9px] text-muted-foreground uppercase">Total Net Pay</p></div>
-            </div>
-            <button className="text-[10px] text-primary font-medium mt-2 flex items-center gap-1"><Download className="w-3 h-3" /> Download Bank Advice</button>
-          </div>
-          <div className="card-elevated p-4 flex flex-col items-center justify-center text-center">
-            <p className="text-[10px] text-muted-foreground uppercase">Pay Day</p>
-            <p className="text-3xl font-bold text-foreground">{selectedRun.date.split("/")[0]}</p>
-            <p className="text-xs text-muted-foreground">{selectedRun.date.split("/").slice(1).join("/")}</p>
-            <p className="text-xs text-foreground mt-2">{selectedRun.employees} Employees</p>
-          </div>
-          <div className="card-elevated p-4">
-            <p className="text-sm font-bold text-foreground mb-2">Taxes & Deductions</p>
-            <div className="space-y-1.5 text-xs">
-              <div className="flex justify-between"><span className="text-muted-foreground">Taxes</span><span className="font-mono">{fmt(0)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Benefits</span><span className="font-mono">{fmt(49554.07)}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Total Deductions</span><span className="font-mono">{fmt(7080)}</span></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Employee Summary Table */}
-        <div className="card-elevated overflow-hidden">
-          <div className="px-4 py-3 border-b border-border flex items-center gap-4">
-            <button className="text-xs font-medium text-foreground border-b-2 border-primary pb-1">Employee Summary</button>
-            <button className="text-xs font-medium text-muted-foreground pb-1">Taxes & Deductions</button>
-            <button className="text-xs font-medium text-muted-foreground pb-1">Overall Insights</button>
-          </div>
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-muted border-b border-border">
-                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
-                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
-                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
-                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
-                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payslip</th>
-                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Mode</th>
-                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { name: "Sujit Kumar Jha (0007)", days: 28, net: 90000 },
-                { name: "Kajal Shrivas (0003)", days: 28, net: 76400 },
-                { name: "Ankita Sharma (0004)", days: 28, net: 17400 },
-                { name: "Mandeep Kaur (0005)", days: 28, net: 21000 },
-                { name: "Shubham Singh (0006)", days: 28, net: 76400 },
-                { name: "Sneha Kanojia (0008)", days: 28, net: 56400 },
-              ].map((row, i) => (
-                <tr key={i} className="border-b border-border hover:bg-accent/50">
-                  <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-border" /></td>
-                  <td className="px-4 py-2.5 text-foreground">{row.name}</td>
-                  <td className="px-4 py-2.5 text-center">{row.days}</td>
-                  <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(row.net)}</td>
-                  <td className="px-4 py-2.5 text-center"><span className="text-primary cursor-pointer">View 📧</span></td>
-                  <td className="px-4 py-2.5">Manual Bank Transfer</td>
-                  <td className="px-4 py-2.5 text-success text-[10px]">Paid on {selectedRun.date}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-5 animate-fade-in-up">
@@ -765,8 +648,10 @@ function PayRunsPage() {
             </thead>
             <tbody>
               {payrollHistory.map(run => (
-                <tr key={run.id} className="border-b border-border hover:bg-accent/50 cursor-pointer" onClick={() => setSelectedRun(run)}>
-                  <td className="px-4 py-3 text-foreground">{run.date}</td>
+                <tr key={run.id} className="border-b border-border hover:bg-accent/50 cursor-pointer">
+                  <td className="px-4 py-3 text-foreground">
+                    <Link to={`/payroll/pay-runs/${run.id}`} className="hover:underline">{run.date}</Link>
+                  </td>
                   <td className="px-4 py-3 text-primary font-medium">{run.type}</td>
                   <td className="px-4 py-3 text-primary">{run.details.split("\n").map((l, i) => <span key={i} className={i > 0 ? "block text-muted-foreground" : ""}>{l}</span>)}</td>
                   <td className="px-4 py-3"><span className="text-success font-medium">{run.status}</span></td>
@@ -780,16 +665,103 @@ function PayRunsPage() {
   );
 }
 
+// PAY RUN DETAIL
+function PayRunDetailRoute() {
+  const location = useLocation();
+  const id = location.pathname.split("/").pop();
+  const run = payrollHistory.find(r => r.id === id);
+  if (!run) return <PlaceholderPage title="Pay Run Not Found" description="The requested pay run could not be found." />;
+
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <div className="flex items-center gap-3">
+        <Link to="/payroll/pay-runs" className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></Link>
+        <h2 className="text-lg font-bold text-foreground">{run.type}</h2>
+        <Badge className="text-[10px] bg-success/10 text-success border-success/30">{run.status}</Badge>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div className="card-elevated p-4">
+          <p className="text-[10px] text-primary uppercase font-semibold">Period</p>
+          <p className="text-xs text-muted-foreground">28 Base Days</p>
+          <div className="flex gap-6 mt-2">
+            <div><p className="text-base font-bold font-mono">{fmt(run.payrollCost)}</p><p className="text-[9px] text-muted-foreground uppercase">Payroll Cost</p></div>
+            <div><p className="text-base font-bold font-mono">{fmt(run.netPay)}</p><p className="text-[9px] text-muted-foreground uppercase">Total Net Pay</p></div>
+          </div>
+          <button className="text-[10px] text-primary font-medium mt-2 flex items-center gap-1"><Download className="w-3 h-3" /> Download Bank Advice</button>
+        </div>
+        <div className="card-elevated p-4 flex flex-col items-center justify-center text-center">
+          <p className="text-[10px] text-muted-foreground uppercase">Pay Day</p>
+          <p className="text-3xl font-bold text-foreground">{run.date.split("/")[0]}</p>
+          <p className="text-xs text-muted-foreground">{run.date.split("/").slice(1).join("/")}</p>
+          <p className="text-xs text-foreground mt-2">{run.employees} Employees</p>
+        </div>
+        <div className="card-elevated p-4">
+          <p className="text-sm font-bold text-foreground mb-2">Taxes & Deductions</p>
+          <div className="space-y-1.5 text-xs">
+            <div className="flex justify-between"><span className="text-muted-foreground">Taxes</span><span className="font-mono">{fmt(0)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Benefits</span><span className="font-mono">{fmt(49554.07)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Total Deductions</span><span className="font-mono">{fmt(7080)}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="card-elevated overflow-hidden">
+        <div className="px-4 py-3 border-b border-border flex items-center gap-4">
+          <button className="text-xs font-medium text-foreground border-b-2 border-primary pb-1">Employee Summary</button>
+          <button className="text-xs font-medium text-muted-foreground pb-1">Taxes & Deductions</button>
+          <button className="text-xs font-medium text-muted-foreground pb-1">Overall Insights</button>
+        </div>
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="bg-muted border-b border-border">
+              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
+              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
+              <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
+              <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
+              <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payslip</th>
+              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Mode</th>
+              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { name: "Sujit Kumar Jha (0007)", days: 28, net: 90000 },
+              { name: "Kajal Shrivas (0003)", days: 28, net: 76400 },
+              { name: "Ankita Sharma (0004)", days: 28, net: 17400 },
+              { name: "Mandeep Kaur (0005)", days: 28, net: 21000 },
+              { name: "Shubham Singh (0006)", days: 28, net: 76400 },
+              { name: "Sneha Kanojia (0008)", days: 28, net: 56400 },
+            ].map((row, i) => (
+              <tr key={i} className="border-b border-border hover:bg-accent/50">
+                <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-border" /></td>
+                <td className="px-4 py-2.5 text-foreground">{row.name}</td>
+                <td className="px-4 py-2.5 text-center">{row.days}</td>
+                <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(row.net)}</td>
+                <td className="px-4 py-2.5 text-center"><span className="text-primary cursor-pointer">View 📧</span></td>
+                <td className="px-4 py-2.5">Manual Bank Transfer</td>
+                <td className="px-4 py-2.5 text-success text-[10px]">Paid on {run.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════
 // TAXES & FORMS
 // ═══════════════════════════════════════════════════════
 function TaxesFormsPage() {
-  const [subPage, setSubPage] = useState<"tds" | "challans" | "form24q" | "form16">("tds");
+  const location = useLocation();
+  const tabFromUrl = location.pathname.split("/").pop();
+  const [subPage, setSubPage] = useState<string>(["tds", "challans", "form24q", "form16"].includes(tabFromUrl || "") ? tabFromUrl! : "tds");
   const subItems = [
-    { id: "tds" as const, label: "TDS Liabilities" },
-    { id: "challans" as const, label: "Challans" },
-    { id: "form24q" as const, label: "Form 24Q" },
-    { id: "form16" as const, label: "Form 16" },
+    { id: "tds", label: "TDS Liabilities" },
+    { id: "challans", label: "Challans" },
+    { id: "form24q", label: "Form 24Q" },
+    { id: "form16", label: "Form 16" },
   ];
 
   return (
@@ -797,9 +769,10 @@ function TaxesFormsPage() {
       <h2 className="text-lg font-bold text-foreground">Taxes & Forms</h2>
       <div className="flex items-center gap-1 border-b border-border">
         {subItems.map(s => (
-          <button key={s.id} onClick={() => setSubPage(s.id)} className={`px-4 py-2 text-xs font-medium border-b-2 -mb-px ${subPage === s.id ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+          <Link key={s.id} to={`/payroll/taxes/${s.id}`} onClick={() => setSubPage(s.id)}
+            className={`px-4 py-2 text-xs font-medium border-b-2 -mb-px ${subPage === s.id ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
             {s.label}
-          </button>
+          </Link>
         ))}
       </div>
 
@@ -828,7 +801,7 @@ function TaxesFormsPage() {
           </div>
         </div>
       )}
-      {subPage !== "tds" && <PlaceholderPage title={subItems.find(s => s.id === subPage)?.label || ""} description={`${subItems.find(s => s.id === subPage)?.label} management will be available here.`} icon={Receipt} />}
+      {subPage !== "tds" && <PlaceholderPage title={subItems.find(s => s.id === subPage)?.label || ""} description={`${subItems.find(s => s.id === subPage)?.label} management will be available here.`} />}
     </div>
   );
 }
@@ -836,7 +809,7 @@ function TaxesFormsPage() {
 // ═══════════════════════════════════════════════════════
 // LOANS
 // ═══════════════════════════════════════════════════════
-function LoansPage({ employees }: { employees: Employee[] }) {
+function LoansPage() {
   return (
     <div className="space-y-5 animate-fade-in-up">
       <div className="flex items-center justify-between">
@@ -858,7 +831,8 @@ function LoansPage({ employees }: { employees: Employee[] }) {
 type WizardStep = 1 | 2 | 3 | 4;
 const stepLabels = ["Basic Details", "Salary Details", "Personal Details", "Payment Information"];
 
-function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (e: Employee) => void }) {
+function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
+  const navigate = useNavigate();
   const [step, setStep] = useState<WizardStep>(1);
   const [form, setForm] = useState({
     firstName: "", middleName: "", lastName: "", employeeId: "", dateOfJoining: "",
@@ -907,7 +881,7 @@ function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (
     <div className="space-y-5 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-foreground">Add Employee</h2>
-        <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-accent"><X className="w-4 h-4" /></button>
+        <Link to="/payroll/employees" className="p-1.5 rounded-lg hover:bg-accent"><X className="w-4 h-4" /></Link>
       </div>
 
       {/* Stepper */}
@@ -930,7 +904,6 @@ function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (
         })}
       </div>
 
-      {/* Step Content */}
       <div className="card-elevated p-6 space-y-5">
         {step === 1 && (
           <div className="space-y-4">
@@ -981,7 +954,7 @@ function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (
               <ToggleItem label="Labour Welfare Fund" checked={form.lwf} onChange={v => u("lwf", v)} />
             </div>
             <div className="rounded-xl border border-border p-5 space-y-4">
-              <div><h3 className="text-sm font-bold text-foreground">Salary Structure</h3><p className="text-xs text-muted-foreground mt-0.5">Set how the employee's salary is divided.</p></div>
+              <div><h3 className="text-sm font-bold text-foreground">Salary Structure</h3></div>
               <div className="flex items-center gap-3">
                 <span className="text-xs font-semibold text-destructive">Annual CTC *</span>
                 <div className="flex items-center border border-border rounded-lg overflow-hidden">
@@ -1088,11 +1061,10 @@ function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (
         )}
       </div>
 
-      {/* Footer */}
       <div className="flex items-center justify-between">
         <div>{step > 1 && <button onClick={() => setStep((step - 1) as WizardStep)} className="px-4 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent"><ChevronLeft className="w-3 h-3 inline mr-1" />Back</button>}</div>
         <div className="flex items-center gap-2">
-          <button onClick={onClose} className="px-4 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent">Cancel</button>
+          <Link to="/payroll/employees" className="px-4 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent">Cancel</Link>
           {step < 4 ? (
             <button onClick={() => canNext() && setStep((step + 1) as WizardStep)} disabled={!canNext()} className="px-4 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50">Save and Continue</button>
           ) : (
@@ -1105,12 +1077,11 @@ function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (
 }
 
 // ═══════════════════════════════════════════════════════
-// PLACEHOLDER PAGE
+// PLACEHOLDER
 // ═══════════════════════════════════════════════════════
-function PlaceholderPage({ title, description, icon: Icon }: { title: string; description: string; icon: typeof LayoutDashboard }) {
+function PlaceholderPage({ title, description }: { title: string; description: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
-      <Icon className="w-16 h-16 text-muted-foreground/20 mb-4" />
       <h2 className="text-lg font-bold text-foreground mb-2">{title}</h2>
       <p className="text-sm text-muted-foreground max-w-md">{description}</p>
     </div>
