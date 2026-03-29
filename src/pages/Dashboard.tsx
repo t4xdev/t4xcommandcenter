@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
   ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
-  Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3,
+  Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3, Wallet,
 } from "lucide-react";
 import IotDashboard from "@/pages/IotDashboard";
 import SurveyPlanner from "@/pages/SurveyPlanner";
-import CrewManagement from "@/pages/CrewManagement";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend,
@@ -136,7 +136,8 @@ export default function Dashboard() {
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [activeView, setActiveView] = useState<"dashboard" | "iot" | "survey" | "crew">("dashboard");
+  const [activeView, setActiveView] = useState<"dashboard" | "iot" | "survey">("dashboard");
+  const navigate = useNavigate();
   const chatEndRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -220,9 +221,9 @@ export default function Dashboard() {
               <ClipboardList className="w-3.5 h-3.5" />
               Survey Planner
             </button>
-            <button onClick={() => setActiveView("crew")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "crew" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
-              <HardHat className="w-3.5 h-3.5" />
-              Crew
+            <button onClick={() => navigate("/payroll")} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-muted-foreground hover:text-foreground">
+              <Wallet className="w-3.5 h-3.5" />
+              Payroll
             </button>
           </div>
 
@@ -244,8 +245,6 @@ export default function Dashboard() {
           <IotDashboard fleet={selectedFleet} />
         ) : activeView === "survey" ? (
           <SurveyPlanner />
-        ) : activeView === "crew" ? (
-          <CrewManagement />
         ) : (
           <div className="space-y-5 animate-fade-in-up">
             {/* Vessel Strip */}
