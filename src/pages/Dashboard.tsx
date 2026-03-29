@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
   ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
-  Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3,
+  Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3, Wallet,
 } from "lucide-react";
 import IotDashboard from "@/pages/IotDashboard";
 import SurveyPlanner from "@/pages/SurveyPlanner";
-import CrewManagement from "@/pages/CrewManagement";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend,
