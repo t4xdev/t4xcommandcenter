@@ -221,9 +221,9 @@ export default function Dashboard() {
               <ClipboardList className="w-3.5 h-3.5" />
               Survey Planner
             </button>
-            <button onClick={() => setActiveView("crew")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "crew" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
-              <HardHat className="w-3.5 h-3.5" />
-              Crew
+            <button onClick={() => navigate("/payroll")} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-muted-foreground hover:text-foreground">
+              <Wallet className="w-3.5 h-3.5" />
+              Payroll
             </button>
           </div>
 
@@ -245,8 +245,6 @@ export default function Dashboard() {
           <IotDashboard fleet={selectedFleet} />
         ) : activeView === "survey" ? (
           <SurveyPlanner />
-        ) : activeView === "crew" ? (
-          <CrewManagement />
         ) : (
           <div className="space-y-5 animate-fade-in-up">
             {/* Vessel Strip */}
