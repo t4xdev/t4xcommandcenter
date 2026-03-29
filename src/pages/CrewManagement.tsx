@@ -3,43 +3,30 @@ import {
   Users, UserPlus, Search, ChevronRight, ChevronLeft, Edit2, X, Check,
   Phone, Mail, MapPin, Building2, Calendar, CreditCard, Shield, IndianRupee,
   FileText, AlertTriangle, Eye, EyeOff, Plus, Trash2, Filter,
+  LayoutDashboard, Wallet, CheckSquare, Receipt, Landmark, BarChart3,
+  Settings, HelpCircle, Award, Upload, Download, Clock, ChevronDown,
+  FileCheck, Anchor, TrendingUp, TrendingDown, CircleDollarSign,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
+} from "recharts";
 
 // ─── Types ───
 interface Employee {
-  id: string;
-  employeeId: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  email: string;
-  mobile?: string;
-  gender: "Male" | "Female" | "Other";
-  dateOfJoining: string;
-  designation: string;
-  department: string;
-  workLocation: string;
-  status: "Active" | "Inactive" | "On Leave";
-  portalAccess: boolean;
-  dob?: string;
-  fatherName?: string;
-  pan?: string;
-  personalEmail?: string;
+  id: string; employeeId: string; firstName: string; middleName?: string; lastName: string;
+  email: string; mobile?: string; gender: "Male" | "Female" | "Other";
+  dateOfJoining: string; designation: string; department: string; workLocation: string;
+  status: "Active" | "Inactive" | "On Leave"; portalAccess: boolean;
+  employmentType: "shore" | "seafarer"; rank?: string; vessel?: string; contractPeriod?: string;
+  dob?: string; fatherName?: string; pan?: string; personalEmail?: string;
   address?: { line1: string; line2?: string; city: string; state: string; pin: string };
-  epf: boolean;
-  esi: boolean;
-  lwf: boolean;
-  pfAccountNumber?: string;
-  uan?: string;
+  epf: boolean; esi: boolean; lwf: boolean; pfAccountNumber?: string; uan?: string;
   annualCTC: number;
   salaryComponents: { name: string; type: string; monthlyAmount: number; annualAmount: number }[];
-  bankName?: string;
-  accountNumber?: string;
-  ifsc?: string;
-  accountType?: "Current" | "Savings";
-  accountHolderName?: string;
-  paymentMode: "Bank Transfer" | "Cheque" | "Cash";
+  bankName?: string; accountNumber?: string; ifsc?: string; accountType?: "Current" | "Savings";
+  accountHolderName?: string; paymentMode: "Bank Transfer" | "Cheque" | "Cash";
+  certificates?: { name: string; number: string; issueDate: string; expiryDate: string; status: "Valid" | "Expiring" | "Expired" }[];
 }
 
 // ─── Mock Data ───
@@ -49,6 +36,7 @@ const mockEmployees: Employee[] = [
     email: "rajesh.sharma@company.com", mobile: "+91 98765 43210", gender: "Male",
     dateOfJoining: "15/01/2022", designation: "Chief Engineer", department: "Engineering",
     workLocation: "Vessel - MV Dolphin 7", status: "Active", portalAccess: true,
+    employmentType: "seafarer", rank: "Chief Engineer", vessel: "MV Dolphin 7", contractPeriod: "01/2022 - 12/2024",
     dob: "12/05/1985", fatherName: "Suresh Sharma", pan: "ABCDE1234F",
     epf: true, esi: false, lwf: true, pfAccountNumber: "MH/BOM/12345/678", uan: "100987654321",
     annualCTC: 1800000,
@@ -59,15 +47,19 @@ const mockEmployees: Employee[] = [
     ],
     bankName: "State Bank of India", accountNumber: "XXXX6789", ifsc: "SBIN0001234",
     accountType: "Savings", accountHolderName: "Rajesh Kumar Sharma", paymentMode: "Bank Transfer",
+    certificates: [
+      { name: "Certificate of Competency", number: "COC-2019-4567", issueDate: "15/03/2019", expiryDate: "14/03/2025", status: "Expiring" },
+      { name: "STCW Certificate", number: "STCW-2020-1234", issueDate: "01/06/2020", expiryDate: "31/05/2026", status: "Valid" },
+      { name: "Medical Fitness", number: "MED-2024-8901", issueDate: "10/01/2024", expiryDate: "09/01/2026", status: "Valid" },
+    ],
   },
   {
     id: "2", employeeId: "EMP002", firstName: "Priya", lastName: "Patel",
     email: "priya.patel@company.com", mobile: "+91 87654 32109", gender: "Female",
     dateOfJoining: "01/03/2023", designation: "Navigation Officer", department: "Operations",
     workLocation: "Vessel - MV Baitarani", status: "Active", portalAccess: true,
-    dob: "22/08/1990", fatherName: "Amit Patel", pan: "FGHIJ5678K",
-    epf: true, esi: true, lwf: false,
-    annualCTC: 1200000,
+    employmentType: "seafarer", rank: "2nd Officer", vessel: "MV Baitarani",
+    epf: true, esi: true, lwf: false, annualCTC: 1200000,
     salaryComponents: [
       { name: "Basic", type: "Fixed amount", monthlyAmount: 50000, annualAmount: 600000 },
       { name: "HRA", type: "% of Basic", monthlyAmount: 25000, annualAmount: 300000 },
@@ -75,28 +67,35 @@ const mockEmployees: Employee[] = [
     ],
     bankName: "HDFC Bank", accountNumber: "XXXX4567", ifsc: "HDFC0005678",
     accountType: "Savings", accountHolderName: "Priya Patel", paymentMode: "Bank Transfer",
+    certificates: [
+      { name: "Certificate of Competency", number: "COC-2021-7890", issueDate: "10/02/2021", expiryDate: "09/02/2027", status: "Valid" },
+      { name: "GMDSS Certificate", number: "GMDSS-2022-3456", issueDate: "15/08/2022", expiryDate: "14/08/2027", status: "Valid" },
+    ],
   },
   {
     id: "3", employeeId: "EMP003", firstName: "Arun", lastName: "Nair",
     email: "arun.nair@company.com", gender: "Male",
     dateOfJoining: "10/06/2021", designation: "Deck Officer", department: "Operations",
     workLocation: "Head Office - Mumbai", status: "On Leave", portalAccess: false,
-    epf: true, esi: false, lwf: true,
-    annualCTC: 960000,
+    employmentType: "seafarer", rank: "3rd Officer",
+    epf: true, esi: false, lwf: true, annualCTC: 960000,
     salaryComponents: [
       { name: "Basic", type: "Fixed amount", monthlyAmount: 40000, annualAmount: 480000 },
       { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 40000, annualAmount: 480000 },
     ],
     bankName: "ICICI Bank", accountNumber: "XXXX8901", ifsc: "ICIC0002345",
     accountType: "Current", accountHolderName: "Arun Nair", paymentMode: "Bank Transfer",
+    certificates: [
+      { name: "Medical Fitness", number: "MED-2023-5678", issueDate: "05/04/2023", expiryDate: "04/04/2025", status: "Expired" },
+    ],
   },
   {
     id: "4", employeeId: "EMP004", firstName: "Sunita", lastName: "Reddy",
     email: "sunita.reddy@company.com", mobile: "+91 76543 21098", gender: "Female",
     dateOfJoining: "20/09/2020", designation: "Safety Officer", department: "QHSE",
     workLocation: "Vessel - MV Kaveri", status: "Active", portalAccess: true,
-    epf: true, esi: true, lwf: true,
-    annualCTC: 1500000,
+    employmentType: "seafarer", rank: "Safety Officer", vessel: "MV Kaveri",
+    epf: true, esi: true, lwf: true, annualCTC: 1500000,
     salaryComponents: [
       { name: "Basic", type: "Fixed amount", monthlyAmount: 62500, annualAmount: 750000 },
       { name: "HRA", type: "% of Basic", monthlyAmount: 31250, annualAmount: 375000 },
@@ -104,14 +103,18 @@ const mockEmployees: Employee[] = [
     ],
     bankName: "Axis Bank", accountNumber: "XXXX2345", ifsc: "UTIB0003456",
     accountType: "Savings", accountHolderName: "Sunita Reddy", paymentMode: "Bank Transfer",
+    certificates: [
+      { name: "STCW Certificate", number: "STCW-2020-9999", issueDate: "20/09/2020", expiryDate: "19/09/2025", status: "Expiring" },
+      { name: "Certificate of Competency", number: "COC-2018-1111", issueDate: "01/01/2018", expiryDate: "31/12/2027", status: "Valid" },
+    ],
   },
   {
     id: "5", employeeId: "EMP005", firstName: "Mohammed", lastName: "Khan",
     email: "mohammed.khan@company.com", mobile: "+91 65432 10987", gender: "Male",
     dateOfJoining: "05/11/2019", designation: "General Manager", department: "Management",
     workLocation: "Head Office - Mumbai", status: "Active", portalAccess: true,
-    epf: true, esi: false, lwf: true, pan: "KLMNO9012P",
-    annualCTC: 2400000,
+    employmentType: "shore", pan: "KLMNO9012P",
+    epf: true, esi: false, lwf: true, annualCTC: 2400000,
     salaryComponents: [
       { name: "Basic", type: "Fixed amount", monthlyAmount: 100000, annualAmount: 1200000 },
       { name: "HRA", type: "% of Basic", monthlyAmount: 50000, annualAmount: 600000 },
@@ -125,320 +128,295 @@ const mockEmployees: Employee[] = [
     email: "deepak.verma@company.com", gender: "Male",
     dateOfJoining: "14/02/2024", designation: "Junior Engineer", department: "Engineering",
     workLocation: "Vessel - MV Dolphin 7", status: "Active", portalAccess: false,
-    epf: true, esi: true, lwf: false,
-    annualCTC: 600000,
+    employmentType: "seafarer", rank: "Junior Engineer", vessel: "MV Dolphin 7",
+    epf: true, esi: true, lwf: false, annualCTC: 600000,
     salaryComponents: [
       { name: "Basic", type: "Fixed amount", monthlyAmount: 25000, annualAmount: 300000 },
       { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 25000, annualAmount: 300000 },
     ],
     paymentMode: "Bank Transfer",
+    certificates: [
+      { name: "STCW Certificate", number: "STCW-2024-5555", issueDate: "01/02/2024", expiryDate: "31/01/2029", status: "Valid" },
+    ],
   },
+];
+
+const payrollHistory = [
+  { id: "1", date: "27/02/2026", type: "Regular Payroll", details: "01/02/2026 - 28/02/2026", status: "Paid", payrollCost: 1107594.07, netPay: 1050960, employees: 16 },
+  { id: "2", date: "27/02/2026", type: "Bulk Final Settlement", details: "01/02/2026 - 28/02/2026", status: "Paid", payrollCost: 245000, netPay: 232000, employees: 3 },
+  { id: "3", date: "30/01/2026", type: "Regular Payroll", details: "01/01/2026 - 31/01/2026", status: "Paid", payrollCost: 1085000, netPay: 1028000, employees: 16 },
+  { id: "4", date: "31/12/2025", type: "Regular Payroll", details: "01/12/2025 - 31/12/2025", status: "Paid", payrollCost: 1072000, netPay: 1015000, employees: 15 },
+  { id: "5", date: "29/12/2025", type: "Final Settlement", details: "01/12/2025 - 29/12/2025\nEmployee: Rajendra Mouli", status: "Paid", payrollCost: 180000, netPay: 165000, employees: 1 },
+  { id: "6", date: "28/11/2025", type: "Regular Payroll", details: "01/11/2025 - 30/11/2025", status: "Paid", payrollCost: 1065000, netPay: 1010000, employees: 15 },
+];
+
+const payrollCostData = [
+  { month: "Apr 2025", cost: 0 }, { month: "May 2025", cost: 0 }, { month: "Jun 2025", cost: 0 },
+  { month: "Jul 2025", cost: 0 }, { month: "Aug 2025", cost: 0 }, { month: "Sep 2025", cost: 0 },
+  { month: "Oct 2025", cost: 0 }, { month: "Nov 2025", cost: 680000 }, { month: "Dec 2025", cost: 750000 },
+  { month: "Jan 2026", cost: 920000 }, { month: "Feb 2026", cost: 1050000 }, { month: "Mar 2026", cost: 1107000 },
 ];
 
 const departments = ["All", "Engineering", "Operations", "QHSE", "Management"];
 const statuses = ["All", "Active", "Inactive", "On Leave"];
+const fmt = (n: number) => "₹" + n.toLocaleString("en-IN");
 
-const formatCurrency = (n: number) => "₹" + n.toLocaleString("en-IN");
+type SidebarPage = "dashboard" | "employees" | "payRuns" | "approvals" | "taxesForms" | "loans" | "reports" | "settings" | "documents";
 
-// ─── Add Employee Wizard ───
-type WizardStep = 1 | 2 | 3 | 4;
-const stepLabels = ["Basic Details", "Salary Details", "Personal Details", "Payment Information"];
+const sidebarItems: { id: SidebarPage; label: string; icon: typeof LayoutDashboard }[] = [
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "employees", label: "Employees", icon: Users },
+  { id: "documents", label: "Documents & Certificates", icon: FileCheck },
+  { id: "payRuns", label: "Pay Runs", icon: Wallet },
+  { id: "approvals", label: "Approvals", icon: CheckSquare },
+  { id: "taxesForms", label: "Taxes & Forms", icon: Receipt },
+  { id: "loans", label: "Loans", icon: Landmark },
+  { id: "reports", label: "Reports", icon: BarChart3 },
+  { id: "settings", label: "Settings", icon: Settings },
+];
 
-function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (e: Employee) => void }) {
-  const [step, setStep] = useState<WizardStep>(1);
-  const [form, setForm] = useState({
-    firstName: "", middleName: "", lastName: "", employeeId: "", dateOfJoining: "",
-    email: "", mobile: "", gender: "Male" as "Male" | "Female" | "Other",
-    workLocation: "Head Office - Mumbai", designation: "", department: "Operations",
-    portalAccess: false, payArrears: false,
-    epf: true, pfAccountNumber: "", uan: "", esi: false, lwf: false,
-    annualCTC: 0, basicMonthly: 0,
-    dob: "", fatherName: "", pan: "", personalEmail: "",
-    addressLine1: "", addressLine2: "", city: "", state: "", pin: "",
-    differentlyAbled: "None",
-    paymentMode: "Bank Transfer" as "Bank Transfer" | "Cheque" | "Cash",
-    accountHolderName: "", bankName: "", accountNumber: "", reAccountNumber: "",
-    ifsc: "", accountType: "Savings" as "Current" | "Savings",
-  });
+const tip = { backgroundColor: "hsl(0, 0%, 100%)", border: "1px solid hsl(220, 15%, 90%)", borderRadius: "8px", fontSize: "12px", color: "hsl(222, 52%, 15%)", boxShadow: "0 4px 12px rgba(0,0,0,0.08)" };
 
-  const u = (key: string, val: any) => setForm(p => ({ ...p, [key]: val }));
-
-  const canNext = () => {
-    if (step === 1) return form.firstName && form.employeeId && form.dateOfJoining && form.email && form.designation;
-    if (step === 2) return true;
-    if (step === 3) return true;
-    return true;
-  };
-
-  const handleSave = () => {
-    const emp: Employee = {
-      id: crypto.randomUUID(), employeeId: form.employeeId,
-      firstName: form.firstName, middleName: form.middleName || undefined, lastName: form.lastName,
-      email: form.email, mobile: form.mobile || undefined, gender: form.gender,
-      dateOfJoining: form.dateOfJoining, designation: form.designation, department: form.department,
-      workLocation: form.workLocation, status: "Active", portalAccess: form.portalAccess,
-      dob: form.dob || undefined, fatherName: form.fatherName || undefined, pan: form.pan || undefined,
-      personalEmail: form.personalEmail || undefined,
-      address: form.addressLine1 ? { line1: form.addressLine1, line2: form.addressLine2, city: form.city, state: form.state, pin: form.pin } : undefined,
-      epf: form.epf, esi: form.esi, lwf: form.lwf,
-      pfAccountNumber: form.pfAccountNumber || undefined, uan: form.uan || undefined,
-      annualCTC: form.annualCTC,
-      salaryComponents: [
-        { name: "Basic", type: "Fixed amount", monthlyAmount: form.basicMonthly, annualAmount: form.basicMonthly * 12 },
-        { name: "Special Allowance", type: "Fixed amount", monthlyAmount: (form.annualCTC / 12) - form.basicMonthly, annualAmount: form.annualCTC - (form.basicMonthly * 12) },
-      ],
-      bankName: form.bankName || undefined, accountNumber: form.accountNumber || undefined,
-      ifsc: form.ifsc || undefined, accountType: form.accountType,
-      accountHolderName: form.accountHolderName || undefined, paymentMode: form.paymentMode,
-    };
-    onSave(emp);
-  };
+// ═══════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════════════════
+export default function CrewManagement() {
+  const [page, setPage] = useState<SidebarPage>("dashboard");
+  const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [showAddWizard, setShowAddWizard] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-start justify-center pt-8 overflow-y-auto">
-      <div className="bg-card rounded-xl border border-border shadow-2xl w-full max-w-3xl mb-8 animate-fade-in-up">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-          <h2 className="text-lg font-bold text-foreground">Add Employee</h2>
-          <button onClick={onClose} className="p-1 rounded hover:bg-accent"><X className="w-4 h-4" /></button>
-        </div>
-
-        {/* Stepper */}
-        <div className="px-6 pt-5 pb-2">
-          <div className="flex items-center justify-between">
-            {stepLabels.map((label, i) => {
-              const s = (i + 1) as WizardStep;
-              const done = step > s;
-              const active = step === s;
-              return (
-                <div key={i} className="flex items-center flex-1 last:flex-none">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${done ? "bg-primary border-primary text-primary-foreground" : active ? "border-primary text-primary bg-primary/10" : "border-muted-foreground/30 text-muted-foreground"}`}>
-                      {done ? <Check className="w-3.5 h-3.5" /> : s}
-                    </div>
-                    <span className={`text-xs font-medium hidden sm:inline ${active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
-                  </div>
-                  {i < 3 && <div className={`flex-1 h-0.5 mx-3 rounded ${done ? "bg-primary" : "bg-border"}`} />}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="px-6 py-5 space-y-5">
-          {step === 1 && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-3">
-                <Field label="First Name" required value={form.firstName} onChange={v => u("firstName", v)} placeholder="First Name" />
-                <Field label="Middle Name" value={form.middleName} onChange={v => u("middleName", v)} placeholder="Middle Name" />
-                <Field label="Last Name" value={form.lastName} onChange={v => u("lastName", v)} placeholder="Last Name" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Employee ID" required value={form.employeeId} onChange={v => u("employeeId", v)} placeholder="EMP001" />
-                <Field label="Date of Joining" required value={form.dateOfJoining} onChange={v => u("dateOfJoining", v)} placeholder="dd/MM/yyyy" />
-              </div>
-              <div className="rounded-lg bg-info/5 border border-info/20 p-3 flex items-start gap-2">
-                <AlertTriangle className="w-4 h-4 text-info mt-0.5 shrink-0" />
-                <p className="text-xs text-info">You may pay the employee's first month salary as arrears in the upcoming pay run.</p>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Work Email" required value={form.email} onChange={v => u("email", v)} placeholder="email@company.com" />
-                <Field label="Mobile Number" value={form.mobile} onChange={v => u("mobile", v)} placeholder="+91 XXXXX XXXXX" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <SelectField label="Gender" required value={form.gender} options={["Male", "Female", "Other"]} onChange={v => u("gender", v)} />
-                <Field label="Work Location" required value={form.workLocation} onChange={v => u("workLocation", v)} />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Designation" required value={form.designation} onChange={v => u("designation", v)} placeholder="e.g. Chief Engineer" />
-                <SelectField label="Department" required value={form.department} options={["Engineering", "Operations", "QHSE", "Management", "Finance", "HR"]} onChange={v => u("department", v)} />
-              </div>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.portalAccess} onChange={e => u("portalAccess", e.target.checked)} className="rounded border-border" />
-                <span className="text-xs font-medium text-foreground">Enable Portal Access</span>
-              </label>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-5">
-              <div className="rounded-xl border border-border p-5 space-y-4">
-                <div>
-                  <h3 className="text-sm font-bold text-foreground">Statutory Components</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">Enable the necessary benefits and tax applicable for this employee.</p>
-                </div>
-                <ToggleItem label="Employees' Provident Fund" checked={form.epf} onChange={v => u("epf", v)}>
-                  {form.epf && (
-                    <div className="grid grid-cols-2 gap-3 mt-3 ml-6">
-                      <Field label="PF Account Number" value={form.pfAccountNumber} onChange={v => u("pfAccountNumber", v)} placeholder="AA/AAA/0000000/XXX/0000000" />
-                      <Field label="UAN" value={form.uan} onChange={v => u("uan", v)} placeholder="000000000000" />
-                    </div>
-                  )}
-                </ToggleItem>
-                <ToggleItem label="Employees' State Insurance" checked={form.esi} onChange={v => u("esi", v)} />
-                <ToggleItem label="Labour Welfare Fund" checked={form.lwf} onChange={v => u("lwf", v)} />
-              </div>
-
-              <div className="rounded-xl border border-border p-5 space-y-4">
-                <div>
-                  <h3 className="text-sm font-bold text-foreground">Salary Structure</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">Set how the employee's salary is divided for accurate pay calculation.</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs font-semibold text-destructive">Annual CTC *</span>
-                  <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                    <span className="px-2 py-1.5 bg-muted text-xs font-medium">₹</span>
-                    <input type="number" value={form.annualCTC || ""} onChange={e => u("annualCTC", Number(e.target.value))} className="px-3 py-1.5 text-sm bg-transparent outline-none w-40" placeholder="0" />
-                    <span className="px-2 py-1.5 text-xs text-muted-foreground">per year</span>
-                  </div>
-                </div>
-                <div className="border border-border rounded-lg overflow-hidden">
-                  <div className="grid grid-cols-4 bg-muted px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    <span>Salary Components</span><span>Calculation Type</span><span className="text-right">Monthly Amount</span><span className="text-right">Annual Amount</span>
-                  </div>
-                  <div className="px-4 py-2 border-t border-border">
-                    <p className="text-xs font-bold text-foreground mb-2">Earnings</p>
-                    <div className="grid grid-cols-4 items-center gap-y-3">
-                      <span className="text-xs text-foreground">Basic</span>
-                      <span className="text-xs text-muted-foreground">Fixed amount</span>
-                      <div className="text-right">
-                        <input type="number" value={form.basicMonthly || ""} onChange={e => u("basicMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" placeholder="0" />
-                      </div>
-                      <span className="text-xs text-right font-mono">{formatCurrency(form.basicMonthly * 12)}</span>
-
-                      <span className="text-xs text-foreground">Special Allowance</span>
-                      <span className="text-xs text-muted-foreground">Fixed amount</span>
-                      <span className="text-xs text-right text-muted-foreground">System Calculated</span>
-                      <span className="text-xs text-right text-muted-foreground">System Calculated</span>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-4 px-4 py-2 bg-primary/5 border-t border-border">
-                    <span className="text-xs font-bold col-span-2">Cost to Company</span>
-                    <span className="text-xs font-bold text-right font-mono">{formatCurrency(form.annualCTC / 12)}</span>
-                    <span className="text-xs font-bold text-right font-mono">{formatCurrency(form.annualCTC)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Date of Birth" value={form.dob} onChange={v => u("dob", v)} placeholder="dd/MM/yyyy" />
-                <Field label="Age" value={form.dob ? "—" : ""} disabled />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Father's Name" value={form.fatherName} onChange={v => u("fatherName", v)} />
-                <Field label="PAN" value={form.pan} onChange={v => u("pan", v)} placeholder="AAAAA0000A" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <SelectField label="Differently Abled Type" value={form.differentlyAbled} options={["None", "Visual", "Hearing", "Locomotor", "Other"]} onChange={v => u("differentlyAbled", v)} />
-                <Field label="Personal Email Address" value={form.personalEmail} onChange={v => u("personalEmail", v)} placeholder="abc@xyz.com" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-medium text-foreground">Residential Address</label>
-                <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="Address Line 1" value={form.addressLine1} onChange={e => u("addressLine1", e.target.value)} />
-                <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="Address Line 2" value={form.addressLine2} onChange={e => u("addressLine2", e.target.value)} />
-                <div className="grid grid-cols-3 gap-3">
-                  <input className="px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="City" value={form.city} onChange={e => u("city", e.target.value)} />
-                  <input className="px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="State" value={form.state} onChange={e => u("state", e.target.value)} />
-                  <input className="px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="PIN Code" value={form.pin} onChange={e => u("pin", e.target.value)} />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="space-y-5">
-              <div>
-                <h3 className="text-sm font-bold text-foreground mb-1">How would you like to pay this employee? *</h3>
-                <div className="border-b border-border" />
-              </div>
-              <div className="space-y-3">
-                {(["Bank Transfer", "Cheque", "Cash"] as const).map(mode => (
-                  <label key={mode} className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${form.paymentMode === mode ? "border-primary bg-primary/5" : "border-border hover:bg-accent/50"}`}>
-                    <div className="flex items-center gap-3">
-                      <CreditCard className="w-4 h-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs font-medium text-foreground">{mode === "Bank Transfer" ? "Bank Transfer (Manual Process)" : mode}</p>
-                        {mode === "Bank Transfer" && <p className="text-[10px] text-primary">Download Bank Advice and process the payment through your bank's website</p>}
-                      </div>
-                    </div>
-                    <input type="radio" checked={form.paymentMode === mode} onChange={() => u("paymentMode", mode)} className="accent-primary" />
-                  </label>
-                ))}
-              </div>
-              {form.paymentMode === "Bank Transfer" && (
-                <div className="space-y-4 mt-4">
-                  <Field label="Account Holder Name" required value={form.accountHolderName} onChange={v => u("accountHolderName", v)} />
-                  <Field label="Bank Name" required value={form.bankName} onChange={v => u("bankName", v)} />
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="Account Number" required value={form.accountNumber} onChange={v => u("accountNumber", v)} type="password" />
-                    <Field label="Re-enter Account Number" required value={form.reAccountNumber} onChange={v => u("reAccountNumber", v)} />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <Field label="IFSC" required value={form.ifsc} onChange={v => u("ifsc", v)} placeholder="AAAA0000000" />
-                    <div>
-                      <label className="text-xs font-medium text-foreground">Account Type *</label>
-                      <div className="flex items-center gap-4 mt-2">
-                        {(["Current", "Savings"] as const).map(t => (
-                          <label key={t} className="flex items-center gap-1.5 cursor-pointer">
-                            <input type="radio" checked={form.accountType === t} onChange={() => u("accountType", t)} className="accent-primary" />
-                            <span className="text-xs">{t}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-border flex items-center justify-between">
+    <div className="flex gap-0 -mx-6 -mt-5 min-h-[calc(100vh-64px)]">
+      {/* Sidebar */}
+      <aside className="w-52 shrink-0 bg-[hsl(222,47%,16%)] text-white flex flex-col">
+        <div className="px-4 py-5 border-b border-white/10">
           <div className="flex items-center gap-2">
-            {step > 1 && (
-              <button onClick={() => setStep((step - 1) as WizardStep)} className="px-4 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent">
-                <ChevronLeft className="w-3 h-3 inline mr-1" />Back
-              </button>
-            )}
+            <Anchor className="w-5 h-5 text-primary" />
+            <span className="text-sm font-bold">Crew & Payroll</span>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={onClose} className="px-4 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent">Cancel</button>
-            {step < 4 ? (
-              <button onClick={() => canNext() && setStep((step + 1) as WizardStep)} disabled={!canNext()} className="px-4 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50">
-                Save and Continue
-              </button>
-            ) : (
-              <button onClick={handleSave} className="px-4 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">
-                Save and Continue
-              </button>
-            )}
-          </div>
-          <p className="text-[10px] text-destructive">* indicates mandatory fields</p>
         </div>
+        <nav className="flex-1 py-2 space-y-0.5 px-2">
+          {sidebarItems.map(item => (
+            <button key={item.id} onClick={() => { setPage(item.id); setSelectedEmployee(null); }}
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${page === item.id ? "bg-primary text-primary-foreground" : "text-white/70 hover:text-white hover:bg-white/10"}`}>
+              <item.icon className="w-4 h-4" />
+              {item.label}
+            </button>
+          ))}
+        </nav>
+        <div className="p-3 border-t border-white/10">
+          <button className="text-[11px] text-white/50 hover:text-white/80 flex items-center gap-1.5">
+            <HelpCircle className="w-3.5 h-3.5" /> Contact Support ›
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 bg-background p-6 overflow-y-auto">
+        {page === "dashboard" && <PayrollDashboard employees={employees} onNavigate={setPage} />}
+        {page === "employees" && !selectedEmployee && !showAddWizard && (
+          <EmployeeList employees={employees} onSelect={setSelectedEmployee} onAdd={() => setShowAddWizard(true)} />
+        )}
+        {page === "employees" && selectedEmployee && (
+          <EmployeeProfile employee={selectedEmployee} onBack={() => setSelectedEmployee(null)} />
+        )}
+        {page === "employees" && showAddWizard && (
+          <AddEmployeeWizard onClose={() => setShowAddWizard(false)} onSave={emp => { setEmployees(p => [...p, emp]); setShowAddWizard(false); }} />
+        )}
+        {page === "documents" && <DocumentsPage employees={employees} />}
+        {page === "payRuns" && <PayRunsPage />}
+        {page === "approvals" && <PlaceholderPage title="Approvals" description="Pending payroll approvals and review queue will appear here." icon={CheckSquare} />}
+        {page === "taxesForms" && <TaxesFormsPage />}
+        {page === "loans" && <LoansPage employees={employees} />}
+        {page === "reports" && <PlaceholderPage title="Reports" description="Generate payroll register, TDS, PF, rank-wise wage reports, vessel-wise payroll, and more." icon={BarChart3} />}
+        {page === "settings" && <PlaceholderPage title="Settings" description="Configure payroll cycles, statutory rates, rank & wage masters, and payment modes." icon={Settings} />}
+      </main>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// PAYROLL DASHBOARD
+// ═══════════════════════════════════════════════════════
+function PayrollDashboard({ employees, onNavigate }: { employees: Employee[]; onNavigate: (p: SidebarPage) => void }) {
+  const activeCount = employees.filter(e => e.status === "Active").length;
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <h2 className="text-lg font-bold text-foreground">Welcome!</h2>
+
+      {/* Upcoming Payrun */}
+      <div className="card-elevated p-5">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Upcoming Payrun</p>
+        <div className="rounded-lg border border-border p-4 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <p className="text-sm font-bold text-foreground">Process Pay Run for March 2026</p>
+              <Badge variant="secondary" className="text-[10px]">DRAFT</Badge>
+            </div>
+            <div className="flex items-center gap-6">
+              <div><p className="text-[10px] text-primary uppercase font-semibold">Employees' Net Pay</p><p className="text-base font-bold font-mono">{fmt(1173528)}</p></div>
+              <div><p className="text-[10px] text-muted-foreground uppercase">Payment Date</p><p className="text-sm font-semibold">31/03/2026</p></div>
+              <div><p className="text-[10px] text-muted-foreground uppercase">No. of Employees</p><p className="text-sm font-semibold">16</p></div>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Please approve this payroll on or before 31/03/2026.</p>
+          </div>
+          <button onClick={() => onNavigate("payRuns")} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90">View Details</button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Benefits & Deductions */}
+        <div className="lg:col-span-2 card-elevated p-5">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-bold text-foreground">Benefits and Deductions</p>
+            <span className="text-xs text-muted-foreground">Previous Month ▾</span>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: "EPF", value: fmt(49554.07), icon: Shield, color: "text-primary bg-primary/10" },
+              { label: "ESI", value: "—", icon: Shield, color: "text-success bg-success/10" },
+              { label: "TDS", value: fmt(0), icon: Receipt, color: "text-warning bg-warning/10" },
+            ].map((item, i) => (
+              <div key={i} className="rounded-lg border border-border p-4">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-2 ${item.color}`}><item.icon className="w-4 h-4" /></div>
+                <p className="text-xs text-muted-foreground">{item.label}</p>
+                <p className="text-base font-bold font-mono text-foreground">{item.value}</p>
+                <button className="text-[10px] text-primary font-medium mt-1">View Details</button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Employee Summary */}
+        <div className="card-elevated p-5 flex flex-col items-center justify-center text-center">
+          <p className="text-sm font-bold text-foreground mb-1">Employee Summary</p>
+          <p className="text-[10px] text-warning uppercase font-bold tracking-wider">ACTIVE EMPLOYEES ⚠</p>
+          <p className="text-5xl font-bold text-primary my-3 font-mono">{activeCount}</p>
+          <button onClick={() => onNavigate("employees")} className="text-xs text-primary font-medium">View Employees</button>
+        </div>
+      </div>
+
+      {/* Payroll Cost Summary */}
+      <div className="card-elevated p-5">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm font-bold text-foreground">Payroll Cost Summary</p>
+          <span className="text-xs text-muted-foreground">This Year ▾</span>
+        </div>
+        <ResponsiveContainer width="100%" height={220}>
+          <BarChart data={payrollCostData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,90%)" />
+            <XAxis dataKey="month" tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" />
+            <YAxis tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" tickFormatter={v => v >= 100000 ? `${(v / 100000).toFixed(0)}L` : `${(v / 1000).toFixed(0)}K`} />
+            <Tooltip contentStyle={tip} formatter={(v: number) => fmt(v)} />
+            <Bar dataKey="cost" radius={[4, 4, 0, 0]}>
+              {payrollCostData.map((_, i) => <Cell key={i} fill={i >= 10 ? "hsl(142,72%,40%)" : "hsl(142,72%,55%)"} />)}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
 }
 
-// ─── Employee Profile View ───
-function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () => void }) {
-  const [activeTab, setActiveTab] = useState<"overview" | "salary" | "investments" | "payslips" | "loans">("overview");
-  const fullName = [employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(" ");
-  const initial = employee.firstName[0];
+// ═══════════════════════════════════════════════════════
+// EMPLOYEE LIST
+// ═══════════════════════════════════════════════════════
+function EmployeeList({ employees, onSelect, onAdd }: { employees: Employee[]; onSelect: (e: Employee) => void; onAdd: () => void }) {
+  const [search, setSearch] = useState("");
+  const [deptFilter, setDeptFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+
+  const filtered = useMemo(() => employees.filter(e => {
+    const q = search.toLowerCase();
+    const m = !q || e.firstName.toLowerCase().includes(q) || e.lastName.toLowerCase().includes(q) || e.employeeId.toLowerCase().includes(q) || e.email.toLowerCase().includes(q);
+    return m && (deptFilter === "All" || e.department === deptFilter) && (statusFilter === "All" || e.status === statusFilter);
+  }), [employees, search, deptFilter, statusFilter]);
 
   return (
     <div className="space-y-4 animate-fade-in-up">
-      {/* Profile Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-foreground">Active Employees ▾</h2>
+        <button onClick={onAdd} className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90">
+          <UserPlus className="w-3.5 h-3.5" /> Add Employee
+        </button>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search in Employee" className="w-full pl-9 pr-3 py-2 text-xs border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none" />
+        </div>
+        <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)} className="px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
+          {departments.map(d => <option key={d}>{d}</option>)}
+        </select>
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
+          {statuses.map(s => <option key={s}>{s}</option>)}
+        </select>
+      </div>
+
+      <div className="card-elevated overflow-hidden">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="bg-muted border-b border-border">
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Type</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Work Email</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map(emp => {
+              const fullName = [emp.firstName, emp.middleName, emp.lastName].filter(Boolean).join(" ");
+              const colors = ["bg-primary/20 text-primary", "bg-success/20 text-success", "bg-warning/20 text-warning", "bg-info/20 text-info", "bg-destructive/20 text-destructive"];
+              const colorIdx = emp.firstName.charCodeAt(0) % colors.length;
+              return (
+                <tr key={emp.id} className="border-b border-border hover:bg-accent/50 cursor-pointer" onClick={() => onSelect(emp)}>
+                  <td className="px-4 py-3"><input type="checkbox" className="rounded border-border" onClick={e => e.stopPropagation()} /></td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colors[colorIdx]}`}>{emp.firstName[0]}</div>
+                      <div>
+                        <p className="font-semibold text-primary cursor-pointer">{fullName} - {emp.employeeId}</p>
+                        <p className="text-[10px] text-muted-foreground">{emp.designation}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <Badge variant={emp.employmentType === "seafarer" ? "default" : "secondary"} className="text-[10px]">{emp.employmentType === "seafarer" ? "Seafarer" : "Shore"}</Badge>
+                  </td>
+                  <td className="px-4 py-3 text-primary">{emp.email}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant={emp.status === "Active" ? "default" : emp.status === "On Leave" ? "secondary" : "destructive"} className="text-[10px]">{emp.status}</Badge>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// EMPLOYEE PROFILE
+// ═══════════════════════════════════════════════════════
+function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () => void }) {
+  const [tab, setTab] = useState<"overview" | "salary" | "seafarer" | "investments" | "payslips" | "loans">("overview");
+  const fullName = [employee.firstName, employee.middleName, employee.lastName].filter(Boolean).join(" ");
+  const tabs = employee.employmentType === "seafarer"
+    ? ["overview", "salary", "seafarer", "investments", "payslips", "loans"] as const
+    : ["overview", "salary", "investments", "payslips", "loans"] as const;
+  const tabLabels: Record<string, string> = { overview: "Overview", salary: "Salary Details", seafarer: "Seafarer Details", investments: "Investments", payslips: "Payslips & Forms", loans: "Loans" };
+
+  return (
+    <div className="space-y-4 animate-fade-in-up">
       <div className="card-elevated p-5">
         <div className="flex items-center gap-4">
           <button onClick={onBack} className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></button>
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">{initial}</div>
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">{employee.firstName[0]}</div>
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-foreground">{employee.employeeId} - {fullName}</h2>
@@ -447,18 +425,15 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
             <p className="text-xs text-muted-foreground">{employee.designation}</p>
           </div>
         </div>
-
-        {/* Tabs */}
         <div className="flex items-center gap-1 mt-4 border-b border-border">
-          {(["overview", "salary", "investments", "payslips", "loans"] as const).map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={`px-3 py-2 text-xs font-medium capitalize transition-colors border-b-2 -mb-px ${activeTab === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
-              {tab === "salary" ? "Salary Details" : tab === "payslips" ? "Payslips & Forms" : tab}
+          {tabs.map(t => (
+            <button key={t} onClick={() => setTab(t)} className={`px-3 py-2 text-xs font-medium border-b-2 -mb-px transition-colors ${tab === t ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+              {tabLabels[t]}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Incomplete Warning */}
       {(!employee.dob || !employee.fatherName) && (
         <div className="bg-warning/10 border border-warning/30 rounded-lg px-4 py-2.5 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
@@ -466,7 +441,7 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
         </div>
       )}
 
-      {activeTab === "overview" && (
+      {tab === "overview" && (
         <div className="space-y-4">
           <InfoSection title="Basic Information" icon={<Edit2 className="w-3.5 h-3.5" />}>
             <InfoGrid items={[
@@ -474,7 +449,7 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
               { label: "Email Address", value: employee.email }, { label: "Designation", value: employee.designation },
               { label: "Mobile Number", value: employee.mobile || "—" }, { label: "Departments", value: employee.department },
               { label: "Date of Joining", value: employee.dateOfJoining }, { label: "Portal Access", value: employee.portalAccess ? "✓ Enabled" : "✗ Disabled" },
-              { label: "Gender", value: employee.gender },
+              { label: "Gender", value: employee.gender }, { label: "Employment Type", value: employee.employmentType === "seafarer" ? "Seafarer" : "Shore Staff" },
             ]} />
           </InfoSection>
           <InfoSection title="Statutory Information" icon={<Edit2 className="w-3.5 h-3.5" />}>
@@ -501,16 +476,13 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
         </div>
       )}
 
-      {activeTab === "salary" && (
+      {tab === "salary" && (
         <div className="space-y-4">
           <div className="card-elevated p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <h3 className="text-sm font-bold text-foreground">Salary Details</h3>
-              <Edit2 className="w-3.5 h-3.5 text-muted-foreground" />
-            </div>
+            <div className="flex items-center gap-2 mb-3"><h3 className="text-sm font-bold text-foreground">Salary Details</h3><Edit2 className="w-3.5 h-3.5 text-muted-foreground" /></div>
             <div className="flex gap-6 p-4 rounded-lg border border-border bg-muted/30">
-              <div><p className="text-[10px] text-primary uppercase font-semibold">Annual CTC</p><p className="text-base font-bold font-mono">{formatCurrency(employee.annualCTC)} per year</p></div>
-              <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly CTC</p><p className="text-base font-bold font-mono">{formatCurrency(Math.round(employee.annualCTC / 12))} per month</p></div>
+              <div><p className="text-[10px] text-primary uppercase font-semibold">Annual CTC</p><p className="text-base font-bold font-mono">{fmt(employee.annualCTC)} per year</p></div>
+              <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly CTC</p><p className="text-base font-bold font-mono">{fmt(Math.round(employee.annualCTC / 12))} per month</p></div>
             </div>
           </div>
           <div className="card-elevated p-5">
@@ -524,22 +496,54 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
                 {employee.salaryComponents.map((c, i) => (
                   <div key={i} className="grid grid-cols-3 py-1.5">
                     <span className="text-xs text-primary">{c.name}</span>
-                    <span className="text-xs text-right font-mono">{formatCurrency(c.monthlyAmount)}</span>
-                    <span className="text-xs text-right font-mono">{formatCurrency(c.annualAmount)}</span>
+                    <span className="text-xs text-right font-mono">{fmt(c.monthlyAmount)}</span>
+                    <span className="text-xs text-right font-mono">{fmt(c.annualAmount)}</span>
                   </div>
                 ))}
               </div>
               <div className="grid grid-cols-3 px-4 py-2 bg-primary/5 border-t border-border">
                 <span className="text-xs font-bold">Cost to Company</span>
-                <span className="text-xs font-bold text-right font-mono">{formatCurrency(Math.round(employee.annualCTC / 12))}</span>
-                <span className="text-xs font-bold text-right font-mono">{formatCurrency(employee.annualCTC)}</span>
+                <span className="text-xs font-bold text-right font-mono">{fmt(Math.round(employee.annualCTC / 12))}</span>
+                <span className="text-xs font-bold text-right font-mono">{fmt(employee.annualCTC)}</span>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {activeTab === "investments" && (
+      {tab === "seafarer" && (
+        <div className="space-y-4">
+          <InfoSection title="Seafarer Details" icon={<Edit2 className="w-3.5 h-3.5" />}>
+            <InfoGrid items={[
+              { label: "Rank", value: employee.rank || "—" },
+              { label: "Current Vessel", value: employee.vessel || "Not Assigned" },
+              { label: "Contract Period", value: employee.contractPeriod || "—" },
+              { label: "Wage Structure", value: "Rank-linked (Auto)" },
+            ]} />
+          </InfoSection>
+          {employee.certificates && employee.certificates.length > 0 && (
+            <div className="card-elevated p-5">
+              <h3 className="text-sm font-bold text-foreground mb-3">Certificates & Documents</h3>
+              <div className="space-y-2">
+                {employee.certificates.map((cert, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border">
+                    <div className="flex items-center gap-3">
+                      <Award className="w-4 h-4 text-primary" />
+                      <div>
+                        <p className="text-xs font-semibold text-foreground">{cert.name}</p>
+                        <p className="text-[10px] text-muted-foreground">{cert.number} · Expires: {cert.expiryDate}</p>
+                      </div>
+                    </div>
+                    <Badge variant={cert.status === "Valid" ? "default" : cert.status === "Expiring" ? "secondary" : "destructive"} className="text-[10px]">{cert.status}</Badge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "investments" && (
         <div className="card-elevated p-8 text-center">
           <FileText className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
           <p className="text-sm font-medium text-foreground">IT Declaration submission is locked for this employee</p>
@@ -548,24 +552,574 @@ function EmployeeProfile({ employee, onBack }: { employee: Employee; onBack: () 
         </div>
       )}
 
-      {activeTab === "payslips" && (
+      {tab === "payslips" && (
         <div className="card-elevated p-8 text-center">
           <Calendar className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
           <p className="text-sm text-muted-foreground">There are no payslips for this financial year.</p>
         </div>
       )}
 
-      {activeTab === "loans" && (
+      {tab === "loans" && (
         <div className="card-elevated p-8 text-center">
           <IndianRupee className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">No active loans for this employee.</p>
+          <p className="text-sm font-medium text-foreground">This employee hasn't taken any loans yet.</p>
+          <button className="mt-4 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">Create Loan</button>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Shared Sub-components ───
+// ═══════════════════════════════════════════════════════
+// DOCUMENTS & CERTIFICATES
+// ═══════════════════════════════════════════════════════
+function DocumentsPage({ employees }: { employees: Employee[] }) {
+  const allCerts = useMemo(() => {
+    const certs: { employee: Employee; cert: NonNullable<Employee["certificates"]>[0] }[] = [];
+    employees.forEach(e => e.certificates?.forEach(c => certs.push({ employee: e, cert: c })));
+    return certs;
+  }, [employees]);
+
+  const stats = { total: allCerts.length, valid: allCerts.filter(c => c.cert.status === "Valid").length, expiring: allCerts.filter(c => c.cert.status === "Expiring").length, expired: allCerts.filter(c => c.cert.status === "Expired").length };
+
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-foreground">Documents & Certificates</h2>
+        <button className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Upload className="w-3.5 h-3.5" /> Upload Document</button>
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
+        {[
+          { label: "Total Certificates", value: stats.total, icon: FileCheck, color: "text-primary" },
+          { label: "Valid", value: stats.valid, icon: Check, color: "text-success" },
+          { label: "Expiring Soon", value: stats.expiring, icon: Clock, color: "text-warning" },
+          { label: "Expired", value: stats.expired, icon: AlertTriangle, color: "text-destructive" },
+        ].map((k, i) => (
+          <div key={i} className="card-elevated p-4">
+            <div className="flex items-center justify-between mb-2"><p className="text-[11px] font-medium text-muted-foreground">{k.label}</p><k.icon className={`w-4 h-4 ${k.color}`} /></div>
+            <p className="text-xl font-bold font-mono text-foreground">{k.value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="card-elevated overflow-hidden">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="bg-muted border-b border-border">
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Certificate</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Number</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Issue Date</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Expiry Date</th>
+              <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allCerts.map((item, i) => (
+              <tr key={i} className="border-b border-border hover:bg-accent/50">
+                <td className="px-4 py-3 font-semibold text-foreground">{item.employee.firstName} {item.employee.lastName}</td>
+                <td className="px-4 py-3 text-foreground">{item.cert.name}</td>
+                <td className="px-4 py-3 font-mono text-muted-foreground">{item.cert.number}</td>
+                <td className="px-4 py-3 text-foreground">{item.cert.issueDate}</td>
+                <td className="px-4 py-3 text-foreground">{item.cert.expiryDate}</td>
+                <td className="px-4 py-3">
+                  <Badge variant={item.cert.status === "Valid" ? "default" : item.cert.status === "Expiring" ? "secondary" : "destructive"} className="text-[10px]">{item.cert.status}</Badge>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// PAY RUNS
+// ═══════════════════════════════════════════════════════
+function PayRunsPage() {
+  const [tab, setTab] = useState<"run" | "history">("run");
+  const [selectedRun, setSelectedRun] = useState<typeof payrollHistory[0] | null>(null);
+
+  if (selectedRun) {
+    return (
+      <div className="space-y-5 animate-fade-in-up">
+        <div className="flex items-center gap-3">
+          <button onClick={() => setSelectedRun(null)} className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></button>
+          <h2 className="text-lg font-bold text-foreground">{selectedRun.type}</h2>
+          <Badge className="text-[10px] bg-success text-success-foreground">{selectedRun.status}</Badge>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div className="card-elevated p-4">
+            <p className="text-[10px] text-primary uppercase font-semibold">Period: {selectedRun.details.split("\n")[0].split(" - ")[0].split("/").reverse().join("/")}</p>
+            <p className="text-[10px] text-muted-foreground">28 Base Days</p>
+            <div className="flex gap-6 mt-2">
+              <div><p className="text-base font-bold font-mono">{fmt(selectedRun.payrollCost)}</p><p className="text-[9px] text-muted-foreground uppercase">Payroll Cost</p></div>
+              <div><p className="text-base font-bold font-mono">{fmt(selectedRun.netPay)}</p><p className="text-[9px] text-muted-foreground uppercase">Total Net Pay</p></div>
+            </div>
+            <button className="text-[10px] text-primary font-medium mt-2 flex items-center gap-1"><Download className="w-3 h-3" /> Download Bank Advice</button>
+          </div>
+          <div className="card-elevated p-4 flex flex-col items-center justify-center text-center">
+            <p className="text-[10px] text-muted-foreground uppercase">Pay Day</p>
+            <p className="text-3xl font-bold text-foreground">{selectedRun.date.split("/")[0]}</p>
+            <p className="text-xs text-muted-foreground">{selectedRun.date.split("/").slice(1).join("/")}</p>
+            <p className="text-xs text-foreground mt-2">{selectedRun.employees} Employees</p>
+          </div>
+          <div className="card-elevated p-4">
+            <p className="text-sm font-bold text-foreground mb-2">Taxes & Deductions</p>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex justify-between"><span className="text-muted-foreground">Taxes</span><span className="font-mono">{fmt(0)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Benefits</span><span className="font-mono">{fmt(49554.07)}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Total Deductions</span><span className="font-mono">{fmt(7080)}</span></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Employee Summary Table */}
+        <div className="card-elevated overflow-hidden">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-4">
+            <button className="text-xs font-medium text-foreground border-b-2 border-primary pb-1">Employee Summary</button>
+            <button className="text-xs font-medium text-muted-foreground pb-1">Taxes & Deductions</button>
+            <button className="text-xs font-medium text-muted-foreground pb-1">Overall Insights</button>
+          </div>
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payslip</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Mode</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { name: "Sujit Kumar Jha (0007)", days: 28, net: 90000 },
+                { name: "Kajal Shrivas (0003)", days: 28, net: 76400 },
+                { name: "Ankita Sharma (0004)", days: 28, net: 17400 },
+                { name: "Mandeep Kaur (0005)", days: 28, net: 21000 },
+                { name: "Shubham Singh (0006)", days: 28, net: 76400 },
+                { name: "Sneha Kanojia (0008)", days: 28, net: 56400 },
+              ].map((row, i) => (
+                <tr key={i} className="border-b border-border hover:bg-accent/50">
+                  <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-border" /></td>
+                  <td className="px-4 py-2.5 text-foreground">{row.name}</td>
+                  <td className="px-4 py-2.5 text-center">{row.days}</td>
+                  <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(row.net)}</td>
+                  <td className="px-4 py-2.5 text-center"><span className="text-primary cursor-pointer">View 📧</span></td>
+                  <td className="px-4 py-2.5">Manual Bank Transfer</td>
+                  <td className="px-4 py-2.5 text-success text-[10px]">Paid on {selectedRun.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <div className="flex items-center gap-4 border-b border-border pb-3">
+        <button onClick={() => setTab("run")} className={`text-sm font-medium pb-2 border-b-2 -mb-[13px] ${tab === "run" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"}`}>Run Payroll</button>
+        <button onClick={() => setTab("history")} className={`text-sm font-medium pb-2 border-b-2 -mb-[13px] ${tab === "history" ? "border-primary text-foreground" : "border-transparent text-muted-foreground"}`}>Payroll History</button>
+      </div>
+
+      {tab === "run" && (
+        <div className="card-elevated p-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-bold text-foreground">Process Pay Run for March 2026</p>
+                <Badge variant="secondary" className="text-[10px]">DRAFT</Badge>
+              </div>
+              <div className="flex items-center gap-6">
+                <div><p className="text-[10px] text-primary uppercase font-semibold">Employees' Net Pay</p><p className="text-base font-bold font-mono">{fmt(1173528)}</p></div>
+                <div><p className="text-[10px] text-muted-foreground uppercase">Payment Date</p><p className="text-sm font-semibold">31/03/2026</p></div>
+                <div><p className="text-[10px] text-muted-foreground uppercase">No. of Employees</p><p className="text-sm font-semibold">16</p></div>
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Please approve this payroll on or before 31/03/2026.</p>
+            </div>
+            <button className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">View Details</button>
+          </div>
+        </div>
+      )}
+
+      {tab === "history" && (
+        <div className="card-elevated overflow-hidden">
+          <div className="px-4 py-3 border-b border-border">
+            <span className="text-xs text-muted-foreground">Payroll Type: All ▾</span>
+          </div>
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Payment Date</th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Payroll Type</th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Details</th>
+                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Payroll Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {payrollHistory.map(run => (
+                <tr key={run.id} className="border-b border-border hover:bg-accent/50 cursor-pointer" onClick={() => setSelectedRun(run)}>
+                  <td className="px-4 py-3 text-foreground">{run.date}</td>
+                  <td className="px-4 py-3 text-primary font-medium">{run.type}</td>
+                  <td className="px-4 py-3 text-primary">{run.details.split("\n").map((l, i) => <span key={i} className={i > 0 ? "block text-muted-foreground" : ""}>{l}</span>)}</td>
+                  <td className="px-4 py-3"><span className="text-success font-medium">{run.status}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// TAXES & FORMS
+// ═══════════════════════════════════════════════════════
+function TaxesFormsPage() {
+  const [subPage, setSubPage] = useState<"tds" | "challans" | "form24q" | "form16">("tds");
+  const subItems = [
+    { id: "tds" as const, label: "TDS Liabilities" },
+    { id: "challans" as const, label: "Challans" },
+    { id: "form24q" as const, label: "Form 24Q" },
+    { id: "form16" as const, label: "Form 16" },
+  ];
+
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <h2 className="text-lg font-bold text-foreground">Taxes & Forms</h2>
+      <div className="flex items-center gap-1 border-b border-border">
+        {subItems.map(s => (
+          <button key={s.id} onClick={() => setSubPage(s.id)} className={`px-4 py-2 text-xs font-medium border-b-2 -mb-px ${subPage === s.id ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {subPage === "tds" && (
+        <div className="card-elevated p-5">
+          <h3 className="text-sm font-bold mb-3">TDS Liabilities Summary</h3>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Month</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">TDS Payable</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">TDS Deposited</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+              </tr></thead>
+              <tbody>
+                {["Feb 2026", "Jan 2026", "Dec 2025", "Nov 2025"].map((m, i) => (
+                  <tr key={i} className="border-b border-border">
+                    <td className="px-4 py-2.5 text-foreground">{m}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(0)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(0)}</td>
+                    <td className="px-4 py-2.5 text-center"><Badge variant="default" className="text-[10px]">Filed</Badge></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {subPage !== "tds" && <PlaceholderPage title={subItems.find(s => s.id === subPage)?.label || ""} description={`${subItems.find(s => s.id === subPage)?.label} management will be available here.`} icon={Receipt} />}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// LOANS
+// ═══════════════════════════════════════════════════════
+function LoansPage({ employees }: { employees: Employee[] }) {
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-foreground">Loans</h2>
+        <button className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3.5 h-3.5" /> Create Loan</button>
+      </div>
+      <div className="card-elevated p-8 text-center">
+        <Landmark className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+        <p className="text-sm font-medium text-foreground">No active loans</p>
+        <p className="text-xs text-muted-foreground mt-1">Create and manage employee salary advance and loan disbursements here.</p>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// ADD EMPLOYEE WIZARD
+// ═══════════════════════════════════════════════════════
+type WizardStep = 1 | 2 | 3 | 4;
+const stepLabels = ["Basic Details", "Salary Details", "Personal Details", "Payment Information"];
+
+function AddEmployeeWizard({ onClose, onSave }: { onClose: () => void; onSave: (e: Employee) => void }) {
+  const [step, setStep] = useState<WizardStep>(1);
+  const [form, setForm] = useState({
+    firstName: "", middleName: "", lastName: "", employeeId: "", dateOfJoining: "",
+    email: "", mobile: "", gender: "Male" as "Male" | "Female" | "Other",
+    workLocation: "Head Office - Mumbai", designation: "", department: "Operations",
+    portalAccess: false, employmentType: "shore" as "shore" | "seafarer",
+    rank: "", vessel: "",
+    epf: true, pfAccountNumber: "", uan: "", esi: false, lwf: false,
+    annualCTC: 0, basicMonthly: 0,
+    dob: "", fatherName: "", pan: "", personalEmail: "",
+    addressLine1: "", addressLine2: "", city: "", state: "", pin: "",
+    differentlyAbled: "None",
+    paymentMode: "Bank Transfer" as "Bank Transfer" | "Cheque" | "Cash",
+    accountHolderName: "", bankName: "", accountNumber: "", reAccountNumber: "",
+    ifsc: "", accountType: "Savings" as "Current" | "Savings",
+  });
+
+  const u = (key: string, val: any) => setForm(p => ({ ...p, [key]: val }));
+  const canNext = () => {
+    if (step === 1) return form.firstName && form.employeeId && form.dateOfJoining && form.email && form.designation;
+    return true;
+  };
+
+  const handleSave = () => {
+    const emp: Employee = {
+      id: crypto.randomUUID(), employeeId: form.employeeId,
+      firstName: form.firstName, middleName: form.middleName || undefined, lastName: form.lastName,
+      email: form.email, mobile: form.mobile || undefined, gender: form.gender,
+      dateOfJoining: form.dateOfJoining, designation: form.designation, department: form.department,
+      workLocation: form.workLocation, status: "Active", portalAccess: form.portalAccess,
+      employmentType: form.employmentType, rank: form.rank || undefined, vessel: form.vessel || undefined,
+      dob: form.dob || undefined, fatherName: form.fatherName || undefined, pan: form.pan || undefined,
+      epf: form.epf, esi: form.esi, lwf: form.lwf, annualCTC: form.annualCTC,
+      salaryComponents: [
+        { name: "Basic", type: "Fixed amount", monthlyAmount: form.basicMonthly, annualAmount: form.basicMonthly * 12 },
+        { name: "Special Allowance", type: "Fixed amount", monthlyAmount: (form.annualCTC / 12) - form.basicMonthly, annualAmount: form.annualCTC - (form.basicMonthly * 12) },
+      ],
+      bankName: form.bankName || undefined, accountNumber: form.accountNumber || undefined,
+      ifsc: form.ifsc || undefined, accountType: form.accountType,
+      accountHolderName: form.accountHolderName || undefined, paymentMode: form.paymentMode,
+    };
+    onSave(emp);
+  };
+
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold text-foreground">Add Employee</h2>
+        <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-accent"><X className="w-4 h-4" /></button>
+      </div>
+
+      {/* Stepper */}
+      <div className="flex items-center justify-between px-4">
+        {stepLabels.map((label, i) => {
+          const s = (i + 1) as WizardStep;
+          const done = step > s;
+          const active = step === s;
+          return (
+            <div key={i} className="flex items-center flex-1 last:flex-none">
+              <div className="flex items-center gap-2">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${done ? "bg-primary border-primary text-primary-foreground" : active ? "border-primary text-primary bg-primary/10" : "border-muted-foreground/30 text-muted-foreground"}`}>
+                  {done ? <Check className="w-3.5 h-3.5" /> : s}
+                </div>
+                <span className={`text-xs font-medium hidden sm:inline ${active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+              </div>
+              {i < 3 && <div className={`flex-1 h-0.5 mx-3 rounded ${done ? "bg-primary" : "bg-border"}`} />}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Step Content */}
+      <div className="card-elevated p-6 space-y-5">
+        {step === 1 && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-3">
+              <Field label="First Name" required value={form.firstName} onChange={v => u("firstName", v)} placeholder="First Name" />
+              <Field label="Middle Name" value={form.middleName} onChange={v => u("middleName", v)} placeholder="Middle Name" />
+              <Field label="Last Name" value={form.lastName} onChange={v => u("lastName", v)} placeholder="Last Name" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Employee ID" required value={form.employeeId} onChange={v => u("employeeId", v)} placeholder="EMP001" />
+              <Field label="Date of Joining" required value={form.dateOfJoining} onChange={v => u("dateOfJoining", v)} placeholder="dd/MM/yyyy" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Work Email" required value={form.email} onChange={v => u("email", v)} placeholder="email@company.com" />
+              <Field label="Mobile Number" value={form.mobile} onChange={v => u("mobile", v)} placeholder="+91 XXXXX XXXXX" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <SelectField label="Gender" required value={form.gender} options={["Male", "Female", "Other"]} onChange={v => u("gender", v)} />
+              <SelectField label="Employment Type" required value={form.employmentType} options={["shore", "seafarer"]} onChange={v => u("employmentType", v)} />
+            </div>
+            {form.employmentType === "seafarer" && (
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Rank" value={form.rank} onChange={v => u("rank", v)} placeholder="e.g. Chief Engineer" />
+                <Field label="Vessel" value={form.vessel} onChange={v => u("vessel", v)} placeholder="e.g. MV Dolphin 7" />
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Designation" required value={form.designation} onChange={v => u("designation", v)} placeholder="e.g. Chief Engineer" />
+              <SelectField label="Department" required value={form.department} options={["Engineering", "Operations", "QHSE", "Management", "Finance", "HR"]} onChange={v => u("department", v)} />
+            </div>
+            <Field label="Work Location" required value={form.workLocation} onChange={v => u("workLocation", v)} />
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-5">
+            <div className="rounded-xl border border-border p-5 space-y-4">
+              <div><h3 className="text-sm font-bold text-foreground">Statutory Components</h3><p className="text-xs text-muted-foreground mt-0.5">Enable the necessary benefits and tax applicable.</p></div>
+              <ToggleItem label="Employees' Provident Fund" checked={form.epf} onChange={v => u("epf", v)}>
+                {form.epf && (
+                  <div className="grid grid-cols-2 gap-3 mt-3 ml-6">
+                    <Field label="PF Account Number" value={form.pfAccountNumber} onChange={v => u("pfAccountNumber", v)} placeholder="AA/AAA/0000000/XXX/0000000" />
+                    <Field label="UAN" value={form.uan} onChange={v => u("uan", v)} placeholder="000000000000" />
+                  </div>
+                )}
+              </ToggleItem>
+              <ToggleItem label="Employees' State Insurance" checked={form.esi} onChange={v => u("esi", v)} />
+              <ToggleItem label="Labour Welfare Fund" checked={form.lwf} onChange={v => u("lwf", v)} />
+            </div>
+            <div className="rounded-xl border border-border p-5 space-y-4">
+              <div><h3 className="text-sm font-bold text-foreground">Salary Structure</h3><p className="text-xs text-muted-foreground mt-0.5">Set how the employee's salary is divided.</p></div>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-semibold text-destructive">Annual CTC *</span>
+                <div className="flex items-center border border-border rounded-lg overflow-hidden">
+                  <span className="px-2 py-1.5 bg-muted text-xs font-medium">₹</span>
+                  <input type="number" value={form.annualCTC || ""} onChange={e => u("annualCTC", Number(e.target.value))} className="px-3 py-1.5 text-sm bg-transparent outline-none w-40" placeholder="0" />
+                  <span className="px-2 py-1.5 text-xs text-muted-foreground">per year</span>
+                </div>
+              </div>
+              <div className="border border-border rounded-lg overflow-hidden">
+                <div className="grid grid-cols-4 bg-muted px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <span>Components</span><span>Calc Type</span><span className="text-right">Monthly</span><span className="text-right">Annual</span>
+                </div>
+                <div className="px-4 py-2 border-t border-border space-y-2">
+                  <p className="text-xs font-bold text-foreground">Earnings</p>
+                  <div className="grid grid-cols-4 items-center">
+                    <span className="text-xs">Basic</span><span className="text-xs text-muted-foreground">Fixed amount</span>
+                    <div className="text-right"><input type="number" value={form.basicMonthly || ""} onChange={e => u("basicMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                    <span className="text-xs text-right font-mono">{fmt(form.basicMonthly * 12)}</span>
+                  </div>
+                  <div className="grid grid-cols-4 items-center">
+                    <span className="text-xs">Special Allowance</span><span className="text-xs text-muted-foreground">Fixed amount</span>
+                    <span className="text-xs text-right text-muted-foreground">System Calc</span><span className="text-xs text-right text-muted-foreground">System Calc</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-4 px-4 py-2 bg-primary/5 border-t border-border">
+                  <span className="text-xs font-bold col-span-2">Cost to Company</span>
+                  <span className="text-xs font-bold text-right font-mono">{fmt(form.annualCTC / 12)}</span>
+                  <span className="text-xs font-bold text-right font-mono">{fmt(form.annualCTC)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Date of Birth" value={form.dob} onChange={v => u("dob", v)} placeholder="dd/MM/yyyy" />
+              <Field label="Age" value="" disabled />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Father's Name" value={form.fatherName} onChange={v => u("fatherName", v)} />
+              <Field label="PAN" value={form.pan} onChange={v => u("pan", v)} placeholder="AAAAA0000A" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <SelectField label="Differently Abled Type" value={form.differentlyAbled} options={["None", "Visual", "Hearing", "Locomotor", "Other"]} onChange={v => u("differentlyAbled", v)} />
+              <Field label="Personal Email" value={form.personalEmail} onChange={v => u("personalEmail", v)} placeholder="abc@xyz.com" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-foreground">Residential Address</label>
+              <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="Address Line 1" value={form.addressLine1} onChange={e => u("addressLine1", e.target.value)} />
+              <input className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="Address Line 2" value={form.addressLine2} onChange={e => u("addressLine2", e.target.value)} />
+              <div className="grid grid-cols-3 gap-3">
+                <input className="px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="City" value={form.city} onChange={e => u("city", e.target.value)} />
+                <input className="px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="State" value={form.state} onChange={e => u("state", e.target.value)} />
+                <input className="px-3 py-2 text-sm border border-border rounded-lg bg-transparent" placeholder="PIN Code" value={form.pin} onChange={e => u("pin", e.target.value)} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-5">
+            <h3 className="text-sm font-bold text-foreground">How would you like to pay this employee? *</h3>
+            <div className="space-y-3">
+              {(["Bank Transfer", "Cheque", "Cash"] as const).map(mode => (
+                <label key={mode} className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-colors ${form.paymentMode === mode ? "border-primary bg-primary/5" : "border-border hover:bg-accent/50"}`}>
+                  <div className="flex items-center gap-3">
+                    <CreditCard className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-xs font-medium text-foreground">{mode === "Bank Transfer" ? "Bank Transfer (Manual Process)" : mode}</p>
+                      {mode === "Bank Transfer" && <p className="text-[10px] text-primary">Download Bank Advice and process the payment</p>}
+                    </div>
+                  </div>
+                  <input type="radio" checked={form.paymentMode === mode} onChange={() => u("paymentMode", mode)} className="accent-primary" />
+                </label>
+              ))}
+            </div>
+            {form.paymentMode === "Bank Transfer" && (
+              <div className="space-y-4">
+                <Field label="Account Holder Name" required value={form.accountHolderName} onChange={v => u("accountHolderName", v)} />
+                <Field label="Bank Name" required value={form.bankName} onChange={v => u("bankName", v)} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="Account Number" required value={form.accountNumber} onChange={v => u("accountNumber", v)} type="password" />
+                  <Field label="Re-enter Account Number" required value={form.reAccountNumber} onChange={v => u("reAccountNumber", v)} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Field label="IFSC" required value={form.ifsc} onChange={v => u("ifsc", v)} placeholder="AAAA0000000" />
+                  <div>
+                    <label className="text-xs font-medium text-foreground">Account Type *</label>
+                    <div className="flex items-center gap-4 mt-2">
+                      {(["Current", "Savings"] as const).map(t => (
+                        <label key={t} className="flex items-center gap-1.5 cursor-pointer">
+                          <input type="radio" checked={form.accountType === t} onChange={() => u("accountType", t)} className="accent-primary" />
+                          <span className="text-xs">{t}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between">
+        <div>{step > 1 && <button onClick={() => setStep((step - 1) as WizardStep)} className="px-4 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent"><ChevronLeft className="w-3 h-3 inline mr-1" />Back</button>}</div>
+        <div className="flex items-center gap-2">
+          <button onClick={onClose} className="px-4 py-2 text-xs font-medium border border-border rounded-lg hover:bg-accent">Cancel</button>
+          {step < 4 ? (
+            <button onClick={() => canNext() && setStep((step + 1) as WizardStep)} disabled={!canNext()} className="px-4 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50">Save and Continue</button>
+          ) : (
+            <button onClick={handleSave} className="px-4 py-2 text-xs font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90">Save and Continue</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// PLACEHOLDER PAGE
+// ═══════════════════════════════════════════════════════
+function PlaceholderPage({ title, description, icon: Icon }: { title: string; description: string; icon: typeof LayoutDashboard }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in-up">
+      <Icon className="w-16 h-16 text-muted-foreground/20 mb-4" />
+      <h2 className="text-lg font-bold text-foreground mb-2">{title}</h2>
+      <p className="text-sm text-muted-foreground max-w-md">{description}</p>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// SHARED FORM COMPONENTS
+// ═══════════════════════════════════════════════════════
 function Field({ label, value, onChange, placeholder, required, type, disabled }: {
   label: string; value?: string; onChange?: (v: string) => void; placeholder?: string; required?: boolean; type?: string; disabled?: boolean;
 }) {
@@ -624,132 +1178,6 @@ function InfoGrid({ items }: { items: { label: string; value: string; highlight?
           <p className={`text-xs font-semibold ${item.highlight ? "text-destructive" : "text-foreground"}`}>{item.value}</p>
         </div>
       ))}
-    </div>
-  );
-}
-
-// ─── Main Component ───
-export default function CrewManagement() {
-  const [employees, setEmployees] = useState<Employee[]>(mockEmployees);
-  const [search, setSearch] = useState("");
-  const [deptFilter, setDeptFilter] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [showAddWizard, setShowAddWizard] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-
-  const filtered = useMemo(() => employees.filter(e => {
-    const q = search.toLowerCase();
-    const matchesSearch = !q || e.firstName.toLowerCase().includes(q) || e.lastName.toLowerCase().includes(q) || e.employeeId.toLowerCase().includes(q) || e.email.toLowerCase().includes(q);
-    const matchesDept = deptFilter === "All" || e.department === deptFilter;
-    const matchesStatus = statusFilter === "All" || e.status === statusFilter;
-    return matchesSearch && matchesDept && matchesStatus;
-  }), [employees, search, deptFilter, statusFilter]);
-
-  const stats = useMemo(() => ({
-    total: employees.length,
-    active: employees.filter(e => e.status === "Active").length,
-    onLeave: employees.filter(e => e.status === "On Leave").length,
-    avgCTC: Math.round(employees.reduce((s, e) => s + e.annualCTC, 0) / employees.length),
-  }), [employees]);
-
-  if (selectedEmployee) {
-    return <EmployeeProfile employee={selectedEmployee} onBack={() => setSelectedEmployee(null)} />;
-  }
-
-  return (
-    <div className="space-y-5 animate-fade-in-up">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Crew", value: stats.total.toString(), icon: Users, color: "text-primary" },
-          { label: "Active", value: stats.active.toString(), icon: Check, color: "text-success" },
-          { label: "On Leave", value: stats.onLeave.toString(), icon: Calendar, color: "text-warning" },
-          { label: "Avg. CTC", value: formatCurrency(stats.avgCTC), icon: IndianRupee, color: "text-info" },
-        ].map((kpi, i) => (
-          <div key={i} className="card-elevated p-4">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-[11px] font-medium text-muted-foreground">{kpi.label}</p>
-              <kpi.icon className={`w-4 h-4 ${kpi.color}`} />
-            </div>
-            <p className="text-xl font-bold font-mono text-foreground">{kpi.value}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* Toolbar */}
-      <div className="card-elevated p-3 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, ID, or email..." className="w-full pl-9 pr-3 py-2 text-xs border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none" />
-          </div>
-          <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)} className="px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
-            {departments.map(d => <option key={d}>{d}</option>)}
-          </select>
-          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
-            {statuses.map(s => <option key={s}>{s}</option>)}
-          </select>
-        </div>
-        <button onClick={() => setShowAddWizard(true)} className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 shrink-0">
-          <UserPlus className="w-3.5 h-3.5" /> Add Employee
-        </button>
-      </div>
-
-      {/* Employee Table */}
-      <div className="card-elevated overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-muted border-b border-border">
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">ID</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Department</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Designation</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Location</th>
-                <th className="text-left px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                <th className="text-right px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Annual CTC</th>
-                <th className="text-center px-4 py-3 font-semibold text-muted-foreground uppercase tracking-wider">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(emp => {
-                const fullName = [emp.firstName, emp.lastName].filter(Boolean).join(" ");
-                return (
-                  <tr key={emp.id} className="border-b border-border hover:bg-accent/50 transition-colors cursor-pointer" onClick={() => setSelectedEmployee(emp)}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">{emp.firstName[0]}</div>
-                        <div>
-                          <p className="font-semibold text-foreground">{fullName}</p>
-                          <p className="text-[10px] text-muted-foreground">{emp.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 font-mono text-foreground">{emp.employeeId}</td>
-                    <td className="px-4 py-3 text-foreground">{emp.department}</td>
-                    <td className="px-4 py-3 text-foreground">{emp.designation}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{emp.workLocation}</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={emp.status === "Active" ? "default" : emp.status === "On Leave" ? "secondary" : "destructive"} className="text-[10px]">{emp.status}</Badge>
-                    </td>
-                    <td className="px-4 py-3 text-right font-mono font-semibold text-foreground">{formatCurrency(emp.annualCTC)}</td>
-                    <td className="px-4 py-3 text-center">
-                      <button className="p-1.5 rounded hover:bg-accent"><ChevronRight className="w-3.5 h-3.5 text-muted-foreground" /></button>
-                    </td>
-                  </tr>
-                );
-              })}
-              {filtered.length === 0 && (
-                <tr><td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">No employees found.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {showAddWizard && (
-        <AddEmployeeWizard onClose={() => setShowAddWizard(false)} onSave={emp => { setEmployees(p => [...p, emp]); setShowAddWizard(false); }} />
-      )}
     </div>
   );
 }
