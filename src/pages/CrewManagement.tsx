@@ -1442,8 +1442,40 @@ function ApprovalsPage() {
                 <td className="px-4 py-2.5 text-center">
                   {row.status === "Pending" ? (
                     <div className="flex items-center justify-center gap-2">
-                      <button onClick={() => handleAction(row.req, "Approved")} className="px-2 py-1 bg-primary text-primary-foreground rounded text-[10px]">Approve</button>
-                      <button onClick={() => handleAction(row.req, "Rejected")} className="px-2 py-1 border border-border rounded text-[10px] hover:bg-accent">Reject</button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button className="px-2 py-1 bg-primary text-primary-foreground rounded text-[10px]">Approve</button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Approve Request {row.req}?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Approve <strong>{row.type}</strong> request from <strong>{row.emp}</strong> submitted on {row.date}. This action will be recorded in the audit log.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleAction(row.req, "Approved")} className="text-xs">Yes, Approve</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <button className="px-2 py-1 border border-destructive/30 text-destructive rounded text-[10px] hover:bg-destructive/5">Reject</button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Reject Request {row.req}?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to reject the <strong>{row.type}</strong> request from <strong>{row.emp}</strong>? The employee will be notified of this rejection.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleAction(row.req, "Rejected")} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 text-xs">Yes, Reject</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   ) : <span className="text-muted-foreground">—</span>}
                 </td>
