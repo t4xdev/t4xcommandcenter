@@ -166,6 +166,32 @@ const payrollCostData = [
 
 const departments = ["All", "Engineering", "Operations", "QHSE", "Management"];
 const statuses = ["All", "Active", "Inactive", "On Leave"];
+const salaryTrendData = [
+  { month: "Apr", gross: 0, net: 0 }, { month: "May", gross: 0, net: 0 }, { month: "Jun", gross: 0, net: 0 },
+  { month: "Jul", gross: 0, net: 0 }, { month: "Aug", gross: 0, net: 0 }, { month: "Sep", gross: 0, net: 0 },
+  { month: "Oct", gross: 0, net: 0 }, { month: "Nov", gross: 820000, net: 712000 },
+  { month: "Dec", gross: 890000, net: 775000 }, { month: "Jan", gross: 1085000, net: 950000 },
+  { month: "Feb", gross: 1107594, net: 1050960 }, { month: "Mar", gross: 1173528, net: 1095000 },
+];
+
+const deptCostData = [
+  { name: "Engineering", value: 420000 },
+  { name: "Operations", value: 320000 },
+  { name: "QHSE", value: 180000 },
+  { name: "Management", value: 250000 },
+];
+
+const DEPT_COLORS = ["hsl(215, 50%, 30%)", "hsl(152, 60%, 40%)", "hsl(35, 80%, 50%)", "hsl(340, 65%, 50%)"];
+
+const headcountData = [
+  { month: "Apr", seafarer: 10, shore: 3, total: 13 }, { month: "May", seafarer: 10, shore: 3, total: 13 },
+  { month: "Jun", seafarer: 10, shore: 3, total: 13 }, { month: "Jul", seafarer: 10, shore: 3, total: 13 },
+  { month: "Aug", seafarer: 10, shore: 3, total: 13 }, { month: "Sep", seafarer: 11, shore: 3, total: 14 },
+  { month: "Oct", seafarer: 11, shore: 3, total: 14 }, { month: "Nov", seafarer: 11, shore: 4, total: 15 },
+  { month: "Dec", seafarer: 11, shore: 4, total: 15 }, { month: "Jan", seafarer: 12, shore: 4, total: 16 },
+  { month: "Feb", seafarer: 12, shore: 4, total: 16 }, { month: "Mar", seafarer: 12, shore: 4, total: 16 },
+];
+
 const fmt = (n: number) => "₹" + n.toLocaleString("en-IN");
 
 type SidebarPage = "dashboard" | "employees" | "pay-runs" | "approvals" | "taxes" | "loans" | "reports" | "settings";
