@@ -1310,7 +1310,7 @@ function ReportsPage() {
               <p className="text-[11px] text-muted-foreground mt-0.5">{report.desc}</p>
               <p className="text-[10px] text-muted-foreground mt-2">Last generated: {report.lastGenerated}</p>
             </div>
-            <button className="flex items-center gap-1 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-accent shrink-0"><Download className="w-3 h-3" /> Generate</button>
+            <button onClick={() => { toast.loading(`Generating ${report.name}...`, { id: report.name }); setTimeout(() => toast.success(`${report.name} Ready`, { id: report.name, description: "Report generated successfully. Click to download." }), 1500); }} className="flex items-center gap-1 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-accent shrink-0"><Download className="w-3 h-3" /> Generate</button>
           </div>
         ))}
       </div>
@@ -1341,7 +1341,7 @@ function SettingsPage() {
               </div>
             ))}
           </div>
-          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Configuration</button>
+          <button onClick={() => toast.info("Edit Payroll Cycle", { description: "Configuration editor opened. Modify pay frequency, pay day, and processing date." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Configuration</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Statutory Rates</h3>
@@ -1360,7 +1360,7 @@ function SettingsPage() {
               </div>
             ))}
           </div>
-          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Update Rates</button>
+          <button onClick={() => toast.info("Update Statutory Rates", { description: "Rate editor opened. Modify EPF, ESI, PT, and LWF contribution rates." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Update Rates</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Rank & Wage Master</h3>
@@ -1392,7 +1392,7 @@ function SettingsPage() {
               </tbody>
             </table>
           </div>
-          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Wage Master</button>
+          <button onClick={() => toast.info("Edit Wage Master", { description: "Wage master editor opened. Modify base wages, sea allowances, and leave pay by rank." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Wage Master</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Payment Modes</h3>
