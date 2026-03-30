@@ -199,7 +199,7 @@ export default function CrewManagement() {
           <div className="flex items-center gap-3">
             <img src={t4xLogo} alt="Twenty4X Logo" className="h-10 w-auto object-contain" />
             <div className="border-l border-border pl-3">
-              <h1 className="text-sm font-bold text-foreground">Smart Insights <span className="text-gradient-brand">MIS</span></h1>
+              <h1 className="text-sm font-bold text-foreground">Payroll</h1>
               <p className="text-[10px] text-muted-foreground">Payroll Management</p>
             </div>
           </div>
