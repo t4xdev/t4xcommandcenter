@@ -847,40 +847,6 @@ function PayRunDetailRoute() {
       </div>
 
       <PayRunDetailTabs run={run} />
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-muted border-b border-border">
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
-              <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
-              <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
-              <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payslip</th>
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Mode</th>
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {[
-              { name: "Sujit Kumar Jha (0007)", days: 28, net: 90000 },
-              { name: "Kajal Shrivas (0003)", days: 28, net: 76400 },
-              { name: "Ankita Sharma (0004)", days: 28, net: 17400 },
-              { name: "Mandeep Kaur (0005)", days: 28, net: 21000 },
-              { name: "Shubham Singh (0006)", days: 28, net: 76400 },
-              { name: "Sneha Kanojia (0008)", days: 28, net: 56400 },
-            ].map((row, i) => (
-              <tr key={i} className="border-b border-border hover:bg-accent/50">
-                <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-border" /></td>
-                <td className="px-4 py-2.5 text-foreground">{row.name}</td>
-                <td className="px-4 py-2.5 text-center">{row.days}</td>
-                <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(row.net)}</td>
-                <td className="px-4 py-2.5 text-center"><button onClick={() => toast.info("Payslip Preview", { description: `Viewing payslip for ${row.name}` })} className="text-primary cursor-pointer hover:underline">View</button>{" "}<button onClick={() => toast.success("Email Sent", { description: `Payslip emailed to ${row.name}` })} className="text-primary cursor-pointer hover:underline">📧</button></td>
-                <td className="px-4 py-2.5">Manual Bank Transfer</td>
-                <td className="px-4 py-2.5 text-success text-[10px]">Paid on {run.date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
     </div>
   );
 }
