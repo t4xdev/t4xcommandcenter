@@ -214,7 +214,7 @@ export default function CrewManagement() {
                 <input placeholder="Search in Employee" className="pl-9 pr-3 py-1.5 text-xs border border-border rounded-lg bg-transparent w-56 focus:ring-2 focus:ring-ring outline-none" />
               </div>
             </div>
-            <button className="relative p-2 rounded-lg hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" /></button>
+            <button onClick={() => toast.info("Notifications", { description: "You have 2 pending approvals and 1 certificate expiring soon." })} className="relative p-2 rounded-lg hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" /></button>
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><User className="w-4 h-4 text-primary-foreground" /></div>
           </div>
         </div>
@@ -241,7 +241,7 @@ export default function CrewManagement() {
             })}
           </nav>
           <div className="p-3 border-t border-primary-foreground/10">
-            <button className="text-[11px] text-primary-foreground/50 hover:text-primary-foreground/80">Contact Support ›</button>
+            <button onClick={() => toast.info("Support", { description: "Contact us at support@twenty4x.com or call +91-22-4567-8900." })} className="text-[11px] text-primary-foreground/50 hover:text-primary-foreground/80">Contact Support ›</button>
           </div>
         </aside>
 
@@ -467,7 +467,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
       {(!employee.dob || !employee.fatherName) && (
         <div className="bg-warning/10 border border-warning/30 rounded-lg px-4 py-2.5 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
-          <p className="text-xs text-warning">This employee's profile is incomplete. <button className="font-semibold text-primary hover:underline">Complete now</button></p>
+          <p className="text-xs text-warning">This employee's profile is incomplete. <button onClick={() => toast.info("Complete Profile", { description: "Navigate to the relevant section to fill in missing details." })} className="font-semibold text-primary hover:underline">Complete now</button></p>
         </div>
       )}
 
