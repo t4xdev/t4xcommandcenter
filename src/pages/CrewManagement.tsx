@@ -1322,6 +1322,19 @@ function ReportsPage() {
 // SETTINGS
 // ═══════════════════════════════════════════════════════
 function SettingsPage() {
+  const [paymentModes, setPaymentModes] = useState([
+    { mode: "Bank Transfer (Manual)", enabled: true, desc: "Download bank advice and process manually" },
+    { mode: "NEFT/RTGS", enabled: true, desc: "Direct bank integration for salary credit" },
+    { mode: "Cheque", enabled: false, desc: "Generate cheques for salary payment" },
+    { mode: "Cash", enabled: false, desc: "Cash disbursement with receipt tracking" },
+  ]);
+
+  const togglePaymentMode = (mode: string) => {
+    setPaymentModes(prev => prev.map(pm => pm.mode === mode ? { ...pm, enabled: !pm.enabled } : pm));
+    const pm = paymentModes.find(p => p.mode === mode);
+    toast.success(`${mode} ${pm?.enabled ? "Disabled" : "Enabled"}`, { description: `Payment mode has been ${pm?.enabled ? "disabled" : "enabled"}.` });
+  };
+
   return (
     <div className="space-y-5 animate-fade-in-up">
       <h2 className="text-lg font-bold text-foreground">Payroll Settings</h2>
