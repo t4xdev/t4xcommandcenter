@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
+import { toast } from "sonner";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
@@ -213,7 +214,7 @@ export default function CrewManagement() {
                 <input placeholder="Search in Employee" className="pl-9 pr-3 py-1.5 text-xs border border-border rounded-lg bg-transparent w-56 focus:ring-2 focus:ring-ring outline-none" />
               </div>
             </div>
-            <button className="relative p-2 rounded-lg hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" /></button>
+            <button onClick={() => toast.info("Notifications", { description: "You have 2 pending approvals and 1 certificate expiring soon." })} className="relative p-2 rounded-lg hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" /></button>
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><User className="w-4 h-4 text-primary-foreground" /></div>
           </div>
         </div>
@@ -240,7 +241,7 @@ export default function CrewManagement() {
             })}
           </nav>
           <div className="p-3 border-t border-primary-foreground/10">
-            <button className="text-[11px] text-primary-foreground/50 hover:text-primary-foreground/80">Contact Support ›</button>
+            <button onClick={() => toast.info("Support", { description: "Contact us at support@twenty4x.com or call +91-22-4567-8900." })} className="text-[11px] text-primary-foreground/50 hover:text-primary-foreground/80">Contact Support ›</button>
           </div>
         </aside>
 
@@ -309,7 +310,7 @@ function PayrollDashboard({ employees }: { employees: Employee[] }) {
               <div key={i} className={`rounded-lg border p-4 ${item.color}`}>
                 <p className="text-xs text-muted-foreground">{item.label}</p>
                 <p className="text-base font-bold font-mono text-foreground mt-1">{item.value}</p>
-                <button className="text-[10px] text-primary font-medium mt-2">View Details</button>
+                <button onClick={() => toast.info(`${item.label} Details`, { description: `Showing detailed breakdown for ${item.label}. Amount: ${item.value}` })} className="text-[10px] text-primary font-medium mt-2">View Details</button>
               </div>
             ))}
           </div>
@@ -466,7 +467,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
       {(!employee.dob || !employee.fatherName) && (
         <div className="bg-warning/10 border border-warning/30 rounded-lg px-4 py-2.5 flex items-center gap-2">
           <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
-          <p className="text-xs text-warning">This employee's profile is incomplete. <button className="font-semibold text-primary hover:underline">Complete now</button></p>
+          <p className="text-xs text-warning">This employee's profile is incomplete. <button onClick={() => toast.info("Complete Profile", { description: "Navigate to the relevant section to fill in missing details." })} className="font-semibold text-primary hover:underline">Complete now</button></p>
         </div>
       )}
 
@@ -624,7 +625,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
           <div className="card-elevated p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-foreground">Payslips - FY 2025-26</h3>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Download All</button>
+              <button onClick={() => toast.success("Download Started", { description: "All payslips for FY 2025-26 are being downloaded as a ZIP file." })} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Download All</button>
             </div>
             <div className="border border-border rounded-lg overflow-hidden">
               <table className="w-full text-xs">
@@ -651,7 +652,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
                       <td className="px-4 py-2.5 text-right font-mono text-destructive">{fmt(ps.ded)}</td>
                       <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(ps.net)}</td>
                       <td className="px-4 py-2.5 text-center">{ps.days}</td>
-                      <td className="px-4 py-2.5 text-center"><button className="text-primary hover:underline">View</button> · <button className="text-primary hover:underline">PDF</button></td>
+                      <td className="px-4 py-2.5 text-center"><button onClick={() => toast.info("Payslip Preview", { description: `Viewing payslip for ${ps.month}` })} className="text-primary hover:underline">View</button> · <button onClick={() => toast.success("PDF Downloaded", { description: `Payslip PDF for ${ps.month} downloaded.` })} className="text-primary hover:underline">PDF</button></td>
                     </tr>
                   ))}
                 </tbody>
@@ -673,7 +674,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
                       <p className="text-[10px] text-muted-foreground">Generated on {f.date}</p>
                     </div>
                   </div>
-                  <button className="flex items-center gap-1 text-xs text-primary font-medium"><Download className="w-3 h-3" /> Download</button>
+                  <button onClick={() => toast.success("Downloaded", { description: `${f.name} downloaded successfully.` })} className="flex items-center gap-1 text-xs text-primary font-medium"><Download className="w-3 h-3" /> Download</button>
                 </div>
               ))}
             </div>
@@ -685,7 +686,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-foreground">Employee Loans</h3>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Create Loan</button>
+            <button onClick={() => toast.info("Create Loan", { description: "Loan creation form will open. Select employee, loan type, and amount." })} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Create Loan</button>
           </div>
           <div className="card-elevated overflow-hidden">
             <table className="w-full text-xs">
@@ -728,6 +729,16 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
 // ═══════════════════════════════════════════════════════
 function PayRunsPage() {
   const [tab, setTab] = useState<"run" | "history">("run");
+  const [processing, setProcessing] = useState(false);
+  const navigate = useNavigate();
+
+  const handleProcessPayroll = () => {
+    setProcessing(true);
+    setTimeout(() => {
+      setProcessing(false);
+      toast.success("Payroll Processed", { description: "March 2026 payroll has been submitted for approval." });
+    }, 1500);
+  };
 
   return (
     <div className="space-y-5 animate-fade-in-up">
@@ -751,7 +762,12 @@ function PayRunsPage() {
               </div>
               <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Please approve this payroll on or before 31/03/2026.</p>
             </div>
-            <button className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">View Details</button>
+            <div className="flex items-center gap-2">
+              <button onClick={handleProcessPayroll} disabled={processing} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50">
+                {processing ? "Processing..." : "Process Payroll"}
+              </button>
+              <button onClick={() => navigate("/payroll/pay-runs/1")} className="px-4 py-2 border border-border text-xs font-medium rounded-lg hover:bg-accent">View Details</button>
+            </div>
           </div>
         </div>
       )}
@@ -772,7 +788,7 @@ function PayRunsPage() {
             </thead>
             <tbody>
               {payrollHistory.map(run => (
-                <tr key={run.id} className="border-b border-border hover:bg-accent/50 cursor-pointer">
+                <tr key={run.id} className="border-b border-border hover:bg-accent/50 cursor-pointer" onClick={() => navigate(`/payroll/pay-runs/${run.id}`)}>
                   <td className="px-4 py-3 text-foreground">
                     <Link to={`/payroll/pay-runs/${run.id}`} className="hover:underline">{run.date}</Link>
                   </td>
@@ -812,7 +828,7 @@ function PayRunDetailRoute() {
             <div><p className="text-base font-bold font-mono">{fmt(run.payrollCost)}</p><p className="text-[9px] text-muted-foreground uppercase">Payroll Cost</p></div>
             <div><p className="text-base font-bold font-mono">{fmt(run.netPay)}</p><p className="text-[9px] text-muted-foreground uppercase">Total Net Pay</p></div>
           </div>
-          <button className="text-[10px] text-primary font-medium mt-2 flex items-center gap-1"><Download className="w-3 h-3" /> Download Bank Advice</button>
+          <button onClick={() => toast.success("Bank Advice Downloaded", { description: "Bank advice file for this pay run has been downloaded." })} className="text-[10px] text-primary font-medium mt-2 flex items-center gap-1"><Download className="w-3 h-3" /> Download Bank Advice</button>
         </div>
         <div className="card-elevated p-4 flex flex-col items-center justify-center text-center">
           <p className="text-[10px] text-muted-foreground uppercase">Pay Day</p>
@@ -830,52 +846,115 @@ function PayRunDetailRoute() {
         </div>
       </div>
 
-      <div className="card-elevated overflow-hidden">
-        <div className="px-4 py-3 border-b border-border flex items-center gap-4">
-          <button className="text-xs font-medium text-foreground border-b-2 border-primary pb-1">Employee Summary</button>
-          <button className="text-xs font-medium text-muted-foreground pb-1">Taxes & Deductions</button>
-          <button className="text-xs font-medium text-muted-foreground pb-1">Overall Insights</button>
-        </div>
+      <PayRunDetailTabs run={run} />
+    </div>
+  );
+}
+
+function PayRunDetailTabs({ run }: { run: typeof payrollHistory[0] }) {
+  const [activeTab, setActiveTab] = useState<"summary" | "taxes" | "insights">("summary");
+  const employees = [
+    { name: "Sujit Kumar Jha (0007)", days: 28, net: 90000 },
+    { name: "Kajal Shrivas (0003)", days: 28, net: 76400 },
+    { name: "Ankita Sharma (0004)", days: 28, net: 17400 },
+    { name: "Mandeep Kaur (0005)", days: 28, net: 21000 },
+    { name: "Shubham Singh (0006)", days: 28, net: 76400 },
+    { name: "Sneha Kanojia (0008)", days: 28, net: 56400 },
+  ];
+
+  return (
+    <div className="card-elevated overflow-hidden">
+      <div className="px-4 py-3 border-b border-border flex items-center gap-4">
+        {([["summary", "Employee Summary"], ["taxes", "Taxes & Deductions"], ["insights", "Overall Insights"]] as const).map(([key, label]) => (
+          <button key={key} onClick={() => setActiveTab(key)} className={`text-xs font-medium pb-1 border-b-2 ${activeTab === key ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{label}</button>
+        ))}
+      </div>
+      {activeTab === "summary" && (
         <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-muted border-b border-border">
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
-              <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
-              <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
-              <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payslip</th>
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Mode</th>
-              <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Status</th>
-            </tr>
-          </thead>
+          <thead><tr className="bg-muted border-b border-border">
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
+            <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payslip</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Mode</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Status</th>
+          </tr></thead>
           <tbody>
-            {[
-              { name: "Sujit Kumar Jha (0007)", days: 28, net: 90000 },
-              { name: "Kajal Shrivas (0003)", days: 28, net: 76400 },
-              { name: "Ankita Sharma (0004)", days: 28, net: 17400 },
-              { name: "Mandeep Kaur (0005)", days: 28, net: 21000 },
-              { name: "Shubham Singh (0006)", days: 28, net: 76400 },
-              { name: "Sneha Kanojia (0008)", days: 28, net: 56400 },
-            ].map((row, i) => (
+            {employees.map((row, i) => (
               <tr key={i} className="border-b border-border hover:bg-accent/50">
                 <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-border" /></td>
                 <td className="px-4 py-2.5 text-foreground">{row.name}</td>
                 <td className="px-4 py-2.5 text-center">{row.days}</td>
                 <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(row.net)}</td>
-                <td className="px-4 py-2.5 text-center"><span className="text-primary cursor-pointer">View 📧</span></td>
+                <td className="px-4 py-2.5 text-center">
+                  <button onClick={() => toast.info("Payslip Preview", { description: `Viewing payslip for ${row.name}` })} className="text-primary hover:underline">View</button>
+                  {" · "}
+                  <button onClick={() => toast.success("Email Sent", { description: `Payslip emailed to ${row.name}` })} className="text-primary hover:underline">📧</button>
+                </td>
                 <td className="px-4 py-2.5">Manual Bank Transfer</td>
                 <td className="px-4 py-2.5 text-success text-[10px]">Paid on {run.date}</td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
+      )}
+      {activeTab === "taxes" && (
+        <div className="p-5 space-y-4">
+          <div className="grid grid-cols-3 gap-4">
+            {[{ label: "Total TDS", value: fmt(0) }, { label: "EPF Contribution", value: fmt(49554.07) }, { label: "ESI Contribution", value: fmt(0) }].map((item, i) => (
+              <div key={i} className="rounded-lg border border-border p-3">
+                <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                <p className="text-base font-bold font-mono text-foreground mt-1">{item.value}</p>
+              </div>
+            ))}
+          </div>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">TDS</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">EPF (EE)</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">EPF (ER)</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Prof. Tax</th>
+              </tr></thead>
+              <tbody>
+                {employees.slice(0, 4).map((row, i) => (
+                  <tr key={i} className="border-b border-border">
+                    <td className="px-4 py-2.5 text-foreground">{row.name}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(0)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.net * 0.12)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.net * 0.12)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(200)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {activeTab === "insights" && (
+        <div className="p-5 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: "Total Payroll Cost", value: fmt(run.payrollCost), change: "+2.1% from last month" },
+              { label: "Total Net Pay", value: fmt(run.netPay), change: "+1.8% from last month" },
+              { label: "Avg. Pay Per Employee", value: fmt(Math.round(run.netPay / run.employees)), change: "Stable" },
+              { label: "Total Employees Paid", value: String(run.employees), change: "+1 from last month" },
+            ].map((item, i) => (
+              <div key={i} className="rounded-lg border border-border p-4">
+                <p className="text-[10px] text-muted-foreground uppercase">{item.label}</p>
+                <p className="text-lg font-bold font-mono text-foreground mt-1">{item.value}</p>
+                <p className="text-[10px] text-primary mt-1">{item.change}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ═══════════════════════════════════════════════════════
-// TAXES & FORMS
 // ═══════════════════════════════════════════════════════
 function TaxesFormsPage() {
   const location = useLocation();
@@ -929,7 +1008,7 @@ function TaxesFormsPage() {
         <div className="card-elevated p-5">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold">Challan History</h3>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Record Challan</button>
+            <button onClick={() => toast.info("Recording Challan", { description: "Enter BSR code, challan number, and payment details." })} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Record Challan</button>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full text-xs">
@@ -990,7 +1069,7 @@ function TaxesFormsPage() {
                     <td className="px-4 py-2.5 text-center">{row.emps}</td>
                     <td className="px-4 py-2.5">{row.due}</td>
                     <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Filed" ? "default" : "secondary"} className="text-[10px]">{row.status}</Badge></td>
-                    <td className="px-4 py-2.5 text-center"><button className="text-primary hover:underline text-xs">{row.status === "Pending" ? "File Now" : "View"}</button></td>
+                    <td className="px-4 py-2.5 text-center"><button onClick={() => { if (row.status === "Pending") { toast.info("Filing Form 24Q", { description: `Initiating filing for ${row.q} (${row.period})` }); } else { toast.info("Viewing Filed Return", { description: `${row.q} return for ${row.period} — TDS: ${fmt(row.tds)}` }); } }} className="text-primary hover:underline text-xs">{row.status === "Pending" ? "File Now" : "View"}</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -1002,7 +1081,7 @@ function TaxesFormsPage() {
         <div className="card-elevated p-5">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold">Form 16 - Employee Tax Certificates</h3>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Generate All Form 16</button>
+            <button onClick={() => { toast.success("Generating Form 16", { description: "Form 16 certificates are being generated for all eligible employees." }); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Generate All Form 16</button>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full text-xs">
@@ -1028,7 +1107,7 @@ function TaxesFormsPage() {
                     <td className="px-4 py-2.5 text-right font-mono">{fmt(row.income)}</td>
                     <td className="px-4 py-2.5 text-right font-mono">{fmt(row.tds)}</td>
                     <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Generated" ? "default" : row.status === "Pending" ? "secondary" : "outline"} className="text-[10px]">{row.status}</Badge></td>
-                    <td className="px-4 py-2.5 text-center">{row.status === "Generated" ? <button className="text-primary hover:underline text-xs">Download</button> : <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-4 py-2.5 text-center">{row.status === "Generated" ? <button onClick={() => toast.success("Downloaded", { description: `Form 16 for ${row.name} downloaded.` })} className="text-primary hover:underline text-xs">Download</button> : <span className="text-muted-foreground">—</span>}</td>
                   </tr>
                 ))}
               </tbody>
@@ -1044,12 +1123,48 @@ function TaxesFormsPage() {
 // LOANS
 // ═══════════════════════════════════════════════════════
 function LoansPage() {
+  const [showForm, setShowForm] = useState(false);
+  const [loanForm, setLoanForm] = useState({ employee: "", type: "Salary Advance", amount: "" });
+
+  const handleCreateLoan = () => {
+    if (!loanForm.employee || !loanForm.amount) { toast.error("Missing Fields", { description: "Please fill in employee and amount." }); return; }
+    toast.success("Loan Created", { description: `${loanForm.type} of ${fmt(Number(loanForm.amount))} created for ${loanForm.employee}.` });
+    setShowForm(false);
+    setLoanForm({ employee: "", type: "Salary Advance", amount: "" });
+  };
+
   return (
     <div className="space-y-5 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-foreground">Loans</h2>
-        <button className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3.5 h-3.5" /> Create Loan</button>
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3.5 h-3.5" /> Create Loan</button>
       </div>
+
+      {showForm && (
+        <div className="card-elevated p-5 border-2 border-primary/20 space-y-4">
+          <h3 className="text-sm font-bold text-foreground">New Loan</h3>
+          <div className="grid grid-cols-3 gap-3">
+            <div><label className="text-[10px] text-muted-foreground uppercase font-semibold">Employee *</label>
+              <select value={loanForm.employee} onChange={e => setLoanForm(p => ({ ...p, employee: e.target.value }))} className="w-full mt-1 px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
+                <option value="">Select Employee</option>
+                <option>Rajesh Sharma (EMP001)</option><option>Priya Patel (EMP002)</option><option>Arun Nair (EMP003)</option><option>Deepak Verma (EMP006)</option>
+              </select>
+            </div>
+            <div><label className="text-[10px] text-muted-foreground uppercase font-semibold">Loan Type *</label>
+              <select value={loanForm.type} onChange={e => setLoanForm(p => ({ ...p, type: e.target.value }))} className="w-full mt-1 px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
+                <option>Salary Advance</option><option>Personal Loan</option><option>Emergency Advance</option>
+              </select>
+            </div>
+            <div><label className="text-[10px] text-muted-foreground uppercase font-semibold">Amount (₹) *</label>
+              <input type="number" value={loanForm.amount} onChange={e => setLoanForm(p => ({ ...p, amount: e.target.value }))} placeholder="0" className="w-full mt-1 px-3 py-2 text-xs border border-border rounded-lg bg-transparent" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleCreateLoan} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">Create Loan</button>
+            <button onClick={() => setShowForm(false)} className="px-4 py-2 border border-border text-xs font-medium rounded-lg hover:bg-accent">Cancel</button>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Active Loans", value: "4", color: "border-primary/20 bg-primary/5" },
@@ -1102,14 +1217,32 @@ function LoansPage() {
 // APPROVALS
 // ═══════════════════════════════════════════════════════
 function ApprovalsPage() {
+  const [approvals, setApprovals] = useState([
+    { req: "APR-2026-015", emp: "Rajesh Sharma", type: "Salary Revision", date: "25/03/2026", status: "Pending" },
+    { req: "APR-2026-014", emp: "Priya Patel", type: "Loan Request", date: "22/03/2026", status: "Pending" },
+    { req: "APR-2026-013", emp: "Deepak Verma", type: "IT Declaration", date: "20/03/2026", status: "Pending" },
+    { req: "APR-2026-012", emp: "Sunita Reddy", type: "Reimbursement", date: "18/03/2026", status: "Approved" },
+    { req: "APR-2026-011", emp: "Mohammed Khan", type: "Bonus Payout", date: "15/03/2026", status: "Approved" },
+    { req: "APR-2026-010", emp: "Arun Nair", type: "Leave Encashment", date: "12/03/2026", status: "Rejected" },
+  ]);
+
+  const handleAction = (req: string, action: "Approved" | "Rejected") => {
+    setApprovals(prev => prev.map(a => a.req === req ? { ...a, status: action } : a));
+    toast.success(`Request ${action}`, { description: `${req} has been ${action.toLowerCase()}.` });
+  };
+
+  const pendingCount = approvals.filter(a => a.status === "Pending").length;
+  const approvedCount = approvals.filter(a => a.status === "Approved").length;
+  const rejectedCount = approvals.filter(a => a.status === "Rejected").length;
+
   return (
     <div className="space-y-5 animate-fade-in-up">
       <h2 className="text-lg font-bold text-foreground">Pending Approvals</h2>
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Pending", value: "3", color: "border-warning/20 bg-warning/5" },
-          { label: "Approved This Month", value: "12", color: "border-success/20 bg-success/5" },
-          { label: "Rejected", value: "1", color: "border-destructive/20 bg-destructive/5" },
+          { label: "Pending", value: String(pendingCount), color: "border-warning/20 bg-warning/5" },
+          { label: "Approved This Month", value: String(approvedCount), color: "border-success/20 bg-success/5" },
+          { label: "Rejected", value: String(rejectedCount), color: "border-destructive/20 bg-destructive/5" },
         ].map((kpi, i) => (
           <div key={i} className={`rounded-lg border p-4 ${kpi.color}`}>
             <p className="text-xs text-muted-foreground">{kpi.label}</p>
@@ -1128,14 +1261,7 @@ function ApprovalsPage() {
             <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Action</th>
           </tr></thead>
           <tbody>
-            {[
-              { req: "APR-2026-015", emp: "Rajesh Sharma", type: "Salary Revision", date: "25/03/2026", status: "Pending" },
-              { req: "APR-2026-014", emp: "Priya Patel", type: "Loan Request", date: "22/03/2026", status: "Pending" },
-              { req: "APR-2026-013", emp: "Deepak Verma", type: "IT Declaration", date: "20/03/2026", status: "Pending" },
-              { req: "APR-2026-012", emp: "Sunita Reddy", type: "Reimbursement", date: "18/03/2026", status: "Approved" },
-              { req: "APR-2026-011", emp: "Mohammed Khan", type: "Bonus Payout", date: "15/03/2026", status: "Approved" },
-              { req: "APR-2026-010", emp: "Arun Nair", type: "Leave Encashment", date: "12/03/2026", status: "Rejected" },
-            ].map((row, i) => (
+            {approvals.map((row, i) => (
               <tr key={i} className="border-b border-border hover:bg-accent/50">
                 <td className="px-4 py-2.5 text-primary font-medium">{row.req}</td>
                 <td className="px-4 py-2.5 font-medium text-foreground">{row.emp}</td>
@@ -1145,8 +1271,8 @@ function ApprovalsPage() {
                 <td className="px-4 py-2.5 text-center">
                   {row.status === "Pending" ? (
                     <div className="flex items-center justify-center gap-2">
-                      <button className="px-2 py-1 bg-primary text-primary-foreground rounded text-[10px]">Approve</button>
-                      <button className="px-2 py-1 border border-border rounded text-[10px] hover:bg-accent">Reject</button>
+                      <button onClick={() => handleAction(row.req, "Approved")} className="px-2 py-1 bg-primary text-primary-foreground rounded text-[10px]">Approve</button>
+                      <button onClick={() => handleAction(row.req, "Rejected")} className="px-2 py-1 border border-border rounded text-[10px] hover:bg-accent">Reject</button>
                     </div>
                   ) : <span className="text-muted-foreground">—</span>}
                 </td>
@@ -1184,7 +1310,7 @@ function ReportsPage() {
               <p className="text-[11px] text-muted-foreground mt-0.5">{report.desc}</p>
               <p className="text-[10px] text-muted-foreground mt-2">Last generated: {report.lastGenerated}</p>
             </div>
-            <button className="flex items-center gap-1 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-accent shrink-0"><Download className="w-3 h-3" /> Generate</button>
+            <button onClick={() => { toast.loading(`Generating ${report.name}...`, { id: report.name }); setTimeout(() => toast.success(`${report.name} Ready`, { id: report.name, description: "Report generated successfully. Click to download." }), 1500); }} className="flex items-center gap-1 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-accent shrink-0"><Download className="w-3 h-3" /> Generate</button>
           </div>
         ))}
       </div>
@@ -1196,6 +1322,19 @@ function ReportsPage() {
 // SETTINGS
 // ═══════════════════════════════════════════════════════
 function SettingsPage() {
+  const [paymentModes, setPaymentModes] = useState([
+    { mode: "Bank Transfer (Manual)", enabled: true, desc: "Download bank advice and process manually" },
+    { mode: "NEFT/RTGS", enabled: true, desc: "Direct bank integration for salary credit" },
+    { mode: "Cheque", enabled: false, desc: "Generate cheques for salary payment" },
+    { mode: "Cash", enabled: false, desc: "Cash disbursement with receipt tracking" },
+  ]);
+
+  const togglePaymentMode = (mode: string) => {
+    setPaymentModes(prev => prev.map(pm => pm.mode === mode ? { ...pm, enabled: !pm.enabled } : pm));
+    const pm = paymentModes.find(p => p.mode === mode);
+    toast.success(`${mode} ${pm?.enabled ? "Disabled" : "Enabled"}`, { description: `Payment mode has been ${pm?.enabled ? "disabled" : "enabled"}.` });
+  };
+
   return (
     <div className="space-y-5 animate-fade-in-up">
       <h2 className="text-lg font-bold text-foreground">Payroll Settings</h2>
@@ -1215,7 +1354,7 @@ function SettingsPage() {
               </div>
             ))}
           </div>
-          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Configuration</button>
+          <button onClick={() => toast.info("Edit Payroll Cycle", { description: "Configuration editor opened. Modify pay frequency, pay day, and processing date." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Configuration</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Statutory Rates</h3>
@@ -1234,7 +1373,7 @@ function SettingsPage() {
               </div>
             ))}
           </div>
-          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Update Rates</button>
+          <button onClick={() => toast.info("Update Statutory Rates", { description: "Rate editor opened. Modify EPF, ESI, PT, and LWF contribution rates." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Update Rates</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Rank & Wage Master</h3>
@@ -1266,18 +1405,13 @@ function SettingsPage() {
               </tbody>
             </table>
           </div>
-          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Wage Master</button>
+          <button onClick={() => toast.info("Edit Wage Master", { description: "Wage master editor opened. Modify base wages, sea allowances, and leave pay by rank." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Wage Master</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Payment Modes</h3>
           <div className="space-y-2">
-            {[
-              { mode: "Bank Transfer (Manual)", enabled: true, desc: "Download bank advice and process manually" },
-              { mode: "NEFT/RTGS", enabled: true, desc: "Direct bank integration for salary credit" },
-              { mode: "Cheque", enabled: false, desc: "Generate cheques for salary payment" },
-              { mode: "Cash", enabled: false, desc: "Cash disbursement with receipt tracking" },
-            ].map((pm, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border">
+            {paymentModes.map((pm, i) => (
+              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border cursor-pointer hover:bg-accent/30" onClick={() => togglePaymentMode(pm.mode)}>
                 <div>
                   <p className="text-xs font-semibold text-foreground">{pm.mode}</p>
                   <p className="text-[10px] text-muted-foreground">{pm.desc}</p>
