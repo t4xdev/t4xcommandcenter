@@ -42,7 +42,11 @@ interface Employee {
   certificates?: { name: string; number: string; issueDate: string; expiryDate: string; status: "Valid" | "Expiring" | "Expired" }[];
 }
 
-// ─── Mock Data ───
+const employeeAvatars: Record<string, string> = {
+  "1": avatarRajesh, "2": avatarPriya, "3": avatarArun,
+  "4": avatarSunita, "5": avatarMohammed, "6": avatarDeepak,
+};
+
 const mockEmployees: Employee[] = [
   {
     id: "1", employeeId: "EMP001", firstName: "Rajesh", middleName: "Kumar", lastName: "Sharma",
