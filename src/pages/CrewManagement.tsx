@@ -1410,13 +1410,8 @@ function SettingsPage() {
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Payment Modes</h3>
           <div className="space-y-2">
-            {[
-              { mode: "Bank Transfer (Manual)", enabled: true, desc: "Download bank advice and process manually" },
-              { mode: "NEFT/RTGS", enabled: true, desc: "Direct bank integration for salary credit" },
-              { mode: "Cheque", enabled: false, desc: "Generate cheques for salary payment" },
-              { mode: "Cash", enabled: false, desc: "Cash disbursement with receipt tracking" },
-            ].map((pm, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border">
+            {paymentModes.map((pm, i) => (
+              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border cursor-pointer hover:bg-accent/30" onClick={() => togglePaymentMode(pm.mode)}>
                 <div>
                   <p className="text-xs font-semibold text-foreground">{pm.mode}</p>
                   <p className="text-[10px] text-muted-foreground">{pm.desc}</p>
