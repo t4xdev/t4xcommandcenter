@@ -2,6 +2,12 @@ import { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
+import avatarRajesh from "@/assets/avatars/avatar-rajesh.jpg";
+import avatarPriya from "@/assets/avatars/avatar-priya.jpg";
+import avatarArun from "@/assets/avatars/avatar-arun.jpg";
+import avatarSunita from "@/assets/avatars/avatar-sunita.jpg";
+import avatarMohammed from "@/assets/avatars/avatar-mohammed.jpg";
+import avatarDeepak from "@/assets/avatars/avatar-deepak.jpg";
 import {
   Users, UserPlus, Search, ChevronRight, ChevronLeft, Edit2, X, Check,
   Calendar, CreditCard, IndianRupee, FileText, AlertTriangle, Plus,
@@ -36,7 +42,11 @@ interface Employee {
   certificates?: { name: string; number: string; issueDate: string; expiryDate: string; status: "Valid" | "Expiring" | "Expired" }[];
 }
 
-// ─── Mock Data ───
+const employeeAvatars: Record<string, string> = {
+  "1": avatarRajesh, "2": avatarPriya, "3": avatarArun,
+  "4": avatarSunita, "5": avatarMohammed, "6": avatarDeepak,
+};
+
 const mockEmployees: Employee[] = [
   {
     id: "1", employeeId: "EMP001", firstName: "Rajesh", middleName: "Kumar", lastName: "Sharma",
@@ -557,7 +567,11 @@ function EmployeeList({ employees }: { employees: Employee[] }) {
                   <td className="px-4 py-3"><input type="checkbox" className="rounded border-border" onClick={e => e.stopPropagation()} /></td>
                   <td className="px-4 py-3">
                     <Link to={`/payroll/employees/${emp.id}`} className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colors[cIdx]}`}>{emp.firstName[0]}</div>
+                      {employeeAvatars[emp.id] ? (
+                        <img src={employeeAvatars[emp.id]} alt={emp.firstName} className="w-8 h-8 rounded-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colors[cIdx]}`}>{emp.firstName[0]}</div>
+                      )}
                       <div>
                         <p className="font-semibold text-primary hover:underline">{fullName} - {emp.employeeId}</p>
                         <p className="text-[10px] text-muted-foreground">{emp.designation}</p>
@@ -601,7 +615,11 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
       <div className="card-elevated p-5">
         <div className="flex items-center gap-4">
           <Link to="/payroll/employees" className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></Link>
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">{employee.firstName[0]}</div>
+          {employeeAvatars[employee.id] ? (
+            <img src={employeeAvatars[employee.id]} alt={employee.firstName} className="w-12 h-12 rounded-full object-cover" loading="lazy" />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">{employee.firstName[0]}</div>
+          )}
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-foreground">{employee.employeeId} - {fullName}</h2>
