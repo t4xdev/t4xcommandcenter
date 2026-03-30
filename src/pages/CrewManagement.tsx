@@ -1217,14 +1217,32 @@ function LoansPage() {
 // APPROVALS
 // ═══════════════════════════════════════════════════════
 function ApprovalsPage() {
+  const [approvals, setApprovals] = useState([
+    { req: "APR-2026-015", emp: "Rajesh Sharma", type: "Salary Revision", date: "25/03/2026", status: "Pending" },
+    { req: "APR-2026-014", emp: "Priya Patel", type: "Loan Request", date: "22/03/2026", status: "Pending" },
+    { req: "APR-2026-013", emp: "Deepak Verma", type: "IT Declaration", date: "20/03/2026", status: "Pending" },
+    { req: "APR-2026-012", emp: "Sunita Reddy", type: "Reimbursement", date: "18/03/2026", status: "Approved" },
+    { req: "APR-2026-011", emp: "Mohammed Khan", type: "Bonus Payout", date: "15/03/2026", status: "Approved" },
+    { req: "APR-2026-010", emp: "Arun Nair", type: "Leave Encashment", date: "12/03/2026", status: "Rejected" },
+  ]);
+
+  const handleAction = (req: string, action: "Approved" | "Rejected") => {
+    setApprovals(prev => prev.map(a => a.req === req ? { ...a, status: action } : a));
+    toast.success(`Request ${action}`, { description: `${req} has been ${action.toLowerCase()}.` });
+  };
+
+  const pendingCount = approvals.filter(a => a.status === "Pending").length;
+  const approvedCount = approvals.filter(a => a.status === "Approved").length;
+  const rejectedCount = approvals.filter(a => a.status === "Rejected").length;
+
   return (
     <div className="space-y-5 animate-fade-in-up">
       <h2 className="text-lg font-bold text-foreground">Pending Approvals</h2>
       <div className="grid grid-cols-3 gap-4">
         {[
-          { label: "Pending", value: "3", color: "border-warning/20 bg-warning/5" },
-          { label: "Approved This Month", value: "12", color: "border-success/20 bg-success/5" },
-          { label: "Rejected", value: "1", color: "border-destructive/20 bg-destructive/5" },
+          { label: "Pending", value: String(pendingCount), color: "border-warning/20 bg-warning/5" },
+          { label: "Approved This Month", value: String(approvedCount), color: "border-success/20 bg-success/5" },
+          { label: "Rejected", value: String(rejectedCount), color: "border-destructive/20 bg-destructive/5" },
         ].map((kpi, i) => (
           <div key={i} className={`rounded-lg border p-4 ${kpi.color}`}>
             <p className="text-xs text-muted-foreground">{kpi.label}</p>
@@ -1243,14 +1261,7 @@ function ApprovalsPage() {
             <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Action</th>
           </tr></thead>
           <tbody>
-            {[
-              { req: "APR-2026-015", emp: "Rajesh Sharma", type: "Salary Revision", date: "25/03/2026", status: "Pending" },
-              { req: "APR-2026-014", emp: "Priya Patel", type: "Loan Request", date: "22/03/2026", status: "Pending" },
-              { req: "APR-2026-013", emp: "Deepak Verma", type: "IT Declaration", date: "20/03/2026", status: "Pending" },
-              { req: "APR-2026-012", emp: "Sunita Reddy", type: "Reimbursement", date: "18/03/2026", status: "Approved" },
-              { req: "APR-2026-011", emp: "Mohammed Khan", type: "Bonus Payout", date: "15/03/2026", status: "Approved" },
-              { req: "APR-2026-010", emp: "Arun Nair", type: "Leave Encashment", date: "12/03/2026", status: "Rejected" },
-            ].map((row, i) => (
+            {approvals.map((row, i) => (
               <tr key={i} className="border-b border-border hover:bg-accent/50">
                 <td className="px-4 py-2.5 text-primary font-medium">{row.req}</td>
                 <td className="px-4 py-2.5 font-medium text-foreground">{row.emp}</td>
@@ -1260,8 +1271,8 @@ function ApprovalsPage() {
                 <td className="px-4 py-2.5 text-center">
                   {row.status === "Pending" ? (
                     <div className="flex items-center justify-center gap-2">
-                      <button className="px-2 py-1 bg-primary text-primary-foreground rounded text-[10px]">Approve</button>
-                      <button className="px-2 py-1 border border-border rounded text-[10px] hover:bg-accent">Reject</button>
+                      <button onClick={() => handleAction(row.req, "Approved")} className="px-2 py-1 bg-primary text-primary-foreground rounded text-[10px]">Approve</button>
+                      <button onClick={() => handleAction(row.req, "Rejected")} className="px-2 py-1 border border-border rounded text-[10px] hover:bg-accent">Reject</button>
                     </div>
                   ) : <span className="text-muted-foreground">—</span>}
                 </td>
