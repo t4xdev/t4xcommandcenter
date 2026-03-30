@@ -918,9 +918,25 @@ function PayRunsPage() {
               <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Please approve this payroll on or before 31/03/2026.</p>
             </div>
             <div className="flex items-center gap-2">
-              <button onClick={handleProcessPayroll} disabled={processing} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50">
-                {processing ? "Processing..." : "Process Payroll"}
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button disabled={processing} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50">
+                    {processing ? "Processing..." : "Process Payroll"}
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Process Payroll for March 2026?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will process payroll for <strong>16 employees</strong> with a net pay of <strong>{fmt(1173528)}</strong>. This action will submit the payroll for final approval and cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="text-xs">Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleProcessPayroll} className="text-xs">Yes, Process Payroll</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <button onClick={() => navigate("/payroll/pay-runs/1")} className="px-4 py-2 border border-border text-xs font-medium rounded-lg hover:bg-accent">View Details</button>
             </div>
           </div>
