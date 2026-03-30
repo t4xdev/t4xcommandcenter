@@ -851,8 +851,110 @@ function PayRunDetailRoute() {
   );
 }
 
-// ═══════════════════════════════════════════════════════
-// TAXES & FORMS
+function PayRunDetailTabs({ run }: { run: typeof payrollHistory[0] }) {
+  const [activeTab, setActiveTab] = useState<"summary" | "taxes" | "insights">("summary");
+  const employees = [
+    { name: "Sujit Kumar Jha (0007)", days: 28, net: 90000 },
+    { name: "Kajal Shrivas (0003)", days: 28, net: 76400 },
+    { name: "Ankita Sharma (0004)", days: 28, net: 17400 },
+    { name: "Mandeep Kaur (0005)", days: 28, net: 21000 },
+    { name: "Shubham Singh (0006)", days: 28, net: 76400 },
+    { name: "Sneha Kanojia (0008)", days: 28, net: 56400 },
+  ];
+
+  return (
+    <div className="card-elevated overflow-hidden">
+      <div className="px-4 py-3 border-b border-border flex items-center gap-4">
+        {([["summary", "Employee Summary"], ["taxes", "Taxes & Deductions"], ["insights", "Overall Insights"]] as const).map(([key, label]) => (
+          <button key={key} onClick={() => setActiveTab(key)} className={`text-xs font-medium pb-1 border-b-2 ${activeTab === key ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{label}</button>
+        ))}
+      </div>
+      {activeTab === "summary" && (
+        <table className="w-full text-xs">
+          <thead><tr className="bg-muted border-b border-border">
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider w-8"><input type="checkbox" className="rounded border-border" /></th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee Name</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
+            <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payslip</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Mode</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Payment Status</th>
+          </tr></thead>
+          <tbody>
+            {employees.map((row, i) => (
+              <tr key={i} className="border-b border-border hover:bg-accent/50">
+                <td className="px-4 py-2.5"><input type="checkbox" className="rounded border-border" /></td>
+                <td className="px-4 py-2.5 text-foreground">{row.name}</td>
+                <td className="px-4 py-2.5 text-center">{row.days}</td>
+                <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(row.net)}</td>
+                <td className="px-4 py-2.5 text-center">
+                  <button onClick={() => toast.info("Payslip Preview", { description: `Viewing payslip for ${row.name}` })} className="text-primary hover:underline">View</button>
+                  {" · "}
+                  <button onClick={() => toast.success("Email Sent", { description: `Payslip emailed to ${row.name}` })} className="text-primary hover:underline">📧</button>
+                </td>
+                <td className="px-4 py-2.5">Manual Bank Transfer</td>
+                <td className="px-4 py-2.5 text-success text-[10px]">Paid on {run.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {activeTab === "taxes" && (
+        <div className="p-5 space-y-4">
+          <div className="grid grid-cols-3 gap-4">
+            {[{ label: "Total TDS", value: fmt(0) }, { label: "EPF Contribution", value: fmt(49554.07) }, { label: "ESI Contribution", value: fmt(0) }].map((item, i) => (
+              <div key={i} className="rounded-lg border border-border p-3">
+                <p className="text-[10px] text-muted-foreground">{item.label}</p>
+                <p className="text-base font-bold font-mono text-foreground mt-1">{item.value}</p>
+              </div>
+            ))}
+          </div>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">TDS</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">EPF (EE)</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">EPF (ER)</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Prof. Tax</th>
+              </tr></thead>
+              <tbody>
+                {employees.slice(0, 4).map((row, i) => (
+                  <tr key={i} className="border-b border-border">
+                    <td className="px-4 py-2.5 text-foreground">{row.name}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(0)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.net * 0.12)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.net * 0.12)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(200)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {activeTab === "insights" && (
+        <div className="p-5 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: "Total Payroll Cost", value: fmt(run.payrollCost), change: "+2.1% from last month" },
+              { label: "Total Net Pay", value: fmt(run.netPay), change: "+1.8% from last month" },
+              { label: "Avg. Pay Per Employee", value: fmt(Math.round(run.netPay / run.employees)), change: "Stable" },
+              { label: "Total Employees Paid", value: String(run.employees), change: "+1 from last month" },
+            ].map((item, i) => (
+              <div key={i} className="rounded-lg border border-border p-4">
+                <p className="text-[10px] text-muted-foreground uppercase">{item.label}</p>
+                <p className="text-lg font-bold font-mono text-foreground mt-1">{item.value}</p>
+                <p className="text-[10px] text-primary mt-1">{item.change}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ═══════════════════════════════════════════════════════
 function TaxesFormsPage() {
   const location = useLocation();
