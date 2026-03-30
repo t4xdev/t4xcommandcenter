@@ -1123,12 +1123,48 @@ function TaxesFormsPage() {
 // LOANS
 // ═══════════════════════════════════════════════════════
 function LoansPage() {
+  const [showForm, setShowForm] = useState(false);
+  const [loanForm, setLoanForm] = useState({ employee: "", type: "Salary Advance", amount: "" });
+
+  const handleCreateLoan = () => {
+    if (!loanForm.employee || !loanForm.amount) { toast.error("Missing Fields", { description: "Please fill in employee and amount." }); return; }
+    toast.success("Loan Created", { description: `${loanForm.type} of ${fmt(Number(loanForm.amount))} created for ${loanForm.employee}.` });
+    setShowForm(false);
+    setLoanForm({ employee: "", type: "Salary Advance", amount: "" });
+  };
+
   return (
     <div className="space-y-5 animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-foreground">Loans</h2>
-        <button className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3.5 h-3.5" /> Create Loan</button>
+        <button onClick={() => setShowForm(!showForm)} className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3.5 h-3.5" /> Create Loan</button>
       </div>
+
+      {showForm && (
+        <div className="card-elevated p-5 border-2 border-primary/20 space-y-4">
+          <h3 className="text-sm font-bold text-foreground">New Loan</h3>
+          <div className="grid grid-cols-3 gap-3">
+            <div><label className="text-[10px] text-muted-foreground uppercase font-semibold">Employee *</label>
+              <select value={loanForm.employee} onChange={e => setLoanForm(p => ({ ...p, employee: e.target.value }))} className="w-full mt-1 px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
+                <option value="">Select Employee</option>
+                <option>Rajesh Sharma (EMP001)</option><option>Priya Patel (EMP002)</option><option>Arun Nair (EMP003)</option><option>Deepak Verma (EMP006)</option>
+              </select>
+            </div>
+            <div><label className="text-[10px] text-muted-foreground uppercase font-semibold">Loan Type *</label>
+              <select value={loanForm.type} onChange={e => setLoanForm(p => ({ ...p, type: e.target.value }))} className="w-full mt-1 px-3 py-2 text-xs border border-border rounded-lg bg-transparent">
+                <option>Salary Advance</option><option>Personal Loan</option><option>Emergency Advance</option>
+              </select>
+            </div>
+            <div><label className="text-[10px] text-muted-foreground uppercase font-semibold">Amount (₹) *</label>
+              <input type="number" value={loanForm.amount} onChange={e => setLoanForm(p => ({ ...p, amount: e.target.value }))} placeholder="0" className="w-full mt-1 px-3 py-2 text-xs border border-border rounded-lg bg-transparent" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={handleCreateLoan} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">Create Loan</button>
+            <button onClick={() => setShowForm(false)} className="px-4 py-2 border border-border text-xs font-medium rounded-lg hover:bg-accent">Cancel</button>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-3 gap-4">
         {[
           { label: "Active Loans", value: "4", color: "border-primary/20 bg-primary/5" },
