@@ -2,6 +2,12 @@ import { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
+import avatarRajesh from "@/assets/avatars/avatar-rajesh.jpg";
+import avatarPriya from "@/assets/avatars/avatar-priya.jpg";
+import avatarArun from "@/assets/avatars/avatar-arun.jpg";
+import avatarSunita from "@/assets/avatars/avatar-sunita.jpg";
+import avatarMohammed from "@/assets/avatars/avatar-mohammed.jpg";
+import avatarDeepak from "@/assets/avatars/avatar-deepak.jpg";
 import {
   Users, UserPlus, Search, ChevronRight, ChevronLeft, Edit2, X, Check,
   Calendar, CreditCard, IndianRupee, FileText, AlertTriangle, Plus,
