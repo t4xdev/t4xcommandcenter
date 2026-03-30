@@ -567,7 +567,11 @@ function EmployeeList({ employees }: { employees: Employee[] }) {
                   <td className="px-4 py-3"><input type="checkbox" className="rounded border-border" onClick={e => e.stopPropagation()} /></td>
                   <td className="px-4 py-3">
                     <Link to={`/payroll/employees/${emp.id}`} className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colors[cIdx]}`}>{emp.firstName[0]}</div>
+                      {employeeAvatars[emp.id] ? (
+                        <img src={employeeAvatars[emp.id]} alt={emp.firstName} className="w-8 h-8 rounded-full object-cover" loading="lazy" />
+                      ) : (
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${colors[cIdx]}`}>{emp.firstName[0]}</div>
+                      )}
                       <div>
                         <p className="font-semibold text-primary hover:underline">{fullName} - {emp.employeeId}</p>
                         <p className="text-[10px] text-muted-foreground">{emp.designation}</p>
@@ -611,7 +615,11 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
       <div className="card-elevated p-5">
         <div className="flex items-center gap-4">
           <Link to="/payroll/employees" className="p-1.5 rounded-lg hover:bg-accent"><ChevronLeft className="w-4 h-4" /></Link>
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">{employee.firstName[0]}</div>
+          {employeeAvatars[employee.id] ? (
+            <img src={employeeAvatars[employee.id]} alt={employee.firstName} className="w-12 h-12 rounded-full object-cover" loading="lazy" />
+          ) : (
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">{employee.firstName[0]}</div>
+          )}
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-base font-bold text-foreground">{employee.employeeId} - {fullName}</h2>
