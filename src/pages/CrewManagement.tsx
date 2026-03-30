@@ -1050,10 +1050,243 @@ function LoansPage() {
         <h2 className="text-lg font-bold text-foreground">Loans</h2>
         <button className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3.5 h-3.5" /> Create Loan</button>
       </div>
-      <div className="card-elevated p-8 text-center">
-        <Landmark className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-        <p className="text-sm font-medium text-foreground">No active loans</p>
-        <p className="text-xs text-muted-foreground mt-1">Create and manage employee salary advance and loan disbursements here.</p>
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { label: "Active Loans", value: "4", color: "border-primary/20 bg-primary/5" },
+          { label: "Total Disbursed", value: fmt(850000), color: "border-success/20 bg-success/5" },
+          { label: "Outstanding Balance", value: fmt(340000), color: "border-warning/20 bg-warning/5" },
+        ].map((kpi, i) => (
+          <div key={i} className={`rounded-lg border p-4 ${kpi.color}`}>
+            <p className="text-xs text-muted-foreground">{kpi.label}</p>
+            <p className="text-lg font-bold font-mono text-foreground mt-1">{kpi.value}</p>
+          </div>
+        ))}
+      </div>
+      <div className="card-elevated overflow-hidden">
+        <table className="w-full text-xs">
+          <thead><tr className="bg-muted border-b border-border">
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Loan Type</th>
+            <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Amount</th>
+            <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Outstanding</th>
+            <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">EMI</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Remaining</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+          </tr></thead>
+          <tbody>
+            {[
+              { emp: "Rajesh Sharma (EMP001)", type: "Salary Advance", amount: 200000, outstanding: 80000, emi: 20000, remaining: "4 months", status: "Active" },
+              { emp: "Priya Patel (EMP002)", type: "Personal Loan", amount: 150000, outstanding: 100000, emi: 12500, remaining: "8 months", status: "Active" },
+              { emp: "Arun Nair (EMP003)", type: "Emergency Advance", amount: 50000, outstanding: 10000, emi: 10000, remaining: "1 month", status: "Active" },
+              { emp: "Deepak Verma (EMP006)", type: "Salary Advance", amount: 100000, outstanding: 100000, emi: 10000, remaining: "10 months", status: "Active" },
+              { emp: "Mohammed Khan (EMP005)", type: "Personal Loan", amount: 350000, outstanding: 0, emi: 29167, remaining: "—", status: "Closed" },
+            ].map((row, i) => (
+              <tr key={i} className="border-b border-border hover:bg-accent/50">
+                <td className="px-4 py-2.5 font-medium text-foreground">{row.emp}</td>
+                <td className="px-4 py-2.5">{row.type}</td>
+                <td className="px-4 py-2.5 text-right font-mono">{fmt(row.amount)}</td>
+                <td className="px-4 py-2.5 text-right font-mono">{fmt(row.outstanding)}</td>
+                <td className="px-4 py-2.5 text-right font-mono">{fmt(row.emi)}</td>
+                <td className="px-4 py-2.5 text-center">{row.remaining}</td>
+                <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Active" ? "default" : "secondary"} className="text-[10px]">{row.status}</Badge></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// APPROVALS
+// ═══════════════════════════════════════════════════════
+function ApprovalsPage() {
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <h2 className="text-lg font-bold text-foreground">Pending Approvals</h2>
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { label: "Pending", value: "3", color: "border-warning/20 bg-warning/5" },
+          { label: "Approved This Month", value: "12", color: "border-success/20 bg-success/5" },
+          { label: "Rejected", value: "1", color: "border-destructive/20 bg-destructive/5" },
+        ].map((kpi, i) => (
+          <div key={i} className={`rounded-lg border p-4 ${kpi.color}`}>
+            <p className="text-xs text-muted-foreground">{kpi.label}</p>
+            <p className="text-lg font-bold font-mono text-foreground mt-1">{kpi.value}</p>
+          </div>
+        ))}
+      </div>
+      <div className="card-elevated overflow-hidden">
+        <table className="w-full text-xs">
+          <thead><tr className="bg-muted border-b border-border">
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Request</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Type</th>
+            <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Submitted</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+            <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Action</th>
+          </tr></thead>
+          <tbody>
+            {[
+              { req: "APR-2026-015", emp: "Rajesh Sharma", type: "Salary Revision", date: "25/03/2026", status: "Pending" },
+              { req: "APR-2026-014", emp: "Priya Patel", type: "Loan Request", date: "22/03/2026", status: "Pending" },
+              { req: "APR-2026-013", emp: "Deepak Verma", type: "IT Declaration", date: "20/03/2026", status: "Pending" },
+              { req: "APR-2026-012", emp: "Sunita Reddy", type: "Reimbursement", date: "18/03/2026", status: "Approved" },
+              { req: "APR-2026-011", emp: "Mohammed Khan", type: "Bonus Payout", date: "15/03/2026", status: "Approved" },
+              { req: "APR-2026-010", emp: "Arun Nair", type: "Leave Encashment", date: "12/03/2026", status: "Rejected" },
+            ].map((row, i) => (
+              <tr key={i} className="border-b border-border hover:bg-accent/50">
+                <td className="px-4 py-2.5 text-primary font-medium">{row.req}</td>
+                <td className="px-4 py-2.5 font-medium text-foreground">{row.emp}</td>
+                <td className="px-4 py-2.5">{row.type}</td>
+                <td className="px-4 py-2.5">{row.date}</td>
+                <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Approved" ? "default" : row.status === "Pending" ? "secondary" : "destructive"} className="text-[10px]">{row.status}</Badge></td>
+                <td className="px-4 py-2.5 text-center">
+                  {row.status === "Pending" ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <button className="px-2 py-1 bg-primary text-primary-foreground rounded text-[10px]">Approve</button>
+                      <button className="px-2 py-1 border border-border rounded text-[10px] hover:bg-accent">Reject</button>
+                    </div>
+                  ) : <span className="text-muted-foreground">—</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════════════════════════
+function ReportsPage() {
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <h2 className="text-lg font-bold text-foreground">Reports</h2>
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          { name: "Payroll Register", desc: "Monthly payroll summary with earnings, deductions, and net pay for all employees.", lastGenerated: "28/02/2026", icon: <Receipt className="w-5 h-5 text-primary" /> },
+          { name: "PF Report (ECR)", desc: "EPF contribution report in ECR format for EPFO portal upload.", lastGenerated: "28/02/2026", icon: <Shield className="w-5 h-5 text-primary" /> },
+          { name: "ESI Report", desc: "Monthly ESI contribution statement for all applicable employees.", lastGenerated: "28/02/2026", icon: <Shield className="w-5 h-5 text-primary" /> },
+          { name: "TDS Report", desc: "Quarter-wise TDS deduction and deposit summary for income tax filing.", lastGenerated: "31/01/2026", icon: <Landmark className="w-5 h-5 text-primary" /> },
+          { name: "Rank-wise Wage Report", desc: "Seafarer wage analysis grouped by rank with vessel-wise breakdown.", lastGenerated: "28/02/2026", icon: <BarChart3 className="w-5 h-5 text-primary" /> },
+          { name: "Vessel-wise Payroll", desc: "Payroll cost summary per vessel including crew wages and allowances.", lastGenerated: "28/02/2026", icon: <BarChart3 className="w-5 h-5 text-primary" /> },
+          { name: "Bank Advice Statement", desc: "Bank transfer details for salary disbursement processing.", lastGenerated: "28/02/2026", icon: <CreditCard className="w-5 h-5 text-primary" /> },
+          { name: "Leave & Attendance", desc: "Monthly attendance, leave balances, and LOP deduction summary.", lastGenerated: "28/02/2026", icon: <Calendar className="w-5 h-5 text-primary" /> },
+        ].map((report, i) => (
+          <div key={i} className="card-elevated p-4 flex items-start gap-4 hover:shadow-md transition-shadow">
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">{report.icon}</div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-foreground">{report.name}</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{report.desc}</p>
+              <p className="text-[10px] text-muted-foreground mt-2">Last generated: {report.lastGenerated}</p>
+            </div>
+            <button className="flex items-center gap-1 px-3 py-1.5 border border-border rounded-lg text-xs font-medium hover:bg-accent shrink-0"><Download className="w-3 h-3" /> Generate</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════
+function SettingsPage() {
+  return (
+    <div className="space-y-5 animate-fade-in-up">
+      <h2 className="text-lg font-bold text-foreground">Payroll Settings</h2>
+      <div className="space-y-4">
+        <div className="card-elevated p-5">
+          <h3 className="text-sm font-bold text-foreground mb-4">Payroll Cycle</h3>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            {[
+              { label: "Pay Frequency", value: "Monthly" },
+              { label: "Pay Day", value: "Last working day of the month" },
+              { label: "Payroll Processing", value: "25th of every month" },
+              { label: "Financial Year Start", value: "April" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center justify-between py-2 border-b border-border">
+                <span className="text-xs text-muted-foreground">{item.label}</span>
+                <span className="text-xs font-semibold text-foreground">{item.value}</span>
+              </div>
+            ))}
+          </div>
+          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Configuration</button>
+        </div>
+        <div className="card-elevated p-5">
+          <h3 className="text-sm font-bold text-foreground mb-4">Statutory Rates</h3>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            {[
+              { label: "EPF Employee Contribution", value: "12% of Basic" },
+              { label: "EPF Employer Contribution", value: "12% of Basic" },
+              { label: "ESI Employee", value: "0.75% of Gross" },
+              { label: "ESI Employer", value: "3.25% of Gross" },
+              { label: "Professional Tax (max)", value: "₹200/month" },
+              { label: "LWF Employee", value: "₹12/half-year" },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center justify-between py-2 border-b border-border">
+                <span className="text-xs text-muted-foreground">{item.label}</span>
+                <span className="text-xs font-semibold text-foreground">{item.value}</span>
+              </div>
+            ))}
+          </div>
+          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Update Rates</button>
+        </div>
+        <div className="card-elevated p-5">
+          <h3 className="text-sm font-bold text-foreground mb-4">Rank & Wage Master</h3>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Rank</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Base Wage (Monthly)</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Sea Allowance</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Leave Pay</th>
+              </tr></thead>
+              <tbody>
+                {[
+                  { rank: "Master", base: 250000, sea: 50000, leave: 30000 },
+                  { rank: "Chief Engineer", base: 220000, sea: 45000, leave: 28000 },
+                  { rank: "Chief Officer", base: 180000, sea: 38000, leave: 24000 },
+                  { rank: "2nd Engineer", base: 150000, sea: 32000, leave: 20000 },
+                  { rank: "2nd Officer", base: 120000, sea: 25000, leave: 16000 },
+                  { rank: "3rd Officer", base: 100000, sea: 20000, leave: 12000 },
+                  { rank: "Junior Engineer", base: 60000, sea: 12000, leave: 8000 },
+                ].map((row, i) => (
+                  <tr key={i} className="border-b border-border">
+                    <td className="px-4 py-2.5 font-medium text-foreground">{row.rank}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.base)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.sea)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.leave)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <button className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Wage Master</button>
+        </div>
+        <div className="card-elevated p-5">
+          <h3 className="text-sm font-bold text-foreground mb-4">Payment Modes</h3>
+          <div className="space-y-2">
+            {[
+              { mode: "Bank Transfer (Manual)", enabled: true, desc: "Download bank advice and process manually" },
+              { mode: "NEFT/RTGS", enabled: true, desc: "Direct bank integration for salary credit" },
+              { mode: "Cheque", enabled: false, desc: "Generate cheques for salary payment" },
+              { mode: "Cash", enabled: false, desc: "Cash disbursement with receipt tracking" },
+            ].map((pm, i) => (
+              <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border">
+                <div>
+                  <p className="text-xs font-semibold text-foreground">{pm.mode}</p>
+                  <p className="text-[10px] text-muted-foreground">{pm.desc}</p>
+                </div>
+                <Badge variant={pm.enabled ? "default" : "secondary"} className="text-[10px]">{pm.enabled ? "Enabled" : "Disabled"}</Badge>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
