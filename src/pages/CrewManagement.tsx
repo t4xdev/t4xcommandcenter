@@ -330,22 +330,145 @@ function PayrollDashboard({ employees }: { employees: Employee[] }) {
         </div>
       </div>
 
-      <div className="card-elevated p-5">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-bold text-foreground">Payroll Cost Summary</p>
-          <span className="text-xs text-muted-foreground">This Year ▾</span>
+      {/* ── Salary Trends (Line Chart) ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="card-elevated p-5">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-sm font-bold text-foreground">Monthly Salary Trends</p>
+            <span className="text-xs text-muted-foreground">FY 2025-26</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mb-4">Gross pay vs net pay trend over the last 12 months</p>
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={salaryTrendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,90%)" />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" />
+              <YAxis tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" tickFormatter={v => v >= 100000 ? `${(v / 100000).toFixed(0)}L` : `${(v / 1000).toFixed(0)}K`} />
+              <Tooltip contentStyle={tip} formatter={(v: number) => fmt(v)} />
+              <Area type="monotone" dataKey="gross" name="Gross Pay" stackId="1" stroke="hsl(215, 50%, 30%)" fill="hsl(215, 50%, 30%)" fillOpacity={0.15} strokeWidth={2} />
+              <Area type="monotone" dataKey="net" name="Net Pay" stackId="2" stroke="hsl(152, 60%, 40%)" fill="hsl(152, 60%, 40%)" fillOpacity={0.15} strokeWidth={2} />
+              <Legend wrapperStyle={{ fontSize: "10px" }} />
+            </AreaChart>
+          </ResponsiveContainer>
+          <div className="mt-3 grid grid-cols-3 gap-3">
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">Avg. Gross Pay</p>
+              <p className="text-sm font-bold font-mono text-foreground">{fmt(985000)}</p>
+              <p className="text-[9px] text-primary">↑ 4.2% YoY</p>
+            </div>
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">Avg. Net Pay</p>
+              <p className="text-sm font-bold font-mono text-foreground">{fmt(842000)}</p>
+              <p className="text-[9px] text-primary">↑ 3.8% YoY</p>
+            </div>
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">Avg. Deduction Rate</p>
+              <p className="text-sm font-bold font-mono text-foreground">14.5%</p>
+              <p className="text-[9px] text-muted-foreground">Stable</p>
+            </div>
+          </div>
         </div>
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={payrollCostData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,90%)" />
-            <XAxis dataKey="month" tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" />
-            <YAxis tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" tickFormatter={v => v >= 100000 ? `${(v / 100000).toFixed(0)}L` : `${(v / 1000).toFixed(0)}K`} />
-            <Tooltip contentStyle={tip} formatter={(v: number) => fmt(v)} />
-            <Bar dataKey="cost" radius={[4, 4, 0, 0]}>
-              {payrollCostData.map((_, i) => <Cell key={i} fill={`hsl(215, 50%, ${i >= 10 ? "23%" : "40%"})`} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+
+        {/* ── Department-wise Cost (Donut + Legend) ── */}
+        <div className="card-elevated p-5">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-sm font-bold text-foreground">Department-wise Payroll Cost</p>
+            <span className="text-xs text-muted-foreground">March 2026</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mb-4">Total cost distribution across departments</p>
+          <div className="flex items-center gap-4">
+            <ResponsiveContainer width="55%" height={200}>
+              <PieChart>
+                <Pie data={deptCostData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" nameKey="name" paddingAngle={3}>
+                  {deptCostData.map((_, i) => <Cell key={i} fill={DEPT_COLORS[i % DEPT_COLORS.length]} />)}
+                </Pie>
+                <Tooltip contentStyle={tip} formatter={(v: number) => fmt(v)} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="flex-1 space-y-2">
+              {deptCostData.map((d, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: DEPT_COLORS[i % DEPT_COLORS.length] }} />
+                    <span className="text-[11px] text-foreground">{d.name}</span>
+                  </div>
+                  <span className="text-[11px] font-mono font-semibold text-foreground">{fmt(d.value)}</span>
+                </div>
+              ))}
+              <div className="pt-2 border-t border-border flex items-center justify-between">
+                <span className="text-[11px] font-bold text-foreground">Total</span>
+                <span className="text-[11px] font-mono font-bold text-foreground">{fmt(deptCostData.reduce((s, d) => s + d.value, 0))}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Headcount Growth + Payroll Cost Summary ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="card-elevated p-5">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-sm font-bold text-foreground">Headcount Growth</p>
+            <span className="text-xs text-muted-foreground">Last 12 Months</span>
+          </div>
+          <p className="text-[10px] text-muted-foreground mb-4">Total employee count including seafarer & shore staff</p>
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={headcountData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,90%)" />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" />
+              <YAxis tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" domain={[0, "auto"]} />
+              <Tooltip contentStyle={tip} />
+              <Line type="monotone" dataKey="seafarer" name="Seafarer" stroke="hsl(215, 50%, 30%)" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="shore" name="Shore" stroke="hsl(35, 80%, 50%)" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="total" name="Total" stroke="hsl(152, 60%, 40%)" strokeWidth={2.5} dot={{ r: 3.5 }} />
+              <Legend wrapperStyle={{ fontSize: "10px" }} />
+            </LineChart>
+          </ResponsiveContainer>
+          <div className="mt-3 grid grid-cols-3 gap-3">
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">Current Headcount</p>
+              <p className="text-sm font-bold font-mono text-foreground">16</p>
+              <p className="text-[9px] text-primary">↑ 3 from Apr '25</p>
+            </div>
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">Seafarer Ratio</p>
+              <p className="text-sm font-bold font-mono text-foreground">75%</p>
+              <p className="text-[9px] text-muted-foreground">12 of 16</p>
+            </div>
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">Attrition Rate</p>
+              <p className="text-sm font-bold font-mono text-foreground">6.3%</p>
+              <p className="text-[9px] text-primary">↓ 1.2% YoY</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="card-elevated p-5">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm font-bold text-foreground">Payroll Cost Summary</p>
+            <span className="text-xs text-muted-foreground">This Year ▾</span>
+          </div>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={payrollCostData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220,15%,90%)" />
+              <XAxis dataKey="month" tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" />
+              <YAxis tick={{ fontSize: 10 }} stroke="hsl(220,15%,70%)" tickFormatter={v => v >= 100000 ? `${(v / 100000).toFixed(0)}L` : `${(v / 1000).toFixed(0)}K`} />
+              <Tooltip contentStyle={tip} formatter={(v: number) => fmt(v)} />
+              <Bar dataKey="cost" radius={[4, 4, 0, 0]}>
+                {payrollCostData.map((_, i) => <Cell key={i} fill={`hsl(215, 50%, ${i >= 10 ? "23%" : "40%"})`} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">YTD Total Cost</p>
+              <p className="text-sm font-bold font-mono text-foreground">{fmt(5507000)}</p>
+            </div>
+            <div className="rounded-lg border border-border p-2.5">
+              <p className="text-[9px] text-muted-foreground uppercase">Avg. Monthly Cost</p>
+              <p className="text-sm font-bold font-mono text-foreground">{fmt(917833)}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
