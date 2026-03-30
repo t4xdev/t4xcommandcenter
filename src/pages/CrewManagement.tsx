@@ -625,7 +625,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
           <div className="card-elevated p-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-foreground">Payslips - FY 2025-26</h3>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Download All</button>
+              <button onClick={() => toast.success("Download Started", { description: "All payslips for FY 2025-26 are being downloaded as a ZIP file." })} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Download All</button>
             </div>
             <div className="border border-border rounded-lg overflow-hidden">
               <table className="w-full text-xs">
@@ -652,7 +652,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
                       <td className="px-4 py-2.5 text-right font-mono text-destructive">{fmt(ps.ded)}</td>
                       <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(ps.net)}</td>
                       <td className="px-4 py-2.5 text-center">{ps.days}</td>
-                      <td className="px-4 py-2.5 text-center"><button className="text-primary hover:underline">View</button> · <button className="text-primary hover:underline">PDF</button></td>
+                      <td className="px-4 py-2.5 text-center"><button onClick={() => toast.info("Payslip Preview", { description: `Viewing payslip for ${ps.month}` })} className="text-primary hover:underline">View</button> · <button onClick={() => toast.success("PDF Downloaded", { description: `Payslip PDF for ${ps.month} downloaded.` })} className="text-primary hover:underline">PDF</button></td>
                     </tr>
                   ))}
                 </tbody>
@@ -674,7 +674,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
                       <p className="text-[10px] text-muted-foreground">Generated on {f.date}</p>
                     </div>
                   </div>
-                  <button className="flex items-center gap-1 text-xs text-primary font-medium"><Download className="w-3 h-3" /> Download</button>
+                  <button onClick={() => toast.success("Downloaded", { description: `${f.name} downloaded successfully.` })} className="flex items-center gap-1 text-xs text-primary font-medium"><Download className="w-3 h-3" /> Download</button>
                 </div>
               ))}
             </div>
@@ -686,7 +686,7 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-bold text-foreground">Employee Loans</h3>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Create Loan</button>
+            <button onClick={() => toast.info("Create Loan", { description: "Loan creation form will open. Select employee, loan type, and amount." })} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Create Loan</button>
           </div>
           <div className="card-elevated overflow-hidden">
             <table className="w-full text-xs">
@@ -1008,7 +1008,7 @@ function TaxesFormsPage() {
         <div className="card-elevated p-5">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold">Challan History</h3>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Record Challan</button>
+            <button onClick={() => toast.info("Recording Challan", { description: "Enter BSR code, challan number, and payment details." })} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Record Challan</button>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full text-xs">
@@ -1069,7 +1069,7 @@ function TaxesFormsPage() {
                     <td className="px-4 py-2.5 text-center">{row.emps}</td>
                     <td className="px-4 py-2.5">{row.due}</td>
                     <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Filed" ? "default" : "secondary"} className="text-[10px]">{row.status}</Badge></td>
-                    <td className="px-4 py-2.5 text-center"><button className="text-primary hover:underline text-xs">{row.status === "Pending" ? "File Now" : "View"}</button></td>
+                    <td className="px-4 py-2.5 text-center"><button onClick={() => { if (row.status === "Pending") { toast.info("Filing Form 24Q", { description: `Initiating filing for ${row.q} (${row.period})` }); } else { toast.info("Viewing Filed Return", { description: `${row.q} return for ${row.period} — TDS: ${fmt(row.tds)}` }); } }} className="text-primary hover:underline text-xs">{row.status === "Pending" ? "File Now" : "View"}</button></td>
                   </tr>
                 ))}
               </tbody>
@@ -1081,7 +1081,7 @@ function TaxesFormsPage() {
         <div className="card-elevated p-5">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-bold">Form 16 - Employee Tax Certificates</h3>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Generate All Form 16</button>
+            <button onClick={() => { toast.success("Generating Form 16", { description: "Form 16 certificates are being generated for all eligible employees." }); }} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Generate All Form 16</button>
           </div>
           <div className="border border-border rounded-lg overflow-hidden">
             <table className="w-full text-xs">
@@ -1107,7 +1107,7 @@ function TaxesFormsPage() {
                     <td className="px-4 py-2.5 text-right font-mono">{fmt(row.income)}</td>
                     <td className="px-4 py-2.5 text-right font-mono">{fmt(row.tds)}</td>
                     <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Generated" ? "default" : row.status === "Pending" ? "secondary" : "outline"} className="text-[10px]">{row.status}</Badge></td>
-                    <td className="px-4 py-2.5 text-center">{row.status === "Generated" ? <button className="text-primary hover:underline text-xs">Download</button> : <span className="text-muted-foreground">—</span>}</td>
+                    <td className="px-4 py-2.5 text-center">{row.status === "Generated" ? <button onClick={() => toast.success("Downloaded", { description: `Form 16 for ${row.name} downloaded.` })} className="text-primary hover:underline text-xs">Download</button> : <span className="text-muted-foreground">—</span>}</td>
                   </tr>
                 ))}
               </tbody>
