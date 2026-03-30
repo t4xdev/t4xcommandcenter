@@ -310,7 +310,7 @@ function PayrollDashboard({ employees }: { employees: Employee[] }) {
               <div key={i} className={`rounded-lg border p-4 ${item.color}`}>
                 <p className="text-xs text-muted-foreground">{item.label}</p>
                 <p className="text-base font-bold font-mono text-foreground mt-1">{item.value}</p>
-                <button className="text-[10px] text-primary font-medium mt-2">View Details</button>
+                <button onClick={() => toast.info(`${item.label} Details`, { description: `Showing detailed breakdown for ${item.label}. Amount: ${item.value}` })} className="text-[10px] text-primary font-medium mt-2">View Details</button>
               </div>
             ))}
           </div>
@@ -729,6 +729,16 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
 // ═══════════════════════════════════════════════════════
 function PayRunsPage() {
   const [tab, setTab] = useState<"run" | "history">("run");
+  const [processing, setProcessing] = useState(false);
+  const navigate = useNavigate();
+
+  const handleProcessPayroll = () => {
+    setProcessing(true);
+    setTimeout(() => {
+      setProcessing(false);
+      toast.success("Payroll Processed", { description: "March 2026 payroll has been submitted for approval." });
+    }, 1500);
+  };
 
   return (
     <div className="space-y-5 animate-fade-in-up">
@@ -752,7 +762,12 @@ function PayRunsPage() {
               </div>
               <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Please approve this payroll on or before 31/03/2026.</p>
             </div>
-            <button className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">View Details</button>
+            <div className="flex items-center gap-2">
+              <button onClick={handleProcessPayroll} disabled={processing} className="px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50">
+                {processing ? "Processing..." : "Process Payroll"}
+              </button>
+              <button onClick={() => navigate("/payroll/pay-runs/1")} className="px-4 py-2 border border-border text-xs font-medium rounded-lg hover:bg-accent">View Details</button>
+            </div>
           </div>
         </div>
       )}
@@ -773,7 +788,7 @@ function PayRunsPage() {
             </thead>
             <tbody>
               {payrollHistory.map(run => (
-                <tr key={run.id} className="border-b border-border hover:bg-accent/50 cursor-pointer">
+                <tr key={run.id} className="border-b border-border hover:bg-accent/50 cursor-pointer" onClick={() => navigate(`/payroll/pay-runs/${run.id}`)}>
                   <td className="px-4 py-3 text-foreground">
                     <Link to={`/payroll/pay-runs/${run.id}`} className="hover:underline">{run.date}</Link>
                   </td>
@@ -813,7 +828,7 @@ function PayRunDetailRoute() {
             <div><p className="text-base font-bold font-mono">{fmt(run.payrollCost)}</p><p className="text-[9px] text-muted-foreground uppercase">Payroll Cost</p></div>
             <div><p className="text-base font-bold font-mono">{fmt(run.netPay)}</p><p className="text-[9px] text-muted-foreground uppercase">Total Net Pay</p></div>
           </div>
-          <button className="text-[10px] text-primary font-medium mt-2 flex items-center gap-1"><Download className="w-3 h-3" /> Download Bank Advice</button>
+          <button onClick={() => toast.success("Bank Advice Downloaded", { description: "Bank advice file for this pay run has been downloaded." })} className="text-[10px] text-primary font-medium mt-2 flex items-center gap-1"><Download className="w-3 h-3" /> Download Bank Advice</button>
         </div>
         <div className="card-elevated p-4 flex flex-col items-center justify-center text-center">
           <p className="text-[10px] text-muted-foreground uppercase">Pay Day</p>
@@ -831,12 +846,7 @@ function PayRunDetailRoute() {
         </div>
       </div>
 
-      <div className="card-elevated overflow-hidden">
-        <div className="px-4 py-3 border-b border-border flex items-center gap-4">
-          <button className="text-xs font-medium text-foreground border-b-2 border-primary pb-1">Employee Summary</button>
-          <button className="text-xs font-medium text-muted-foreground pb-1">Taxes & Deductions</button>
-          <button className="text-xs font-medium text-muted-foreground pb-1">Overall Insights</button>
-        </div>
+      <PayRunDetailTabs run={run} />
         <table className="w-full text-xs">
           <thead>
             <tr className="bg-muted border-b border-border">
@@ -863,7 +873,7 @@ function PayRunDetailRoute() {
                 <td className="px-4 py-2.5 text-foreground">{row.name}</td>
                 <td className="px-4 py-2.5 text-center">{row.days}</td>
                 <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(row.net)}</td>
-                <td className="px-4 py-2.5 text-center"><span className="text-primary cursor-pointer">View 📧</span></td>
+                <td className="px-4 py-2.5 text-center"><button onClick={() => toast.info("Payslip Preview", { description: `Viewing payslip for ${row.name}` })} className="text-primary cursor-pointer hover:underline">View</button>{" "}<button onClick={() => toast.success("Email Sent", { description: `Payslip emailed to ${row.name}` })} className="text-primary cursor-pointer hover:underline">📧</button></td>
                 <td className="px-4 py-2.5">Manual Bank Transfer</td>
                 <td className="px-4 py-2.5 text-success text-[10px]">Paid on {run.date}</td>
               </tr>
