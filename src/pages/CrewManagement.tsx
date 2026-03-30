@@ -253,12 +253,12 @@ export default function CrewManagement() {
             <Route path="employees/:id" element={<EmployeeProfileRoute employees={employees} />} />
             <Route path="pay-runs" element={<PayRunsPage />} />
             <Route path="pay-runs/:id" element={<PayRunDetailRoute />} />
-            <Route path="approvals" element={<PlaceholderPage title="Approvals" description="Pending payroll approvals and review queue will appear here." />} />
+            <Route path="approvals" element={<ApprovalsPage />} />
             <Route path="taxes" element={<TaxesFormsPage />} />
             <Route path="taxes/:tab" element={<TaxesFormsPage />} />
             <Route path="loans" element={<LoansPage />} />
-            <Route path="reports" element={<PlaceholderPage title="Reports" description="Generate payroll register, TDS, PF, rank-wise wage and vessel-wise payroll reports." />} />
-            <Route path="settings" element={<PlaceholderPage title="Settings" description="Configure payroll cycles, statutory rates, rank & wage masters, and payment modes." />} />
+            <Route path="reports" element={<ReportsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Routes>
         </main>
       </div>
@@ -573,26 +573,150 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
       )}
 
       {tab === "investments" && (
-        <div className="card-elevated p-8 text-center">
-          <FileText className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm font-medium text-foreground">IT Declaration submission is locked for this employee</p>
-          <p className="text-xs text-muted-foreground mt-1">You can either allow the employee to submit IT Declaration through the portal or submit it on their behalf.</p>
-          <button className="mt-4 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">Submit Declaration</button>
+        <div className="space-y-4">
+          <div className="card-elevated p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-foreground">IT Declaration - FY 2025-26</h3>
+              <Badge variant="default" className="text-[10px]">Submitted</Badge>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                { section: "Section 80C", items: [{ name: "PPF", declared: 150000, approved: 150000 }, { name: "ELSS Mutual Funds", declared: 50000, approved: 50000 }, { name: "Life Insurance Premium", declared: 25000, approved: 25000 }] },
+                { section: "Section 80D", items: [{ name: "Medical Insurance (Self)", declared: 25000, approved: 25000 }, { name: "Medical Insurance (Parents)", declared: 50000, approved: 50000 }] },
+              ].map((sec, si) => (
+                <div key={si} className="border border-border rounded-lg p-4">
+                  <p className="text-xs font-bold text-foreground mb-3">{sec.section}</p>
+                  <div className="space-y-2">
+                    {sec.items.map((item, ii) => (
+                      <div key={ii} className="flex items-center justify-between">
+                        <span className="text-xs text-muted-foreground">{item.name}</span>
+                        <div className="flex items-center gap-4">
+                          <span className="text-xs font-mono">{fmt(item.declared)}</span>
+                          <Badge variant={item.approved === item.declared ? "default" : "secondary"} className="text-[9px]">Approved</Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold text-foreground">Total Tax Savings Declared</p>
+                <p className="text-[10px] text-muted-foreground">Based on approved declarations</p>
+              </div>
+              <p className="text-base font-bold font-mono text-primary">{fmt(300000)}</p>
+            </div>
+          </div>
+          <div className="card-elevated p-5">
+            <h3 className="text-sm font-bold text-foreground mb-3">HRA Exemption</h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div><p className="text-[10px] text-muted-foreground">Monthly Rent Paid</p><p className="text-xs font-bold font-mono">{fmt(15000)}</p></div>
+              <div><p className="text-[10px] text-muted-foreground">HRA Exemption (Annual)</p><p className="text-xs font-bold font-mono">{fmt(180000)}</p></div>
+              <div><p className="text-[10px] text-muted-foreground">Landlord PAN</p><p className="text-xs font-bold">ABCDE1234F</p></div>
+            </div>
+          </div>
         </div>
       )}
 
       {tab === "payslips" && (
-        <div className="card-elevated p-8 text-center">
-          <Calendar className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">There are no payslips for this financial year.</p>
+        <div className="space-y-4">
+          <div className="card-elevated p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-foreground">Payslips - FY 2025-26</h3>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Download All</button>
+            </div>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <table className="w-full text-xs">
+                <thead><tr className="bg-muted border-b border-border">
+                  <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Month</th>
+                  <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Gross Earnings</th>
+                  <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Deductions</th>
+                  <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Net Pay</th>
+                  <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Paid Days</th>
+                  <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Action</th>
+                </tr></thead>
+                <tbody>
+                  {[
+                    { month: "Mar 2026", gross: 150000, ded: 18000, net: 132000, days: 31 },
+                    { month: "Feb 2026", gross: 150000, ded: 18000, net: 132000, days: 28 },
+                    { month: "Jan 2026", gross: 150000, ded: 18000, net: 132000, days: 31 },
+                    { month: "Dec 2025", gross: 150000, ded: 18000, net: 132000, days: 31 },
+                    { month: "Nov 2025", gross: 150000, ded: 18000, net: 132000, days: 30 },
+                    { month: "Oct 2025", gross: 150000, ded: 18000, net: 132000, days: 31 },
+                  ].map((ps, i) => (
+                    <tr key={i} className="border-b border-border hover:bg-accent/50">
+                      <td className="px-4 py-2.5 font-medium text-foreground">{ps.month}</td>
+                      <td className="px-4 py-2.5 text-right font-mono">{fmt(ps.gross)}</td>
+                      <td className="px-4 py-2.5 text-right font-mono text-destructive">{fmt(ps.ded)}</td>
+                      <td className="px-4 py-2.5 text-right font-mono font-semibold">{fmt(ps.net)}</td>
+                      <td className="px-4 py-2.5 text-center">{ps.days}</td>
+                      <td className="px-4 py-2.5 text-center"><button className="text-primary hover:underline">View</button> · <button className="text-primary hover:underline">PDF</button></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="card-elevated p-5">
+            <h3 className="text-sm font-bold text-foreground mb-3">Tax Forms</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { name: "Form 16 - FY 2024-25", status: "Available", date: "15/06/2025" },
+                { name: "Form 16 - FY 2023-24", status: "Available", date: "12/06/2024" },
+              ].map((f, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border">
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-primary" />
+                    <div>
+                      <p className="text-xs font-semibold text-foreground">{f.name}</p>
+                      <p className="text-[10px] text-muted-foreground">Generated on {f.date}</p>
+                    </div>
+                  </div>
+                  <button className="flex items-center gap-1 text-xs text-primary font-medium"><Download className="w-3 h-3" /> Download</button>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
       {tab === "loans" && (
-        <div className="card-elevated p-8 text-center">
-          <IndianRupee className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
-          <p className="text-sm font-medium text-foreground">This employee hasn't taken any loans yet.</p>
-          <button className="mt-4 px-4 py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg">Create Loan</button>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-foreground">Employee Loans</h3>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Create Loan</button>
+          </div>
+          <div className="card-elevated overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Loan Type</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Loan Amount</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Outstanding</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">EMI</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Tenure</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+              </tr></thead>
+              <tbody>
+                <tr className="border-b border-border">
+                  <td className="px-4 py-2.5 font-medium text-foreground">Salary Advance</td>
+                  <td className="px-4 py-2.5 text-right font-mono">{fmt(100000)}</td>
+                  <td className="px-4 py-2.5 text-right font-mono">{fmt(40000)}</td>
+                  <td className="px-4 py-2.5 text-right font-mono">{fmt(10000)}</td>
+                  <td className="px-4 py-2.5 text-center">10 months</td>
+                  <td className="px-4 py-2.5 text-center"><Badge variant="default" className="text-[10px]">Active</Badge></td>
+                </tr>
+                <tr className="border-b border-border">
+                  <td className="px-4 py-2.5 font-medium text-foreground">Personal Loan</td>
+                  <td className="px-4 py-2.5 text-right font-mono">{fmt(200000)}</td>
+                  <td className="px-4 py-2.5 text-right font-mono">{fmt(0)}</td>
+                  <td className="px-4 py-2.5 text-right font-mono">{fmt(16667)}</td>
+                  <td className="px-4 py-2.5 text-center">12 months</td>
+                  <td className="px-4 py-2.5 text-center"><Badge variant="secondary" className="text-[10px]">Closed</Badge></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
@@ -801,7 +925,117 @@ function TaxesFormsPage() {
           </div>
         </div>
       )}
-      {subPage !== "tds" && <PlaceholderPage title={subItems.find(s => s.id === subPage)?.label || ""} description={`${subItems.find(s => s.id === subPage)?.label} management will be available here.`} />}
+      {subPage === "challans" && (
+        <div className="card-elevated p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold">Challan History</h3>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Plus className="w-3 h-3" /> Record Challan</button>
+          </div>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">BSR Code</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Challan No.</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Date of Payment</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Amount</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Section</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+              </tr></thead>
+              <tbody>
+                {[
+                  { bsr: "0510086", challan: "CHN-20260228-001", date: "28/02/2026", amount: 42500, section: "192", status: "Verified" },
+                  { bsr: "0510086", challan: "CHN-20260131-002", date: "31/01/2026", amount: 38000, section: "192", status: "Verified" },
+                  { bsr: "0510086", challan: "CHN-20251231-003", date: "31/12/2025", amount: 35600, section: "192", status: "Verified" },
+                  { bsr: "0510086", challan: "CHN-20251130-004", date: "30/11/2025", amount: 33200, section: "192", status: "Pending" },
+                ].map((ch, i) => (
+                  <tr key={i} className="border-b border-border hover:bg-accent/50">
+                    <td className="px-4 py-2.5 text-foreground">{ch.bsr}</td>
+                    <td className="px-4 py-2.5 text-primary font-medium">{ch.challan}</td>
+                    <td className="px-4 py-2.5">{ch.date}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(ch.amount)}</td>
+                    <td className="px-4 py-2.5">{ch.section}</td>
+                    <td className="px-4 py-2.5 text-center"><Badge variant={ch.status === "Verified" ? "default" : "secondary"} className="text-[10px]">{ch.status}</Badge></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {subPage === "form24q" && (
+        <div className="card-elevated p-5">
+          <h3 className="text-sm font-bold mb-3">Form 24Q - Quarterly TDS Returns</h3>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Quarter</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Period</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">TDS Amount</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">No. of Employees</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Due Date</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Action</th>
+              </tr></thead>
+              <tbody>
+                {[
+                  { q: "Q4", period: "Jan - Mar 2026", tds: 116100, emps: 16, due: "31/05/2026", status: "Pending" },
+                  { q: "Q3", period: "Oct - Dec 2025", tds: 102800, emps: 15, due: "31/01/2026", status: "Filed" },
+                  { q: "Q2", period: "Jul - Sep 2025", tds: 89400, emps: 14, due: "31/10/2025", status: "Filed" },
+                  { q: "Q1", period: "Apr - Jun 2025", tds: 76200, emps: 13, due: "31/07/2025", status: "Filed" },
+                ].map((row, i) => (
+                  <tr key={i} className="border-b border-border hover:bg-accent/50">
+                    <td className="px-4 py-2.5 font-bold text-foreground">{row.q}</td>
+                    <td className="px-4 py-2.5">{row.period}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.tds)}</td>
+                    <td className="px-4 py-2.5 text-center">{row.emps}</td>
+                    <td className="px-4 py-2.5">{row.due}</td>
+                    <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Filed" ? "default" : "secondary"} className="text-[10px]">{row.status}</Badge></td>
+                    <td className="px-4 py-2.5 text-center"><button className="text-primary hover:underline text-xs">{row.status === "Pending" ? "File Now" : "View"}</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {subPage === "form16" && (
+        <div className="card-elevated p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold">Form 16 - Employee Tax Certificates</h3>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"><Download className="w-3 h-3" /> Generate All Form 16</button>
+          </div>
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead><tr className="bg-muted border-b border-border">
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Employee</th>
+                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">PAN</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Total Income</th>
+                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">TDS Deducted</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="text-center px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Action</th>
+              </tr></thead>
+              <tbody>
+                {[
+                  { name: "Rajesh Kumar Sharma", pan: "ABCDE1234F", income: 1800000, tds: 156000, status: "Generated" },
+                  { name: "Priya Patel", pan: "FGHIJ5678K", income: 1200000, tds: 78000, status: "Generated" },
+                  { name: "Mohammed Khan", pan: "KLMNO9012P", income: 2400000, tds: 312000, status: "Generated" },
+                  { name: "Sunita Reddy", pan: "PQRST3456U", income: 1500000, tds: 117000, status: "Pending" },
+                  { name: "Deepak Verma", pan: "UVWXY7890Z", income: 600000, tds: 0, status: "No TDS" },
+                ].map((row, i) => (
+                  <tr key={i} className="border-b border-border hover:bg-accent/50">
+                    <td className="px-4 py-2.5 font-medium text-foreground">{row.name}</td>
+                    <td className="px-4 py-2.5 font-mono">{row.pan}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.income)}</td>
+                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.tds)}</td>
+                    <td className="px-4 py-2.5 text-center"><Badge variant={row.status === "Generated" ? "default" : row.status === "Pending" ? "secondary" : "outline"} className="text-[10px]">{row.status}</Badge></td>
+                    <td className="px-4 py-2.5 text-center">{row.status === "Generated" ? <button className="text-primary hover:underline text-xs">Download</button> : <span className="text-muted-foreground">—</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
