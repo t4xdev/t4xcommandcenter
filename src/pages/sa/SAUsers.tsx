@@ -121,7 +121,7 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
 
       <Card>
         <CardContent className="pt-6">
-          <div className="grid gap-5 max-w-3xl">
+          <div className="grid gap-5">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Primary Company</Label>
