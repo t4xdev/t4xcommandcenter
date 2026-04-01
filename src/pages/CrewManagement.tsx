@@ -1773,18 +1773,44 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <SelectField label="Gender" required value={form.gender} options={["Male", "Female", "Other"]} onChange={v => u("gender", v)} />
-              <SelectField label="Employment Type" required value={form.employmentType} options={["shore", "seafarer"]} onChange={v => u("employmentType", v)} />
-            </div>
-            {form.employmentType === "seafarer" && (
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Rank" value={form.rank} onChange={v => u("rank", v)} placeholder="e.g. Chief Engineer" />
-                <Field label="Vessel" value={form.vessel} onChange={v => u("vessel", v)} placeholder="e.g. MV Dolphin 7" />
+              <div>
+                <label className="text-xs font-medium text-foreground">Pay Type<span className="text-destructive"> *</span></label>
+                <select value={form.payType} onChange={e => u("payType", e.target.value)} className="w-full mt-1 px-3 py-2 text-sm border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none">
+                  <option value="contract">Contract</option>
+                  <option value="fulltime">Full-time</option>
+                </select>
               </div>
-            )}
+            </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Designation" required value={form.designation} onChange={v => u("designation", v)} placeholder="e.g. Chief Engineer" />
+              <div>
+                <label className="text-xs font-medium text-foreground">Designation<span className="text-destructive"> *</span></label>
+                <select value={form.designation} onChange={e => handleDesignationChange(e.target.value)} className="w-full mt-1 px-3 py-2 text-sm border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none">
+                  <option value="">Select Designation</option>
+                  <optgroup label="Seafarer">
+                    {designationMaster.filter(d => d.category === "seafarer").map(d => <option key={d.designation} value={d.designation}>{d.designation}</option>)}
+                  </optgroup>
+                  <optgroup label="Shore Staff">
+                    {designationMaster.filter(d => d.category === "shore").map(d => <option key={d.designation} value={d.designation}>{d.designation}</option>)}
+                  </optgroup>
+                </select>
+                {form.designation && (
+                  <p className="text-[10px] text-success mt-1">✓ Wages auto-filled from Designation Master ({form.employmentType})</p>
+                )}
+              </div>
               <SelectField label="Department" required value={form.department} options={["Engineering", "Operations", "QHSE", "Management", "Finance", "HR"]} onChange={v => u("department", v)} />
             </div>
+            {form.employmentType === "seafarer" && (
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Rank" value={form.rank} onChange={v => u("rank", v)} placeholder="Auto-filled" />
+                <Field label="Vessel" value={form.vessel} onChange={v => u("vessel", v)} placeholder="e.g. MV Dolphin 7" />
+                <div>
+                  <label className="text-xs font-medium text-foreground">Contract Duration</label>
+                  <select value={form.contractDurationMonths} onChange={e => u("contractDurationMonths", Number(e.target.value))} className="w-full mt-1 px-3 py-2 text-sm border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none">
+                    {[3, 4, 6, 9, 12, 18, 24, 36].map(m => <option key={m} value={m}>{m} months</option>)}
+                  </select>
+                </div>
+              </div>
+            )}
             <Field label="Work Location" required value={form.workLocation} onChange={v => u("workLocation", v)} />
           </div>
         )}
@@ -1805,35 +1831,67 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
               <ToggleItem label="Labour Welfare Fund" checked={form.lwf} onChange={v => u("lwf", v)} />
             </div>
             <div className="rounded-xl border border-border p-5 space-y-4">
-              <div><h3 className="text-sm font-bold text-foreground">Salary Structure</h3></div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-destructive">Annual CTC *</span>
-                <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                  <span className="px-2 py-1.5 bg-muted text-xs font-medium">₹</span>
-                  <input type="number" value={form.annualCTC || ""} onChange={e => u("annualCTC", Number(e.target.value))} className="px-3 py-1.5 text-sm bg-transparent outline-none w-40" placeholder="0" />
-                  <span className="px-2 py-1.5 text-xs text-muted-foreground">per year</span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">Salary Structure</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">{form.payType === "contract" ? "Monthly contract salary — editable below" : "Annual CTC with monthly breakdown"}</p>
                 </div>
+                <Badge variant="secondary" className="text-[10px] uppercase">{form.payType}</Badge>
               </div>
+
+              {form.payType === "fulltime" && (
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-destructive">Annual CTC *</span>
+                  <div className="flex items-center border border-border rounded-lg overflow-hidden">
+                    <span className="px-2 py-1.5 bg-muted text-xs font-medium">₹</span>
+                    <input type="number" value={form.annualCTC || ""} onChange={e => u("annualCTC", Number(e.target.value))} className="px-3 py-1.5 text-sm bg-transparent outline-none w-40" placeholder="0" />
+                    <span className="px-2 py-1.5 text-xs text-muted-foreground">per year</span>
+                  </div>
+                </div>
+              )}
+
               <div className="border border-border rounded-lg overflow-hidden">
                 <div className="grid grid-cols-4 bg-muted px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  <span>Components</span><span>Calc Type</span><span className="text-right">Monthly</span><span className="text-right">Annual</span>
+                  <span>Components</span><span>Type</span><span className="text-right">Monthly</span><span className="text-right">Annual</span>
                 </div>
                 <div className="px-4 py-2 border-t border-border space-y-2">
                   <p className="text-xs font-bold text-foreground">Earnings</p>
                   <div className="grid grid-cols-4 items-center">
-                    <span className="text-xs">Basic</span><span className="text-xs text-muted-foreground">Fixed amount</span>
+                    <span className="text-xs">Basic</span><span className="text-xs text-muted-foreground">Fixed</span>
                     <div className="text-right"><input type="number" value={form.basicMonthly || ""} onChange={e => u("basicMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
                     <span className="text-xs text-right font-mono">{fmt(form.basicMonthly * 12)}</span>
                   </div>
+                  {form.employmentType === "shore" && (
+                    <div className="grid grid-cols-4 items-center">
+                      <span className="text-xs">HRA</span><span className="text-xs text-muted-foreground">% of Basic</span>
+                      <div className="text-right"><input type="number" value={form.hraMonthly || ""} onChange={e => u("hraMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                      <span className="text-xs text-right font-mono">{fmt(form.hraMonthly * 12)}</span>
+                    </div>
+                  )}
+                  {form.employmentType === "seafarer" && (
+                    <>
+                      <div className="grid grid-cols-4 items-center">
+                        <span className="text-xs">Sea Allowance</span><span className="text-xs text-muted-foreground">Fixed</span>
+                        <div className="text-right"><input type="number" value={form.seaAllowanceMonthly || ""} onChange={e => u("seaAllowanceMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                        <span className="text-xs text-right font-mono">{fmt(form.seaAllowanceMonthly * 12)}</span>
+                      </div>
+                      <div className="grid grid-cols-4 items-center">
+                        <span className="text-xs">Leave Pay</span><span className="text-xs text-muted-foreground">Fixed</span>
+                        <div className="text-right"><input type="number" value={form.leavePayMonthly || ""} onChange={e => u("leavePayMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                        <span className="text-xs text-right font-mono">{fmt(form.leavePayMonthly * 12)}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="grid grid-cols-4 items-center">
-                    <span className="text-xs">Special Allowance</span><span className="text-xs text-muted-foreground">Fixed amount</span>
-                    <span className="text-xs text-right text-muted-foreground">System Calc</span><span className="text-xs text-right text-muted-foreground">System Calc</span>
+                    <span className="text-xs">Special Allowance</span><span className="text-xs text-muted-foreground">Fixed</span>
+                    <div className="text-right"><input type="number" value={form.specialAllowanceMonthly || ""} onChange={e => u("specialAllowanceMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                    <span className="text-xs text-right font-mono">{fmt(form.specialAllowanceMonthly * 12)}</span>
                   </div>
                 </div>
                 <div className="grid grid-cols-4 px-4 py-2 bg-primary/5 border-t border-border">
-                  <span className="text-xs font-bold col-span-2">Cost to Company</span>
-                  <span className="text-xs font-bold text-right font-mono">{fmt(form.annualCTC / 12)}</span>
-                  <span className="text-xs font-bold text-right font-mono">{fmt(form.annualCTC)}</span>
+                  <span className="text-xs font-bold col-span-2">Total Monthly Salary</span>
+                  <span className="text-xs font-bold text-right font-mono">{fmt(totalMonthly)}</span>
+                  <span className="text-xs font-bold text-right font-mono">{fmt(totalMonthly * 12)}</span>
                 </div>
               </div>
             </div>
