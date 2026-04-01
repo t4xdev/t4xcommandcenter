@@ -91,7 +91,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                 </div>
                 <div />
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Controlling Scope</Label>
                   <Select value={form.controllingScope || "Vessel wise controlling"} onValueChange={v => set("controllingScope", v)}>
@@ -111,6 +111,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                     <Input className="h-9 text-sm flex-1" value={form.companyColor || "#1a365d"} onChange={e => set("companyColor", e.target.value)} placeholder="#000000" />
                   </div>
                 </div>
+                <div />
               </div>
             </div>
 
