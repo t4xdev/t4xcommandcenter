@@ -38,7 +38,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
       </div>
       <Card>
         <CardContent className="pt-6">
-          <div className="grid gap-5 max-w-3xl">
+          <div className="grid gap-5">
             {/* Basic */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Basic Information</h3>
