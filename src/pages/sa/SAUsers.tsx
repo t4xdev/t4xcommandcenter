@@ -11,7 +11,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
-  Users, Shield, Ship, Search, Plus, Edit2, Eye,
+  Users, Shield, Ship, Search, Plus, Edit2, Eye, Upload,
   UserCheck, UserX, Anchor, CheckCircle2, XCircle, Clock, ArrowLeft,
 } from "lucide-react";
 import {

@@ -120,21 +120,22 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
             {/* Logos */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Branding</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Company Logo (Main)</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
                     <Upload className="w-5 h-5 mb-1" />
                     <span className="text-xs">Click or Drop file</span>
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Company Logo (PDF Right)</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
                     <Upload className="w-5 h-5 mb-1" />
                     <span className="text-xs">Click or Drop file</span>
                   </div>
                 </div>
+                <div />
               </div>
             </div>
           </div>
