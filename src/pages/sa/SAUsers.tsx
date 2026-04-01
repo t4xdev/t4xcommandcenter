@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
 import {
   Users, Shield, Ship, Search, Plus, Edit2, Eye, Upload,
   UserCheck, UserX, Anchor, CheckCircle2, XCircle, Clock, ArrowLeft,
