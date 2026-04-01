@@ -1650,9 +1650,11 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
     email: "", mobile: "", gender: "Male" as "Male" | "Female" | "Other",
     workLocation: "Head Office - Mumbai", designation: "", department: "Operations",
     portalAccess: false, employmentType: "shore" as "shore" | "seafarer",
-    rank: "", vessel: "",
+    payType: "contract" as "contract" | "fulltime",
+    rank: "", vessel: "", contractDurationMonths: 6,
     epf: true, pfAccountNumber: "", uan: "", esi: false, lwf: false,
-    annualCTC: 0, basicMonthly: 0,
+    annualCTC: 0, monthlySalary: 0,
+    basicMonthly: 0, hraMonthly: 0, seaAllowanceMonthly: 0, leavePayMonthly: 0, specialAllowanceMonthly: 0,
     dob: "", fatherName: "", pan: "", personalEmail: "",
     addressLine1: "", addressLine2: "", city: "", state: "", pin: "",
     differentlyAbled: "None",
@@ -1662,25 +1664,63 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
   });
 
   const u = (key: string, val: any) => setForm(p => ({ ...p, [key]: val }));
+
+  // Auto-fill wages when designation changes
+  const handleDesignationChange = (desig: string) => {
+    u("designation", desig);
+    const info = getDesignationInfo(desig);
+    if (info) {
+      u("department", info.department);
+      u("employmentType", info.category);
+      if (info.category === "seafarer") {
+        u("rank", desig);
+        u("payType", "contract");
+      }
+      const wage = getDesignationWage(desig, 2026);
+      if (wage) {
+        u("basicMonthly", wage.basic);
+        u("hraMonthly", wage.hra);
+        u("seaAllowanceMonthly", wage.seaAllowance);
+        u("leavePayMonthly", wage.leavePay);
+        u("specialAllowanceMonthly", wage.specialAllowance);
+        u("monthlySalary", wage.totalMonthly);
+        if (info.category === "shore") {
+          u("annualCTC", wage.totalMonthly * 12);
+        }
+      }
+    }
+  };
+
   const canNext = () => {
     if (step === 1) return form.firstName && form.employeeId && form.dateOfJoining && form.email && form.designation;
     return true;
   };
 
+  const totalMonthly = form.basicMonthly + form.hraMonthly + form.seaAllowanceMonthly + form.leavePayMonthly + form.specialAllowanceMonthly;
+
   const handleSave = () => {
+    const components = [
+      { name: "Basic", type: "Fixed amount", monthlyAmount: form.basicMonthly, annualAmount: form.basicMonthly * 12 },
+    ];
+    if (form.hraMonthly > 0) components.push({ name: "HRA", type: "% of Basic", monthlyAmount: form.hraMonthly, annualAmount: form.hraMonthly * 12 });
+    if (form.seaAllowanceMonthly > 0) components.push({ name: "Sea Allowance", type: "Fixed amount", monthlyAmount: form.seaAllowanceMonthly, annualAmount: form.seaAllowanceMonthly * 12 });
+    if (form.leavePayMonthly > 0) components.push({ name: "Leave Pay", type: "Fixed amount", monthlyAmount: form.leavePayMonthly, annualAmount: form.leavePayMonthly * 12 });
+    if (form.specialAllowanceMonthly > 0) components.push({ name: "Special Allowance", type: "Fixed amount", monthlyAmount: form.specialAllowanceMonthly, annualAmount: form.specialAllowanceMonthly * 12 });
+
     const emp: Employee = {
       id: crypto.randomUUID(), employeeId: form.employeeId,
       firstName: form.firstName, middleName: form.middleName || undefined, lastName: form.lastName,
       email: form.email, mobile: form.mobile || undefined, gender: form.gender,
       dateOfJoining: form.dateOfJoining, designation: form.designation, department: form.department,
       workLocation: form.workLocation, status: "Active", portalAccess: form.portalAccess,
-      employmentType: form.employmentType, rank: form.rank || undefined, vessel: form.vessel || undefined,
+      employmentType: form.employmentType, payType: form.payType,
+      rank: form.rank || undefined, vessel: form.vessel || undefined,
+      contractDurationMonths: form.payType === "contract" ? form.contractDurationMonths : undefined,
       dob: form.dob || undefined, fatherName: form.fatherName || undefined, pan: form.pan || undefined,
-      epf: form.epf, esi: form.esi, lwf: form.lwf, annualCTC: form.annualCTC,
-      salaryComponents: [
-        { name: "Basic", type: "Fixed amount", monthlyAmount: form.basicMonthly, annualAmount: form.basicMonthly * 12 },
-        { name: "Special Allowance", type: "Fixed amount", monthlyAmount: (form.annualCTC / 12) - form.basicMonthly, annualAmount: form.annualCTC - (form.basicMonthly * 12) },
-      ],
+      epf: form.epf, esi: form.esi, lwf: form.lwf,
+      annualCTC: form.payType === "fulltime" ? form.annualCTC : 0,
+      monthlySalary: totalMonthly,
+      salaryComponents: components,
       bankName: form.bankName || undefined, accountNumber: form.accountNumber || undefined,
       ifsc: form.ifsc || undefined, accountType: form.accountType,
       accountHolderName: form.accountHolderName || undefined, paymentMode: form.paymentMode,
