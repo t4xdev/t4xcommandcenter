@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import TopNav from "@/components/TopNav";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
@@ -8,9 +9,6 @@ import {
   Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3, Wallet,
   FileText, PieChart as PieChartIcon, Settings, Users, Cpu,
 } from "lucide-react";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import IotDashboard from "@/pages/IotDashboard";
 import SurveyPlanner from "@/pages/SurveyPlanner";
 import {
