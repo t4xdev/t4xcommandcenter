@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import TopNav from "@/components/TopNav";
 import {
   Activity, AlertTriangle, Anchor, Droplets, Gauge, Thermometer, Waves,
   Zap, Wifi, WifiOff, Clock, Circle, BarChart3, Fuel, Cog, Fan,
