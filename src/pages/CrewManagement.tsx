@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
+import TopNav from "@/components/TopNav";
 import t4xLogo from "@/assets/t4x_logo.png";
 import avatarRajesh from "@/assets/avatars/avatar-rajesh.jpg";
 import avatarPriya from "@/assets/avatars/avatar-priya.jpg";
@@ -236,31 +237,8 @@ export default function CrewManagement() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header — consistent with main dashboard */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border px-6 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={t4xLogo} alt="Twenty4X Logo" className="h-10 w-auto object-contain" />
-            <div className="border-l border-border pl-3">
-              <h1 className="text-sm font-bold text-foreground">Payroll</h1>
-              <p className="text-[10px] text-muted-foreground">Payroll Management</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link to="/" className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-md hover:bg-accent transition-colors">
-              ← Back to Dashboard
-            </Link>
-            <div className="relative flex items-center gap-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-                <input placeholder="Search in Employee" className="pl-9 pr-3 py-1.5 text-xs border border-border rounded-lg bg-transparent w-56 focus:ring-2 focus:ring-ring outline-none" />
-              </div>
-            </div>
-            <button onClick={() => toast.info("Notifications", { description: "You have 2 pending approvals and 1 certificate expiring soon." })} className="relative p-2 rounded-lg hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" /></button>
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><User className="w-4 h-4 text-primary-foreground" /></div>
-          </div>
-        </div>
-      </header>
+      {/* Top Navigation Bar */}
+      <TopNav breadcrumb={`User / Payroll / ${sidebarItems.find(i => i.id === currentPage)?.label || "Dashboard"}`} />
 
       <div className="flex flex-1">
         {/* Sidebar — text-only, no icons */}
