@@ -72,10 +72,10 @@ export default function TopNav({ breadcrumb = "User / Dashboard", rightContent }
     {
       label: "SA", icon: Shield,
       items: [
-        { label: "Users", action: () => navigate("/super-admin/users") },
-        { label: "Roles", action: () => navigate("/super-admin/roles") },
-        { label: "Vessels", action: () => navigate("/super-admin/vessels") },
         { label: "Company", action: () => navigate("/super-admin/company") },
+        { label: "Vessels", action: () => navigate("/super-admin/vessels") },
+        { label: "Roles", action: () => navigate("/super-admin/roles") },
+        { label: "Users", action: () => navigate("/super-admin/users") },
       ],
     },
   ];
