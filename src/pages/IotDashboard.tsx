@@ -371,7 +371,7 @@ function FleetVesselTable({ vessels }: { vessels: VesselSensors[] }) {
 type TimeRange = "1h" | "6h" | "24h";
 
 // ─── Main Dashboard ───
-export default function IotDashboard({ fleet }: { fleet: string }) {
+export default function IotDashboard({ fleet = "All Fleets" }: { fleet?: string }) {
   const [selectedVesselId, setSelectedVesselId] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<TimeRange>("24h");
 

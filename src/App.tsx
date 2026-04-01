@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "@/pages/Dashboard";
 import CrewManagement from "@/pages/CrewManagement";
 import EmissionsTracker from "@/pages/EmissionsTracker";
+import IotDashboard from "@/pages/IotDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/" element={<Dashboard />} />
           <Route path="/payroll/*" element={<CrewManagement />} />
           <Route path="/emissions" element={<EmissionsTracker />} />
+          <Route path="/iot" element={<IotDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
