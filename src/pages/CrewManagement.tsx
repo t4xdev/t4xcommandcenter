@@ -33,11 +33,14 @@ interface Employee {
   email: string; mobile?: string; gender: "Male" | "Female" | "Other";
   dateOfJoining: string; designation: string; department: string; workLocation: string;
   status: "Active" | "Inactive" | "On Leave"; portalAccess: boolean;
-  employmentType: "shore" | "seafarer"; rank?: string; vessel?: string; contractPeriod?: string;
+  employmentType: "shore" | "seafarer";
+  payType: "contract" | "fulltime";
+  rank?: string; vessel?: string; contractPeriod?: string; contractDurationMonths?: number;
   dob?: string; fatherName?: string; pan?: string; personalEmail?: string;
   address?: { line1: string; line2?: string; city: string; state: string; pin: string };
   epf: boolean; esi: boolean; lwf: boolean; pfAccountNumber?: string; uan?: string;
   annualCTC: number;
+  monthlySalary: number;
   salaryComponents: { name: string; type: string; monthlyAmount: number; annualAmount: number }[];
   bankName?: string; accountNumber?: string; ifsc?: string; accountType?: "Current" | "Savings";
   accountHolderName?: string; paymentMode: "Bank Transfer" | "Cheque" | "Cash";
