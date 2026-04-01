@@ -245,6 +245,7 @@ export default function Dashboard() {
       items: [
         { label: "Fleet Overview", action: () => setActiveView("dashboard") },
         { label: "IoT Sensors", action: () => setActiveView("iot") },
+        { label: "Emissions Tracker", action: () => navigate("/emissions") },
       ],
     },
     {
