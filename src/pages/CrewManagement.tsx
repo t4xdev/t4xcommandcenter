@@ -1586,36 +1586,36 @@ function SettingsPage() {
           <button onClick={() => toast.info("Update Statutory Rates", { description: "Rate editor opened. Modify EPF, ESI, PT, and LWF contribution rates." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Update Rates</button>
         </div>
         <div className="card-elevated p-5">
-          <h3 className="text-sm font-bold text-foreground mb-4">Rank & Wage Master</h3>
-          <div className="border border-border rounded-lg overflow-hidden">
-            <table className="w-full text-xs">
-              <thead><tr className="bg-muted border-b border-border">
-                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Rank</th>
-                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Base Wage (Monthly)</th>
-                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Sea Allowance</th>
-                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Leave Pay</th>
-              </tr></thead>
-              <tbody>
-                {[
-                  { rank: "Master", base: 250000, sea: 50000, leave: 30000 },
-                  { rank: "Chief Engineer", base: 220000, sea: 45000, leave: 28000 },
-                  { rank: "Chief Officer", base: 180000, sea: 38000, leave: 24000 },
-                  { rank: "2nd Engineer", base: 150000, sea: 32000, leave: 20000 },
-                  { rank: "2nd Officer", base: 120000, sea: 25000, leave: 16000 },
-                  { rank: "3rd Officer", base: 100000, sea: 20000, leave: 12000 },
-                  { rank: "Junior Engineer", base: 60000, sea: 12000, leave: 8000 },
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-border">
-                    <td className="px-4 py-2.5 font-medium text-foreground">{row.rank}</td>
-                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.base)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.sea)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.leave)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <button onClick={() => toast.info("Edit Wage Master", { description: "Wage master editor opened. Modify base wages, sea allowances, and leave pay by rank." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Wage Master</button>
+          <h3 className="text-sm font-bold text-foreground mb-2">Designation Master — Minimum Wages (3-Year)</h3>
+          <p className="text-[10px] text-muted-foreground mb-4">Defines minimum monthly wages per designation. These auto-fill when adding new crew.</p>
+          {["seafarer", "shore"].map(cat => (
+            <div key={cat} className="mb-5">
+              <p className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">{cat === "seafarer" ? "⚓ Seafarer Designations" : "🏢 Shore Staff Designations"}</p>
+              <div className="border border-border rounded-lg overflow-hidden mb-3">
+                <table className="w-full text-xs">
+                  <thead><tr className="bg-muted border-b border-border">
+                    <th className="text-left px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Designation</th>
+                    <th className="text-left px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Dept</th>
+                    <th className="text-right px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">2026 (₹/mo)</th>
+                    <th className="text-right px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">2027 (₹/mo)</th>
+                    <th className="text-right px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">2028 (₹/mo)</th>
+                  </tr></thead>
+                  <tbody>
+                    {designationMaster.filter(d => d.category === cat).map(d => (
+                      <tr key={d.designation} className="border-b border-border last:border-0 hover:bg-accent/30">
+                        <td className="px-3 py-2 font-medium text-foreground">{d.designation}</td>
+                        <td className="px-3 py-2 text-muted-foreground">{d.department}</td>
+                        {d.wages.map(w => (
+                          <td key={w.year} className="px-3 py-2 text-right font-mono">{fmt(w.totalMonthly)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+          <button onClick={() => toast.info("Edit Designation Master", { description: "Designation master editor opened. Modify wages for all years and designations." })} className="px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Designation Master</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Payment Modes</h3>
