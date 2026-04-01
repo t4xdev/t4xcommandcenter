@@ -200,67 +200,6 @@ export default function Dashboard() {
   const activeLabel = activeView === "dashboard" ? "Dashboard" : activeView === "iot" ? "IoT Sensors" : "Survey Planner";
   const breadcrumb = `User / ${activeLabel}`;
 
-  const menuItems = [
-    {
-      label: "Documents", icon: FileText,
-      items: [
-        { label: "Documents & Compliance", action: () => { setActiveView("dashboard"); setActiveDomain("documents"); } },
-        { label: "Certificate Alerts", action: () => { setActiveView("dashboard"); setActiveDomain("documents"); } },
-      ],
-    },
-    {
-      label: "Reports", icon: BarChart3,
-      items: [
-        { label: "MIS Dashboard", action: () => setActiveView("dashboard") },
-        { label: "QHSE & Incidents", action: () => { setActiveView("dashboard"); setActiveDomain("qhse"); } },
-        { label: "Operations", action: () => { setActiveView("dashboard"); setActiveDomain("operations"); } },
-      ],
-    },
-    {
-      label: "Procurement", icon: ShoppingCart,
-      items: [
-        { label: "Procurement Overview", action: () => { setActiveView("dashboard"); setActiveDomain("procurement"); } },
-        { label: "Vendor Performance", action: () => { setActiveView("dashboard"); setActiveDomain("procurement"); } },
-      ],
-    },
-    {
-      label: "PMS", icon: Wrench,
-      items: [
-        { label: "Maintenance & PMS", action: () => { setActiveView("dashboard"); setActiveDomain("maintenance"); } },
-        { label: "Dry Dock", action: () => { setActiveView("dashboard"); setActiveDomain("drydock"); } },
-        { label: "Survey Planner", action: () => setActiveView("survey") },
-      ],
-    },
-    {
-      label: "Crewing", icon: Users,
-      items: [
-        { label: "Payroll Management", action: () => navigate("/payroll") },
-        { label: "Crew Dashboard", action: () => navigate("/payroll") },
-      ],
-    },
-    {
-      label: "Vessel", icon: Ship,
-      items: [
-        { label: "Fleet Overview", action: () => setActiveView("dashboard") },
-        { label: "IoT Sensors", action: () => setActiveView("iot") },
-        { label: "Emissions Tracker", action: () => navigate("/emissions") },
-      ],
-    },
-    {
-      label: "Admin", icon: Settings,
-      items: [
-        { label: "User Management", action: () => {} },
-        { label: "Settings", action: () => {} },
-      ],
-    },
-    {
-      label: "SA", icon: Shield,
-      items: [
-        { label: "Super Admin", action: () => {} },
-        { label: "System Config", action: () => {} },
-      ],
-    },
-  ];
 
   const fleetSelector = (
     <div className="relative">
