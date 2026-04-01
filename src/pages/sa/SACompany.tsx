@@ -74,7 +74,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
             {/* Fiscal & Config */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Fiscal & Configuration</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Fiscal Start Month</Label>
                   <Select value={form.fiscalStartMonth || "Jan"} onValueChange={v => set("fiscalStartMonth", v)}>
@@ -89,6 +89,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                     <SelectContent>{yearPrefixFormats.map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
+                <div />
               </div>
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div className="space-y-1.5">
