@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
+import TopNav from "@/components/TopNav";
 import t4xLogo from "@/assets/t4x_logo.png";
 import avatarRajesh from "@/assets/avatars/avatar-rajesh.jpg";
 import avatarPriya from "@/assets/avatars/avatar-priya.jpg";
