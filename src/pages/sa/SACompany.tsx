@@ -42,9 +42,10 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
             {/* Basic */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Basic Information</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5"><Label className="text-xs">Company Name</Label><Input className="h-9 text-sm" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Company Name" /></div>
                 <div className="space-y-1.5"><Label className="text-xs">Short Name</Label><Input className="h-9 text-sm" value={form.shortName} onChange={e => set("shortName", e.target.value)} placeholder="Short Name" /></div>
+                <div />
               </div>
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <div className="space-y-1.5">
