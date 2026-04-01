@@ -408,7 +408,9 @@ export default function IotDashboard({ fleet = "All Fleets" }: { fleet?: string 
   }, [selectedVessel, selectedFleet, filteredVessels]);
 
   return (
-    <div className="space-y-5 animate-fade-in-up">
+    <div className="min-h-screen bg-background">
+      <TopNav breadcrumb="IoT Sensors" />
+      <div className="p-4 max-w-[1400px] mx-auto space-y-5 animate-fade-in-up">
       {/* Info Bar */}
       <div className="bg-card rounded-xl border border-border p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
