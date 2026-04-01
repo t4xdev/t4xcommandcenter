@@ -7,6 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import CrewManagement from "@/pages/CrewManagement";
 import EmissionsTracker from "@/pages/EmissionsTracker";
 import IotDashboard from "@/pages/IotDashboard";
+import SuperAdmin from "@/pages/SuperAdmin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/payroll/*" element={<CrewManagement />} />
           <Route path="/emissions" element={<EmissionsTracker />} />
           <Route path="/iot" element={<IotDashboard />} />
+          <Route path="/super-admin/*" element={<SuperAdmin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
