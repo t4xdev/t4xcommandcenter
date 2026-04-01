@@ -1,4 +1,5 @@
 import { useState } from "react";
+import TopNav from "@/components/TopNav";
 import {
   BarChart3, Ship, FileText, AlertTriangle, GitCompare, Settings,
   TrendingUp, TrendingDown, Fuel, Leaf, Activity, ChevronDown,
