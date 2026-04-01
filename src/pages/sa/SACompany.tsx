@@ -47,7 +47,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                 <div className="space-y-1.5"><Label className="text-xs">Short Name</Label><Input className="h-9 text-sm" value={form.shortName} onChange={e => set("shortName", e.target.value)} placeholder="Short Name" /></div>
                 <div />
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Country</Label>
                   <Select value={form.country || ""} onValueChange={v => set("country", v)}>
@@ -65,6 +65,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                     </SelectContent>
                   </Select>
                 </div>
+                <div />
               </div>
             </div>
 
