@@ -810,7 +810,9 @@ export default function EmissionsTracker() {
   const unresolvedAlerts = emissionAlerts.filter(a => !a.acknowledged).length;
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex flex-col">
+      <TopNav breadcrumb={`User / Vessel / Emissions Tracker / ${sidebarItems.find(i => i.id === activePage)?.label || "Overview"}`} />
+      <div className="flex flex-1">
       {/* Sidebar */}
       <aside className="w-52 bg-card border-r border-border shrink-0 sticky top-0 h-screen">
         <div className="p-4 border-b border-border">
