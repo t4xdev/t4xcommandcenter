@@ -58,7 +58,7 @@ export default function TopNav({ breadcrumb = "User / Dashboard", rightContent }
       label: "Vessel", icon: Ship,
       items: [
         { label: "Fleet Overview", action: () => navigate("/") },
-        { label: "IoT Sensors", action: () => navigate("/") },
+        { label: "IoT Sensors", action: () => navigate("/iot") },
         { label: "Emissions Tracker", action: () => navigate("/emissions") },
       ],
     },
