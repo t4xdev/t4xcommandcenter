@@ -814,7 +814,7 @@ export default function EmissionsTracker() {
       <TopNav breadcrumb={`User / Vessel / Emissions Tracker / ${sidebarItems.find(i => i.id === activePage)?.label || "Overview"}`} />
       <div className="flex flex-1">
       {/* Sidebar */}
-      <aside className="w-52 bg-card border-r border-border shrink-0 sticky top-0 h-screen">
+      <aside className="w-52 bg-card border-r border-border shrink-0">
         <div className="p-4 border-b border-border">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-success/10">
