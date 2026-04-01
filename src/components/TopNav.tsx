@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
-  FileText, BarChart3, ShoppingCart, Wrench, Users, Ship, Settings, Shield,
+  LayoutDashboard, FileText, BarChart3, ShoppingCart, Wrench, Users, Ship, Settings, Shield,
   ChevronDown, Bell, User,
 } from "lucide-react";
 import {
