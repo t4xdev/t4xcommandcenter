@@ -107,6 +107,7 @@ export default function TopNav({ breadcrumb = "User / Dashboard", rightContent }
         </nav>
 
         <div className="flex items-center gap-2 shrink-0">
+          {rightContent}
           <button className="relative p-1.5 rounded-md hover:bg-accent text-muted-foreground">
             <Bell className="w-4 h-4" />
             <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-destructive rounded-full" />
