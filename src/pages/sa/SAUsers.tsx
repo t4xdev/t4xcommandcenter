@@ -145,7 +145,7 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Full Name</Label>
                 <Input className="h-9 text-sm" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Full Name" />
@@ -154,6 +154,7 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
                 <Label className="text-xs">Email</Label>
                 <Input className="h-9 text-sm" type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="Email" />
               </div>
+              <div />
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
