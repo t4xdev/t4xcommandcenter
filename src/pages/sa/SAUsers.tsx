@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
 import {
   Users, Shield, Ship, Search, Plus, Edit2, Eye, Upload,
   UserCheck, UserX, Anchor, CheckCircle2, XCircle, Clock, ArrowLeft,
@@ -108,7 +109,7 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
   const set = (k: keyof SAUser, v: string) => setForm(prev => ({ ...prev, [k]: v }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onCancel}>
           <ArrowLeft className="w-4 h-4" />
@@ -120,109 +121,126 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
       </div>
 
       <Card>
-        <CardContent className="pt-6">
-          <div className="grid gap-5">
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Primary Company</Label>
-                <Select value={form.company || ""} onValueChange={v => set("company", v)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select company" /></SelectTrigger>
-                  <SelectContent>{mockCompanies.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Country</Label>
-                <Select value={form.country || ""} onValueChange={v => set("country", v)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select country" /></SelectTrigger>
-                  <SelectContent>{countries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Upload User Image</Label>
-                <div className="border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
-                  <Upload className="w-5 h-5 mb-1" />
-                  <span className="text-xs">Click or Drop file</span>
+        <CardContent className="pt-5 pb-5">
+          <div className="space-y-5">
+            {/* Row 1: Photo + Company/Country */}
+            <div>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Profile</h3>
+              <div className="flex gap-4">
+                <div className="shrink-0">
+                  <div className="w-20 h-20 border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
+                    <Upload className="w-4 h-4 mb-0.5" />
+                    <span className="text-[10px]">Photo</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3 flex-1">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Full Name</Label>
+                    <Input className="h-9 text-sm" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Full Name" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Email</Label>
+                    <Input className="h-9 text-sm" type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="Email" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Username</Label>
+                    <Input className="h-9 text-sm" value={form.username} onChange={e => set("username", e.target.value)} placeholder="Username" />
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Full Name</Label>
-                <Input className="h-9 text-sm" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Full Name" />
+
+            <Separator />
+
+            {/* Row 2: Organization */}
+            <div>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Organization</h3>
+              <div className="grid grid-cols-4 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Primary Company</Label>
+                  <Select value={form.company || ""} onValueChange={v => set("company", v)}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select company" /></SelectTrigger>
+                    <SelectContent>{mockCompanies.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Country</Label>
+                  <Select value={form.country || ""} onValueChange={v => set("country", v)}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select country" /></SelectTrigger>
+                    <SelectContent>{countries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Designation</Label>
+                  <Select value={form.designation || ""} onValueChange={v => set("designation", v)}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>{designations.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Department</Label>
+                  <Select value={form.department || ""} onValueChange={v => set("department", v)}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>{departments.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Email</Label>
-                <Input className="h-9 text-sm" type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="Email" />
-              </div>
-              <div />
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Username</Label>
-                <Input className="h-9 text-sm" value={form.username} onChange={e => set("username", e.target.value)} placeholder="Username" />
+
+            <Separator />
+
+            {/* Row 3: Access */}
+            <div>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Access & Security</h3>
+              <div className="grid grid-cols-4 gap-3">
+                {!user && (
+                  <div className="space-y-1">
+                    <Label className="text-xs">Password</Label>
+                    <Input className="h-9 text-sm" type="password" placeholder="Set password" />
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <Label className="text-xs">User Type</Label>
+                  <Select value={form.userType || "On-Shore"} onValueChange={v => set("userType", v)}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="On-Shore">On-Shore</SelectItem>
+                      <SelectItem value="On-Board">On-Board</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Role</Label>
+                  <Select value={form.role || ""} onValueChange={v => set("role", v)}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Assign a role" /></SelectTrigger>
+                    <SelectContent>{mockRoles.map(r => (
+                      <SelectItem key={r.id} value={r.name}>
+                        <div className="flex items-center gap-2">
+                          <span>{r.name}</span>
+                          <span className="text-[10px] text-muted-foreground">— {r.description}</span>
+                        </div>
+                      </SelectItem>
+                    ))}</SelectContent>
+                  </Select>
+                </div>
               </div>
-              {!user && (
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Password</Label>
-                  <Input className="h-9 text-sm" type="password" placeholder="Set password" />
+              {form.role && (
+                <div className="p-3 rounded-lg bg-muted/50 border mt-3">
+                  <p className="text-xs font-medium mb-1">Permissions inherited from "{form.role}" role:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {Object.keys(mockRoles.find(r => r.name === form.role)?.permissions || {}).map(m => (
+                      <Badge key={m} variant="secondary" className="text-[10px] capitalize">{m}</Badge>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-2">
+                    To change permissions, edit the role from SA → Roles.
+                  </p>
                 </div>
               )}
-              <div className="space-y-1.5">
-                <Label className="text-xs">User Type</Label>
-                <Select value={form.userType || "On-Shore"} onValueChange={v => set("userType", v)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="On-Shore">On-Shore</SelectItem>
-                    <SelectItem value="On-Board">On-Board</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Designation</Label>
-                <Select value={form.designation || ""} onValueChange={v => set("designation", v)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>{designations.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Department</Label>
-                <Select value={form.department || ""} onValueChange={v => set("department", v)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select" /></SelectTrigger>
-                  <SelectContent>{departments.map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Role</Label>
-                <Select value={form.role || ""} onValueChange={v => set("role", v)}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Assign a role" /></SelectTrigger>
-                  <SelectContent>{mockRoles.map(r => (
-                    <SelectItem key={r.id} value={r.name}>
-                      <div className="flex items-center gap-2">
-                        <span>{r.name}</span>
-                        <span className="text-[10px] text-muted-foreground">— {r.description}</span>
-                      </div>
-                    </SelectItem>
-                  ))}</SelectContent>
-                </Select>
-              </div>
-            </div>
-            {form.role && (
-              <div className="p-3 rounded-lg bg-muted/50 border">
-                <p className="text-xs font-medium mb-1">Permissions inherited from "{form.role}" role:</p>
-                <div className="flex flex-wrap gap-1">
-                  {Object.keys(mockRoles.find(r => r.name === form.role)?.permissions || {}).map(m => (
-                    <Badge key={m} variant="secondary" className="text-[10px] capitalize">{m}</Badge>
-                  ))}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-2">
-                  To change permissions, edit the role from SA → Roles.
-                </p>
-              </div>
-            )}
           </div>
-          <div className="flex gap-2 mt-6">
+
+          <div className="flex gap-2 mt-5 pt-4 border-t">
             <Button variant="outline" onClick={onCancel}>Cancel</Button>
             <Button onClick={() => onSave(form)}>{user ? "Update User" : "Create User"}</Button>
           </div>
