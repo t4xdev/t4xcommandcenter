@@ -199,48 +199,118 @@ export default function Dashboard() {
   const summary = getFleetSummary();
   const groupedQ = predefinedQuestions.reduce((a, q) => { (a[q.category] ??= []).push(q); return a; }, {} as Record<string, PredefinedQuestion[]>);
 
+  const activeLabel = activeView === "dashboard" ? "Dashboard" : activeView === "iot" ? "IoT Sensors" : "Survey Planner";
+  const breadcrumb = `User / ${activeLabel}`;
+
+  const menuItems = [
+    {
+      label: "Documents", icon: FileText,
+      items: [
+        { label: "Documents & Compliance", action: () => { setActiveView("dashboard"); setActiveDomain("documents"); } },
+        { label: "Certificate Alerts", action: () => { setActiveView("dashboard"); setActiveDomain("documents"); } },
+      ],
+    },
+    {
+      label: "Reports", icon: BarChart3,
+      items: [
+        { label: "MIS Dashboard", action: () => setActiveView("dashboard") },
+        { label: "QHSE & Incidents", action: () => { setActiveView("dashboard"); setActiveDomain("qhse"); } },
+        { label: "Operations", action: () => { setActiveView("dashboard"); setActiveDomain("operations"); } },
+      ],
+    },
+    {
+      label: "Procurement", icon: ShoppingCart,
+      items: [
+        { label: "Procurement Overview", action: () => { setActiveView("dashboard"); setActiveDomain("procurement"); } },
+        { label: "Vendor Performance", action: () => { setActiveView("dashboard"); setActiveDomain("procurement"); } },
+      ],
+    },
+    {
+      label: "PMS", icon: Wrench,
+      items: [
+        { label: "Maintenance & PMS", action: () => { setActiveView("dashboard"); setActiveDomain("maintenance"); } },
+        { label: "Dry Dock", action: () => { setActiveView("dashboard"); setActiveDomain("drydock"); } },
+        { label: "Survey Planner", action: () => setActiveView("survey") },
+      ],
+    },
+    {
+      label: "Crewing", icon: Users,
+      items: [
+        { label: "Payroll Management", action: () => navigate("/payroll") },
+        { label: "Crew Dashboard", action: () => navigate("/payroll") },
+      ],
+    },
+    {
+      label: "Vessel", icon: Ship,
+      items: [
+        { label: "Fleet Overview", action: () => setActiveView("dashboard") },
+        { label: "IoT Sensors", action: () => setActiveView("iot") },
+      ],
+    },
+    {
+      label: "Admin", icon: Settings,
+      items: [
+        { label: "User Management", action: () => {} },
+        { label: "Settings", action: () => {} },
+      ],
+    },
+    {
+      label: "SA", icon: Shield,
+      items: [
+        { label: "Super Admin", action: () => {} },
+        { label: "System Config", action: () => {} },
+      ],
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border px-6 py-3">
-        <div className="max-w-[1600px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src={t4xLogo} alt="Twenty4X Logo" className="h-10 w-auto object-contain" />
-            <div className="border-l border-border pl-3">
-              <h1 className="text-sm font-bold text-foreground">{activeView === "dashboard" ? "Dashboard" : activeView === "iot" ? "IoT Sensors" : "Survey Planner"}</h1>
-              <p className="text-[10px] text-muted-foreground">Maritime Fleet Analytics</p>
-            </div>
+      {/* Top Navigation Bar */}
+      <header className="sticky top-0 z-50 bg-card border-b border-border">
+        <div className="flex items-center h-12 px-4">
+          {/* Logo */}
+          <div className="flex items-center mr-6 shrink-0">
+            <img src={t4xLogo} alt="Twenty4X Logo" className="h-8 w-auto object-contain" />
           </div>
 
-          <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-            <button onClick={() => setActiveView("dashboard")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "dashboard" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
-              <BarChart3 className="w-3.5 h-3.5" />
-              Dashboard
-            </button>
-            <button onClick={() => setActiveView("iot")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "iot" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
-              <Radio className="w-3.5 h-3.5" />
-              IoT Sensors
-            </button>
-            <button onClick={() => setActiveView("survey")} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${activeView === "survey" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
-              <ClipboardList className="w-3.5 h-3.5" />
-              Survey Planner
-            </button>
-            <button onClick={() => navigate("/payroll")} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-muted-foreground hover:text-foreground">
-              <Wallet className="w-3.5 h-3.5" />
-              Payroll
-            </button>
-          </div>
+          {/* Menu Items */}
+          <nav className="flex items-center gap-0.5 flex-1">
+            {menuItems.map((menu) => (
+              <DropdownMenu key={menu.label}>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-accent rounded-md transition-colors outline-none">
+                    <menu.icon className="w-3.5 h-3.5" />
+                    {menu.label}
+                    <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" sideOffset={4}>
+                  {menu.items.map((item) => (
+                    <DropdownMenuItem key={item.label} onClick={item.action} className="text-xs cursor-pointer">
+                      {item.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ))}
+          </nav>
 
-          <div className="flex items-center gap-3">
+          {/* Right controls */}
+          <div className="flex items-center gap-2 shrink-0">
             <div className="relative">
-              <select value={selectedFleet} onChange={(e) => setSelectedFleet(e.target.value as FleetName)} className="appearance-none card-elevated pl-3 pr-8 py-1.5 text-xs font-medium text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-lg">
+              <select value={selectedFleet} onChange={(e) => setSelectedFleet(e.target.value as FleetName)} className="appearance-none bg-muted pl-3 pr-7 py-1.5 text-[11px] font-medium text-foreground cursor-pointer focus:outline-none focus:ring-1 focus:ring-ring rounded-md border border-border">
                 {fleets.map((f) => <option key={f} value={f}>{f}</option>)}
               </select>
-              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
             </div>
-            <button className="relative p-2 rounded-lg hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full" /></button>
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><User className="w-4 h-4 text-primary-foreground" /></div>
+            <button className="relative p-1.5 rounded-md hover:bg-accent text-muted-foreground"><Bell className="w-4 h-4" /><span className="absolute top-0.5 right-0.5 w-2 h-2 bg-destructive rounded-full" /></button>
+            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center"><User className="w-3.5 h-3.5 text-primary-foreground" /></div>
           </div>
+        </div>
+
+        {/* Breadcrumb */}
+        <div className="px-4 py-1.5 border-t border-border bg-muted/30">
+          <span className="text-[11px] text-muted-foreground">{breadcrumb}</span>
         </div>
       </header>
 
