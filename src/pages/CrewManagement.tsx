@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
+import { designationMaster, getDesignationWage, getDesignationInfo, mockAdjustments, type DesignationWage, type SalaryAdjustment } from "@/data/payrollData";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
 import TopNav from "@/components/TopNav";
 import t4xLogo from "@/assets/t4x_logo.png";
@@ -32,11 +33,14 @@ interface Employee {
   email: string; mobile?: string; gender: "Male" | "Female" | "Other";
   dateOfJoining: string; designation: string; department: string; workLocation: string;
   status: "Active" | "Inactive" | "On Leave"; portalAccess: boolean;
-  employmentType: "shore" | "seafarer"; rank?: string; vessel?: string; contractPeriod?: string;
+  employmentType: "shore" | "seafarer";
+  payType: "contract" | "fulltime";
+  rank?: string; vessel?: string; contractPeriod?: string; contractDurationMonths?: number;
   dob?: string; fatherName?: string; pan?: string; personalEmail?: string;
   address?: { line1: string; line2?: string; city: string; state: string; pin: string };
   epf: boolean; esi: boolean; lwf: boolean; pfAccountNumber?: string; uan?: string;
   annualCTC: number;
+  monthlySalary: number;
   salaryComponents: { name: string; type: string; monthlyAmount: number; annualAmount: number }[];
   bankName?: string; accountNumber?: string; ifsc?: string; accountType?: "Current" | "Savings";
   accountHolderName?: string; paymentMode: "Bank Transfer" | "Cheque" | "Cash";
@@ -54,14 +58,15 @@ const mockEmployees: Employee[] = [
     email: "rajesh.sharma@company.com", mobile: "+91 98765 43210", gender: "Male",
     dateOfJoining: "15/01/2022", designation: "Chief Engineer", department: "Engineering",
     workLocation: "Vessel - MV Dolphin 7", status: "Active", portalAccess: true,
-    employmentType: "seafarer", rank: "Chief Engineer", vessel: "MV Dolphin 7", contractPeriod: "01/2022 - 12/2024",
+    employmentType: "seafarer", payType: "contract", rank: "Chief Engineer", vessel: "MV Dolphin 7", contractPeriod: "01/2022 - 12/2024", contractDurationMonths: 36,
     dob: "12/05/1985", fatherName: "Suresh Sharma", pan: "ABCDE1234F",
     epf: true, esi: false, lwf: true, pfAccountNumber: "MH/BOM/12345/678", uan: "100987654321",
-    annualCTC: 1800000,
+    annualCTC: 0, monthlySalary: 234000,
     salaryComponents: [
-      { name: "Basic", type: "Fixed amount", monthlyAmount: 75000, annualAmount: 900000 },
-      { name: "HRA", type: "% of Basic", monthlyAmount: 37500, annualAmount: 450000 },
-      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 37500, annualAmount: 450000 },
+      { name: "Basic", type: "Fixed amount", monthlyAmount: 130000, annualAmount: 1560000 },
+      { name: "Sea Allowance", type: "Fixed amount", monthlyAmount: 52000, annualAmount: 624000 },
+      { name: "Leave Pay", type: "Fixed amount", monthlyAmount: 30000, annualAmount: 360000 },
+      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 22000, annualAmount: 264000 },
     ],
     bankName: "State Bank of India", accountNumber: "XXXX6789", ifsc: "SBIN0001234",
     accountType: "Savings", accountHolderName: "Rajesh Kumar Sharma", paymentMode: "Bank Transfer",
@@ -74,14 +79,15 @@ const mockEmployees: Employee[] = [
   {
     id: "2", employeeId: "EMP002", firstName: "Priya", lastName: "Patel",
     email: "priya.patel@company.com", mobile: "+91 87654 32109", gender: "Female",
-    dateOfJoining: "01/03/2023", designation: "Navigation Officer", department: "Operations",
+    dateOfJoining: "01/03/2023", designation: "2nd Officer", department: "Operations",
     workLocation: "Vessel - MV Baitarani", status: "Active", portalAccess: true,
-    employmentType: "seafarer", rank: "2nd Officer", vessel: "MV Baitarani",
-    epf: true, esi: true, lwf: false, annualCTC: 1200000,
+    employmentType: "seafarer", payType: "contract", rank: "2nd Officer", vessel: "MV Baitarani", contractDurationMonths: 9,
+    epf: true, esi: true, lwf: false, annualCTC: 0, monthlySalary: 138000,
     salaryComponents: [
-      { name: "Basic", type: "Fixed amount", monthlyAmount: 50000, annualAmount: 600000 },
-      { name: "HRA", type: "% of Basic", monthlyAmount: 25000, annualAmount: 300000 },
-      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 25000, annualAmount: 300000 },
+      { name: "Basic", type: "Fixed amount", monthlyAmount: 75000, annualAmount: 900000 },
+      { name: "Sea Allowance", type: "Fixed amount", monthlyAmount: 30000, annualAmount: 360000 },
+      { name: "Leave Pay", type: "Fixed amount", monthlyAmount: 18000, annualAmount: 216000 },
+      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 15000, annualAmount: 180000 },
     ],
     bankName: "HDFC Bank", accountNumber: "XXXX4567", ifsc: "HDFC0005678",
     accountType: "Savings", accountHolderName: "Priya Patel", paymentMode: "Bank Transfer",
@@ -93,13 +99,15 @@ const mockEmployees: Employee[] = [
   {
     id: "3", employeeId: "EMP003", firstName: "Arun", lastName: "Nair",
     email: "arun.nair@company.com", gender: "Male",
-    dateOfJoining: "10/06/2021", designation: "Deck Officer", department: "Operations",
+    dateOfJoining: "10/06/2021", designation: "3rd Officer", department: "Operations",
     workLocation: "Head Office - Mumbai", status: "On Leave", portalAccess: false,
-    employmentType: "seafarer", rank: "3rd Officer",
-    epf: true, esi: false, lwf: true, annualCTC: 960000,
+    employmentType: "seafarer", payType: "contract", rank: "3rd Officer", contractDurationMonths: 6,
+    epf: true, esi: false, lwf: true, annualCTC: 0, monthlySalary: 110000,
     salaryComponents: [
-      { name: "Basic", type: "Fixed amount", monthlyAmount: 40000, annualAmount: 480000 },
-      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 40000, annualAmount: 480000 },
+      { name: "Basic", type: "Fixed amount", monthlyAmount: 60000, annualAmount: 720000 },
+      { name: "Sea Allowance", type: "Fixed amount", monthlyAmount: 24000, annualAmount: 288000 },
+      { name: "Leave Pay", type: "Fixed amount", monthlyAmount: 14000, annualAmount: 168000 },
+      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 12000, annualAmount: 144000 },
     ],
     bankName: "ICICI Bank", accountNumber: "XXXX8901", ifsc: "ICIC0002345",
     accountType: "Current", accountHolderName: "Arun Nair", paymentMode: "Bank Transfer",
@@ -112,12 +120,13 @@ const mockEmployees: Employee[] = [
     email: "sunita.reddy@company.com", mobile: "+91 76543 21098", gender: "Female",
     dateOfJoining: "20/09/2020", designation: "Safety Officer", department: "QHSE",
     workLocation: "Vessel - MV Kaveri", status: "Active", portalAccess: true,
-    employmentType: "seafarer", rank: "Safety Officer", vessel: "MV Kaveri",
-    epf: true, esi: true, lwf: true, annualCTC: 1500000,
+    employmentType: "seafarer", payType: "contract", rank: "Safety Officer", vessel: "MV Kaveri", contractDurationMonths: 12,
+    epf: true, esi: true, lwf: true, annualCTC: 0, monthlySalary: 155000,
     salaryComponents: [
-      { name: "Basic", type: "Fixed amount", monthlyAmount: 62500, annualAmount: 750000 },
-      { name: "HRA", type: "% of Basic", monthlyAmount: 31250, annualAmount: 375000 },
-      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 31250, annualAmount: 375000 },
+      { name: "Basic", type: "Fixed amount", monthlyAmount: 85000, annualAmount: 1020000 },
+      { name: "Sea Allowance", type: "Fixed amount", monthlyAmount: 34000, annualAmount: 408000 },
+      { name: "Leave Pay", type: "Fixed amount", monthlyAmount: 20000, annualAmount: 240000 },
+      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 16000, annualAmount: 192000 },
     ],
     bankName: "Axis Bank", accountNumber: "XXXX2345", ifsc: "UTIB0003456",
     accountType: "Savings", accountHolderName: "Sunita Reddy", paymentMode: "Bank Transfer",
@@ -131,8 +140,8 @@ const mockEmployees: Employee[] = [
     email: "mohammed.khan@company.com", mobile: "+91 65432 10987", gender: "Male",
     dateOfJoining: "05/11/2019", designation: "General Manager", department: "Management",
     workLocation: "Head Office - Mumbai", status: "Active", portalAccess: true,
-    employmentType: "shore", pan: "KLMNO9012P",
-    epf: true, esi: false, lwf: true, annualCTC: 2400000,
+    employmentType: "shore", payType: "fulltime", pan: "KLMNO9012P",
+    epf: true, esi: false, lwf: true, annualCTC: 2400000, monthlySalary: 200000,
     salaryComponents: [
       { name: "Basic", type: "Fixed amount", monthlyAmount: 100000, annualAmount: 1200000 },
       { name: "HRA", type: "% of Basic", monthlyAmount: 50000, annualAmount: 600000 },
@@ -146,11 +155,13 @@ const mockEmployees: Employee[] = [
     email: "deepak.verma@company.com", gender: "Male",
     dateOfJoining: "14/02/2024", designation: "Junior Engineer", department: "Engineering",
     workLocation: "Vessel - MV Dolphin 7", status: "Active", portalAccess: false,
-    employmentType: "seafarer", rank: "Junior Engineer", vessel: "MV Dolphin 7",
-    epf: true, esi: true, lwf: false, annualCTC: 600000,
+    employmentType: "seafarer", payType: "contract", rank: "Junior Engineer", vessel: "MV Dolphin 7", contractDurationMonths: 6,
+    epf: true, esi: true, lwf: false, annualCTC: 0, monthlySalary: 65000,
     salaryComponents: [
-      { name: "Basic", type: "Fixed amount", monthlyAmount: 25000, annualAmount: 300000 },
-      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 25000, annualAmount: 300000 },
+      { name: "Basic", type: "Fixed amount", monthlyAmount: 35000, annualAmount: 420000 },
+      { name: "Sea Allowance", type: "Fixed amount", monthlyAmount: 14000, annualAmount: 168000 },
+      { name: "Leave Pay", type: "Fixed amount", monthlyAmount: 8000, annualAmount: 96000 },
+      { name: "Special Allowance", type: "Fixed amount", monthlyAmount: 8000, annualAmount: 96000 },
     ],
     paymentMode: "Bank Transfer",
     certificates: [
@@ -662,8 +673,18 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
           <div className="card-elevated p-5">
             <div className="flex items-center gap-2 mb-3"><h3 className="text-sm font-bold text-foreground">Salary Details</h3><Edit2 className="w-3.5 h-3.5 text-muted-foreground" /></div>
             <div className="flex gap-6 p-4 rounded-lg border border-border bg-muted/30">
-              <div><p className="text-[10px] text-primary uppercase font-semibold">Annual CTC</p><p className="text-base font-bold font-mono">{fmt(employee.annualCTC)} per year</p></div>
-              <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly CTC</p><p className="text-base font-bold font-mono">{fmt(Math.round(employee.annualCTC / 12))} per month</p></div>
+              {employee.payType === "contract" ? (
+                <>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly Salary</p><p className="text-base font-bold font-mono">{fmt(employee.monthlySalary)} per month</p></div>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Pay Type</p><p className="text-base font-bold font-mono">Contract</p></div>
+                  {employee.contractDurationMonths && <div><p className="text-[10px] text-primary uppercase font-semibold">Duration</p><p className="text-base font-bold font-mono">{employee.contractDurationMonths} months</p></div>}
+                </>
+              ) : (
+                <>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Annual CTC</p><p className="text-base font-bold font-mono">{fmt(employee.annualCTC)} per year</p></div>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly CTC</p><p className="text-base font-bold font-mono">{fmt(employee.monthlySalary)} per month</p></div>
+                </>
+              )}
             </div>
           </div>
           <div className="card-elevated p-5">
@@ -1575,36 +1596,36 @@ function SettingsPage() {
           <button onClick={() => toast.info("Update Statutory Rates", { description: "Rate editor opened. Modify EPF, ESI, PT, and LWF contribution rates." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Update Rates</button>
         </div>
         <div className="card-elevated p-5">
-          <h3 className="text-sm font-bold text-foreground mb-4">Rank & Wage Master</h3>
-          <div className="border border-border rounded-lg overflow-hidden">
-            <table className="w-full text-xs">
-              <thead><tr className="bg-muted border-b border-border">
-                <th className="text-left px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Rank</th>
-                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Base Wage (Monthly)</th>
-                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Sea Allowance</th>
-                <th className="text-right px-4 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Leave Pay</th>
-              </tr></thead>
-              <tbody>
-                {[
-                  { rank: "Master", base: 250000, sea: 50000, leave: 30000 },
-                  { rank: "Chief Engineer", base: 220000, sea: 45000, leave: 28000 },
-                  { rank: "Chief Officer", base: 180000, sea: 38000, leave: 24000 },
-                  { rank: "2nd Engineer", base: 150000, sea: 32000, leave: 20000 },
-                  { rank: "2nd Officer", base: 120000, sea: 25000, leave: 16000 },
-                  { rank: "3rd Officer", base: 100000, sea: 20000, leave: 12000 },
-                  { rank: "Junior Engineer", base: 60000, sea: 12000, leave: 8000 },
-                ].map((row, i) => (
-                  <tr key={i} className="border-b border-border">
-                    <td className="px-4 py-2.5 font-medium text-foreground">{row.rank}</td>
-                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.base)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.sea)}</td>
-                    <td className="px-4 py-2.5 text-right font-mono">{fmt(row.leave)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <button onClick={() => toast.info("Edit Wage Master", { description: "Wage master editor opened. Modify base wages, sea allowances, and leave pay by rank." })} className="mt-4 px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Wage Master</button>
+          <h3 className="text-sm font-bold text-foreground mb-2">Designation Master — Minimum Wages (3-Year)</h3>
+          <p className="text-[10px] text-muted-foreground mb-4">Defines minimum monthly wages per designation. These auto-fill when adding new crew.</p>
+          {["seafarer", "shore"].map(cat => (
+            <div key={cat} className="mb-5">
+              <p className="text-xs font-bold text-foreground uppercase tracking-wider mb-2">{cat === "seafarer" ? "⚓ Seafarer Designations" : "🏢 Shore Staff Designations"}</p>
+              <div className="border border-border rounded-lg overflow-hidden mb-3">
+                <table className="w-full text-xs">
+                  <thead><tr className="bg-muted border-b border-border">
+                    <th className="text-left px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Designation</th>
+                    <th className="text-left px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">Dept</th>
+                    <th className="text-right px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">2026 (₹/mo)</th>
+                    <th className="text-right px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">2027 (₹/mo)</th>
+                    <th className="text-right px-3 py-2 font-semibold text-muted-foreground uppercase tracking-wider">2028 (₹/mo)</th>
+                  </tr></thead>
+                  <tbody>
+                    {designationMaster.filter(d => d.category === cat).map(d => (
+                      <tr key={d.designation} className="border-b border-border last:border-0 hover:bg-accent/30">
+                        <td className="px-3 py-2 font-medium text-foreground">{d.designation}</td>
+                        <td className="px-3 py-2 text-muted-foreground">{d.department}</td>
+                        {d.wages.map(w => (
+                          <td key={w.year} className="px-3 py-2 text-right font-mono">{fmt(w.totalMonthly)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+          <button onClick={() => toast.info("Edit Designation Master", { description: "Designation master editor opened. Modify wages for all years and designations." })} className="px-3 py-1.5 text-xs font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5">Edit Designation Master</button>
         </div>
         <div className="card-elevated p-5">
           <h3 className="text-sm font-bold text-foreground mb-4">Payment Modes</h3>
@@ -1639,9 +1660,11 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
     email: "", mobile: "", gender: "Male" as "Male" | "Female" | "Other",
     workLocation: "Head Office - Mumbai", designation: "", department: "Operations",
     portalAccess: false, employmentType: "shore" as "shore" | "seafarer",
-    rank: "", vessel: "",
+    payType: "contract" as "contract" | "fulltime",
+    rank: "", vessel: "", contractDurationMonths: 6,
     epf: true, pfAccountNumber: "", uan: "", esi: false, lwf: false,
-    annualCTC: 0, basicMonthly: 0,
+    annualCTC: 0, monthlySalary: 0,
+    basicMonthly: 0, hraMonthly: 0, seaAllowanceMonthly: 0, leavePayMonthly: 0, specialAllowanceMonthly: 0,
     dob: "", fatherName: "", pan: "", personalEmail: "",
     addressLine1: "", addressLine2: "", city: "", state: "", pin: "",
     differentlyAbled: "None",
@@ -1651,25 +1674,63 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
   });
 
   const u = (key: string, val: any) => setForm(p => ({ ...p, [key]: val }));
+
+  // Auto-fill wages when designation changes
+  const handleDesignationChange = (desig: string) => {
+    u("designation", desig);
+    const info = getDesignationInfo(desig);
+    if (info) {
+      u("department", info.department);
+      u("employmentType", info.category);
+      if (info.category === "seafarer") {
+        u("rank", desig);
+        u("payType", "contract");
+      }
+      const wage = getDesignationWage(desig, 2026);
+      if (wage) {
+        u("basicMonthly", wage.basic);
+        u("hraMonthly", wage.hra);
+        u("seaAllowanceMonthly", wage.seaAllowance);
+        u("leavePayMonthly", wage.leavePay);
+        u("specialAllowanceMonthly", wage.specialAllowance);
+        u("monthlySalary", wage.totalMonthly);
+        if (info.category === "shore") {
+          u("annualCTC", wage.totalMonthly * 12);
+        }
+      }
+    }
+  };
+
   const canNext = () => {
     if (step === 1) return form.firstName && form.employeeId && form.dateOfJoining && form.email && form.designation;
     return true;
   };
 
+  const totalMonthly = form.basicMonthly + form.hraMonthly + form.seaAllowanceMonthly + form.leavePayMonthly + form.specialAllowanceMonthly;
+
   const handleSave = () => {
+    const components = [
+      { name: "Basic", type: "Fixed amount", monthlyAmount: form.basicMonthly, annualAmount: form.basicMonthly * 12 },
+    ];
+    if (form.hraMonthly > 0) components.push({ name: "HRA", type: "% of Basic", monthlyAmount: form.hraMonthly, annualAmount: form.hraMonthly * 12 });
+    if (form.seaAllowanceMonthly > 0) components.push({ name: "Sea Allowance", type: "Fixed amount", monthlyAmount: form.seaAllowanceMonthly, annualAmount: form.seaAllowanceMonthly * 12 });
+    if (form.leavePayMonthly > 0) components.push({ name: "Leave Pay", type: "Fixed amount", monthlyAmount: form.leavePayMonthly, annualAmount: form.leavePayMonthly * 12 });
+    if (form.specialAllowanceMonthly > 0) components.push({ name: "Special Allowance", type: "Fixed amount", monthlyAmount: form.specialAllowanceMonthly, annualAmount: form.specialAllowanceMonthly * 12 });
+
     const emp: Employee = {
       id: crypto.randomUUID(), employeeId: form.employeeId,
       firstName: form.firstName, middleName: form.middleName || undefined, lastName: form.lastName,
       email: form.email, mobile: form.mobile || undefined, gender: form.gender,
       dateOfJoining: form.dateOfJoining, designation: form.designation, department: form.department,
       workLocation: form.workLocation, status: "Active", portalAccess: form.portalAccess,
-      employmentType: form.employmentType, rank: form.rank || undefined, vessel: form.vessel || undefined,
+      employmentType: form.employmentType, payType: form.payType,
+      rank: form.rank || undefined, vessel: form.vessel || undefined,
+      contractDurationMonths: form.payType === "contract" ? form.contractDurationMonths : undefined,
       dob: form.dob || undefined, fatherName: form.fatherName || undefined, pan: form.pan || undefined,
-      epf: form.epf, esi: form.esi, lwf: form.lwf, annualCTC: form.annualCTC,
-      salaryComponents: [
-        { name: "Basic", type: "Fixed amount", monthlyAmount: form.basicMonthly, annualAmount: form.basicMonthly * 12 },
-        { name: "Special Allowance", type: "Fixed amount", monthlyAmount: (form.annualCTC / 12) - form.basicMonthly, annualAmount: form.annualCTC - (form.basicMonthly * 12) },
-      ],
+      epf: form.epf, esi: form.esi, lwf: form.lwf,
+      annualCTC: form.payType === "fulltime" ? form.annualCTC : 0,
+      monthlySalary: totalMonthly,
+      salaryComponents: components,
       bankName: form.bankName || undefined, accountNumber: form.accountNumber || undefined,
       ifsc: form.ifsc || undefined, accountType: form.accountType,
       accountHolderName: form.accountHolderName || undefined, paymentMode: form.paymentMode,
@@ -1722,18 +1783,44 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <SelectField label="Gender" required value={form.gender} options={["Male", "Female", "Other"]} onChange={v => u("gender", v)} />
-              <SelectField label="Employment Type" required value={form.employmentType} options={["shore", "seafarer"]} onChange={v => u("employmentType", v)} />
-            </div>
-            {form.employmentType === "seafarer" && (
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Rank" value={form.rank} onChange={v => u("rank", v)} placeholder="e.g. Chief Engineer" />
-                <Field label="Vessel" value={form.vessel} onChange={v => u("vessel", v)} placeholder="e.g. MV Dolphin 7" />
+              <div>
+                <label className="text-xs font-medium text-foreground">Pay Type<span className="text-destructive"> *</span></label>
+                <select value={form.payType} onChange={e => u("payType", e.target.value)} className="w-full mt-1 px-3 py-2 text-sm border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none">
+                  <option value="contract">Contract</option>
+                  <option value="fulltime">Full-time</option>
+                </select>
               </div>
-            )}
+            </div>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Designation" required value={form.designation} onChange={v => u("designation", v)} placeholder="e.g. Chief Engineer" />
+              <div>
+                <label className="text-xs font-medium text-foreground">Designation<span className="text-destructive"> *</span></label>
+                <select value={form.designation} onChange={e => handleDesignationChange(e.target.value)} className="w-full mt-1 px-3 py-2 text-sm border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none">
+                  <option value="">Select Designation</option>
+                  <optgroup label="Seafarer">
+                    {designationMaster.filter(d => d.category === "seafarer").map(d => <option key={d.designation} value={d.designation}>{d.designation}</option>)}
+                  </optgroup>
+                  <optgroup label="Shore Staff">
+                    {designationMaster.filter(d => d.category === "shore").map(d => <option key={d.designation} value={d.designation}>{d.designation}</option>)}
+                  </optgroup>
+                </select>
+                {form.designation && (
+                  <p className="text-[10px] text-success mt-1">✓ Wages auto-filled from Designation Master ({form.employmentType})</p>
+                )}
+              </div>
               <SelectField label="Department" required value={form.department} options={["Engineering", "Operations", "QHSE", "Management", "Finance", "HR"]} onChange={v => u("department", v)} />
             </div>
+            {form.employmentType === "seafarer" && (
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Rank" value={form.rank} onChange={v => u("rank", v)} placeholder="Auto-filled" />
+                <Field label="Vessel" value={form.vessel} onChange={v => u("vessel", v)} placeholder="e.g. MV Dolphin 7" />
+                <div>
+                  <label className="text-xs font-medium text-foreground">Contract Duration</label>
+                  <select value={form.contractDurationMonths} onChange={e => u("contractDurationMonths", Number(e.target.value))} className="w-full mt-1 px-3 py-2 text-sm border border-border rounded-lg bg-transparent focus:ring-2 focus:ring-ring outline-none">
+                    {[3, 4, 6, 9, 12, 18, 24, 36].map(m => <option key={m} value={m}>{m} months</option>)}
+                  </select>
+                </div>
+              </div>
+            )}
             <Field label="Work Location" required value={form.workLocation} onChange={v => u("workLocation", v)} />
           </div>
         )}
@@ -1754,35 +1841,67 @@ function AddEmployeeWizard({ onSave }: { onSave: (e: Employee) => void }) {
               <ToggleItem label="Labour Welfare Fund" checked={form.lwf} onChange={v => u("lwf", v)} />
             </div>
             <div className="rounded-xl border border-border p-5 space-y-4">
-              <div><h3 className="text-sm font-bold text-foreground">Salary Structure</h3></div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-semibold text-destructive">Annual CTC *</span>
-                <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                  <span className="px-2 py-1.5 bg-muted text-xs font-medium">₹</span>
-                  <input type="number" value={form.annualCTC || ""} onChange={e => u("annualCTC", Number(e.target.value))} className="px-3 py-1.5 text-sm bg-transparent outline-none w-40" placeholder="0" />
-                  <span className="px-2 py-1.5 text-xs text-muted-foreground">per year</span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-foreground">Salary Structure</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">{form.payType === "contract" ? "Monthly contract salary — editable below" : "Annual CTC with monthly breakdown"}</p>
                 </div>
+                <Badge variant="secondary" className="text-[10px] uppercase">{form.payType}</Badge>
               </div>
+
+              {form.payType === "fulltime" && (
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold text-destructive">Annual CTC *</span>
+                  <div className="flex items-center border border-border rounded-lg overflow-hidden">
+                    <span className="px-2 py-1.5 bg-muted text-xs font-medium">₹</span>
+                    <input type="number" value={form.annualCTC || ""} onChange={e => u("annualCTC", Number(e.target.value))} className="px-3 py-1.5 text-sm bg-transparent outline-none w-40" placeholder="0" />
+                    <span className="px-2 py-1.5 text-xs text-muted-foreground">per year</span>
+                  </div>
+                </div>
+              )}
+
               <div className="border border-border rounded-lg overflow-hidden">
                 <div className="grid grid-cols-4 bg-muted px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  <span>Components</span><span>Calc Type</span><span className="text-right">Monthly</span><span className="text-right">Annual</span>
+                  <span>Components</span><span>Type</span><span className="text-right">Monthly</span><span className="text-right">Annual</span>
                 </div>
                 <div className="px-4 py-2 border-t border-border space-y-2">
                   <p className="text-xs font-bold text-foreground">Earnings</p>
                   <div className="grid grid-cols-4 items-center">
-                    <span className="text-xs">Basic</span><span className="text-xs text-muted-foreground">Fixed amount</span>
+                    <span className="text-xs">Basic</span><span className="text-xs text-muted-foreground">Fixed</span>
                     <div className="text-right"><input type="number" value={form.basicMonthly || ""} onChange={e => u("basicMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
                     <span className="text-xs text-right font-mono">{fmt(form.basicMonthly * 12)}</span>
                   </div>
+                  {form.employmentType === "shore" && (
+                    <div className="grid grid-cols-4 items-center">
+                      <span className="text-xs">HRA</span><span className="text-xs text-muted-foreground">% of Basic</span>
+                      <div className="text-right"><input type="number" value={form.hraMonthly || ""} onChange={e => u("hraMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                      <span className="text-xs text-right font-mono">{fmt(form.hraMonthly * 12)}</span>
+                    </div>
+                  )}
+                  {form.employmentType === "seafarer" && (
+                    <>
+                      <div className="grid grid-cols-4 items-center">
+                        <span className="text-xs">Sea Allowance</span><span className="text-xs text-muted-foreground">Fixed</span>
+                        <div className="text-right"><input type="number" value={form.seaAllowanceMonthly || ""} onChange={e => u("seaAllowanceMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                        <span className="text-xs text-right font-mono">{fmt(form.seaAllowanceMonthly * 12)}</span>
+                      </div>
+                      <div className="grid grid-cols-4 items-center">
+                        <span className="text-xs">Leave Pay</span><span className="text-xs text-muted-foreground">Fixed</span>
+                        <div className="text-right"><input type="number" value={form.leavePayMonthly || ""} onChange={e => u("leavePayMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                        <span className="text-xs text-right font-mono">{fmt(form.leavePayMonthly * 12)}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="grid grid-cols-4 items-center">
-                    <span className="text-xs">Special Allowance</span><span className="text-xs text-muted-foreground">Fixed amount</span>
-                    <span className="text-xs text-right text-muted-foreground">System Calc</span><span className="text-xs text-right text-muted-foreground">System Calc</span>
+                    <span className="text-xs">Special Allowance</span><span className="text-xs text-muted-foreground">Fixed</span>
+                    <div className="text-right"><input type="number" value={form.specialAllowanceMonthly || ""} onChange={e => u("specialAllowanceMonthly", Number(e.target.value))} className="w-24 text-right px-2 py-1 text-xs border border-border rounded bg-transparent" /></div>
+                    <span className="text-xs text-right font-mono">{fmt(form.specialAllowanceMonthly * 12)}</span>
                   </div>
                 </div>
                 <div className="grid grid-cols-4 px-4 py-2 bg-primary/5 border-t border-border">
-                  <span className="text-xs font-bold col-span-2">Cost to Company</span>
-                  <span className="text-xs font-bold text-right font-mono">{fmt(form.annualCTC / 12)}</span>
-                  <span className="text-xs font-bold text-right font-mono">{fmt(form.annualCTC)}</span>
+                  <span className="text-xs font-bold col-span-2">Total Monthly Salary</span>
+                  <span className="text-xs font-bold text-right font-mono">{fmt(totalMonthly)}</span>
+                  <span className="text-xs font-bold text-right font-mono">{fmt(totalMonthly * 12)}</span>
                 </div>
               </div>
             </div>
