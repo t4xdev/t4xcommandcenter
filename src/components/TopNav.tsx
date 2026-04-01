@@ -10,9 +10,10 @@ import {
 
 interface TopNavProps {
   breadcrumb?: string;
+  rightContent?: React.ReactNode;
 }
 
-export default function TopNav({ breadcrumb = "User / Dashboard" }: TopNavProps) {
+export default function TopNav({ breadcrumb = "User / Dashboard", rightContent }: TopNavProps) {
   const navigate = useNavigate();
 
   const menuItems = [
