@@ -12,16 +12,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
   Users, Shield, Ship, Search, Plus, Edit2, Eye,
-  UserCheck, UserX, Anchor, MoreHorizontal, CheckCircle2, XCircle, Clock, ArrowLeft,
+  UserCheck, UserX, Anchor, CheckCircle2, XCircle, Clock, ArrowLeft,
 } from "lucide-react";
 import {
   mockRoles, mockSAUsers, mockVessels, mockCompanies, permissionModules,
   designations, departments, countries,
   type SAUser, type Vessel,
 } from "@/data/superAdminData";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 
 // ── Vessel Assignment Dialog ──

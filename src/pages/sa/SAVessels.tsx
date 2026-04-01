@@ -9,10 +9,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 import {
-  Ship, Search, Plus, ArrowLeft, Edit2, Eye, MoreHorizontal, Anchor, Users, Upload,
+  Ship, Search, Plus, ArrowLeft, Edit2, Eye, Anchor, Users, Upload,
 } from "lucide-react";
 import { mockVessels, mockCompanies, vesselTypes, flags, fuelTypes, countries, type Vessel } from "@/data/superAdminData";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 
 type View = "list" | "create" | "edit" | "view";
