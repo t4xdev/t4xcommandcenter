@@ -30,10 +30,28 @@ export interface SAUser {
 export interface Vessel {
   id: string;
   name: string;
+  shortName: string;
   imo: string;
+  callSign: string;
+  officialNo: string;
+  mmsi: string;
+  portOfRegistry: string;
   type: string;
   company: string;
   flag: string;
+  nationality: string;
+  fuelType: string;
+  lengthOverall: string;
+  lengthPerpendicular: string;
+  deckMainArea: string;
+  deckArea: string;
+  designDraft: string;
+  deadWeight: string;
+  grossTonnage: string;
+  netTonnage: string;
+  cargoDeckArea: string;
+  deckStrength: string;
+  vesselEmail: string;
   status: "active" | "laid-up" | "dry-dock";
   crew: number;
 }
@@ -43,6 +61,10 @@ export interface Company {
   name: string;
   shortName: string;
   country: string;
+  fiscalStartMonth: string;
+  yearPrefixFormat: string;
+  controllingScope: string;
+  companyColor: string;
   vesselCount: number;
   userCount: number;
   status: "active" | "inactive";
