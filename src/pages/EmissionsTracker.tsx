@@ -858,6 +858,7 @@ export default function EmissionsTracker() {
         {activePage === "benchmarks" && <BenchmarksPage onViewVessel={handleViewVessel} />}
         {activePage === "settings" && <AdminSettings />}
       </main>
+      </div>
     </div>
   );
 }
