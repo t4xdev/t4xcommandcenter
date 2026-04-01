@@ -43,11 +43,11 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
       </div>
       <Card>
         <CardContent className="pt-6">
-          <div className="grid gap-5">
+          <div className="space-y-5">
             {/* Basic Info */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Basic Information</h3>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Company</Label>
                   <Select value={form.company || ""} onValueChange={v => set("company", v)}>
@@ -65,12 +65,12 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
             {/* Registration */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Registration Details</h3>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 {field("IMO No", "imo")}
                 {field("Call Sign", "callSign")}
                 {field("Official No", "officialNo")}
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-3 mt-3">
                 {field("MMSI", "mmsi")}
                 {field("Port of Registry", "portOfRegistry")}
                 <div className="space-y-1.5">
@@ -81,7 +81,7 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
                   </Select>
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-3 mt-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Flag</Label>
                   <Select value={form.flag || ""} onValueChange={v => set("flag", v)}>
@@ -111,25 +111,26 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
             {/* Dimensions */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Dimensions & Tonnage</h3>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-4 gap-3">
                 {field("Length Overall (m)", "lengthOverall")}
                 {field("Length Perpendicular (m)", "lengthPerpendicular")}
                 {field("Deck Main Area (m²)", "deckMainArea")}
-              </div>
-              <div className="grid grid-cols-3 gap-4 mt-4">
                 {field("Deck Area (m²)", "deckArea")}
+              </div>
+              <div className="grid grid-cols-4 gap-3 mt-3">
                 {field("Design Draft (m)", "designDraft")}
                 {field("Dead Weight (MT)", "deadWeight")}
-              </div>
-              <div className="grid grid-cols-3 gap-4 mt-4">
                 {field("Gross Tonnage", "grossTonnage")}
                 {field("Net Tonnage", "netTonnage")}
-                {field("Cargo Deck Area (m²)", "cargoDeckArea")}
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-4 gap-3 mt-3">
+                {field("Cargo Deck Area (m²)", "cargoDeckArea")}
                 {field("Deck Strength (t/m²)", "deckStrength")}
                 {field("Vessel Email", "vesselEmail")}
-                <div />
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Crew Count</Label>
+                  <Input className="h-9 text-sm" type="number" value={form.crew} onChange={e => set("crew", parseInt(e.target.value) || 0)} />
+                </div>
               </div>
             </div>
 
@@ -138,11 +139,7 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
             {/* Status & Image */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Status & Media</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Crew Count</Label>
-                  <Input className="h-9 text-sm" type="number" value={form.crew} onChange={e => set("crew", parseInt(e.target.value) || 0)} />
-                </div>
+              <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Status</Label>
                   <Select value={form.status || "active"} onValueChange={v => set("status", v)}>
@@ -156,7 +153,7 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Upload Vessel Image</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-border rounded-lg p-3 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
                     <Upload className="w-5 h-5 mb-1" />
                     <span className="text-xs">Click or Drop file</span>
                   </div>
