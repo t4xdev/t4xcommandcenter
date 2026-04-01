@@ -12,16 +12,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
   Users, Shield, Ship, Search, Plus, Edit2, Eye,
-  UserCheck, UserX, Anchor, MoreHorizontal, CheckCircle2, XCircle, Clock, ArrowLeft,
+  UserCheck, UserX, Anchor, CheckCircle2, XCircle, Clock, ArrowLeft,
 } from "lucide-react";
 import {
   mockRoles, mockSAUsers, mockVessels, mockCompanies, permissionModules,
   designations, departments, countries,
   type SAUser, type Vessel,
 } from "@/data/superAdminData";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 
 // ── Vessel Assignment Dialog ──
@@ -459,30 +456,16 @@ export default function SAUsers() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => e.stopPropagation()}>
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => { setSelectedUser(u); setView("view"); }}>
-                              <Eye className="w-3.5 h-3.5 mr-2" /> View
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { setSelectedUser(u); setView("edit"); }}>
-                              <Edit2 className="w-3.5 h-3.5 mr-2" /> Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={(e) => { setShowAssignment(u); }}>
-                              <Ship className="w-3.5 h-3.5 mr-2" /> Assign Vessels
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => {
-                              setUsers(prev => prev.map(x => x.id === u.id ? { ...x, status: x.status === "active" ? "inactive" as const : "active" as const } : x));
-                              toast({ title: `User ${u.status === "active" ? "deactivated" : "activated"}` });
-                            }}>
-                              {u.status === "active" ? <><UserX className="w-3.5 h-3.5 mr-2" /> Deactivate</> : <><UserCheck className="w-3.5 h-3.5 mr-2" /> Activate</>}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-7 w-7" title="View" onClick={e => { e.stopPropagation(); setSelectedUser(u); setView("view"); }}><Eye className="w-3.5 h-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" title="Edit" onClick={e => { e.stopPropagation(); setSelectedUser(u); setView("edit"); }}><Edit2 className="w-3.5 h-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" title="Assign Vessels" onClick={e => { e.stopPropagation(); setShowAssignment(u); }}><Ship className="w-3.5 h-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" title={u.status === "active" ? "Deactivate" : "Activate"} onClick={e => {
+                            e.stopPropagation();
+                            setUsers(prev => prev.map(x => x.id === u.id ? { ...x, status: x.status === "active" ? "inactive" as const : "active" as const } : x));
+                            toast({ title: `User ${u.status === "active" ? "deactivated" : "activated"}` });
+                          }}>{u.status === "active" ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}</Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}

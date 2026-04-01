@@ -9,10 +9,9 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 import {
-  Ship, Search, Plus, ArrowLeft, Edit2, Eye, MoreHorizontal, Anchor, Users, Upload,
+  Ship, Search, Plus, ArrowLeft, Edit2, Eye, Anchor, Users, Upload,
 } from "lucide-react";
 import { mockVessels, mockCompanies, vesselTypes, flags, fuelTypes, countries, type Vessel } from "@/data/superAdminData";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
 
 type View = "list" | "create" | "edit" | "view";
@@ -338,15 +337,10 @@ export default function SAVessels() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => e.stopPropagation()}><MoreHorizontal className="w-4 h-4" /></Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => { setSelectedVessel(v); setView("view"); }}><Eye className="w-3.5 h-3.5 mr-2" /> View</DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { setSelectedVessel(v); setView("edit"); }}><Edit2 className="w-3.5 h-3.5 mr-2" /> Edit</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedVessel(v); setView("view"); }}><Eye className="w-3.5 h-3.5" /></Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={e => { e.stopPropagation(); setSelectedVessel(v); setView("edit"); }}><Edit2 className="w-3.5 h-3.5" /></Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
