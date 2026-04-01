@@ -43,7 +43,7 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
       </div>
       <Card>
         <CardContent className="pt-6">
-          <div className="grid gap-5 max-w-4xl">
+          <div className="grid gap-5">
             {/* Basic Info */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Basic Information</h3>
