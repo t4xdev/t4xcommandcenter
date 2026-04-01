@@ -6,7 +6,11 @@ import {
   Sparkles, Shield, Anchor, Bell, Activity, Ship, Wrench, FileCheck,
   ClipboardList, ChevronDown, Circle, HardHat, CheckCircle, Clock, Target, ShoppingCart,
   Package, Filter, X, Check, Maximize2, Minimize2, Radio, BarChart3, Wallet,
+  FileText, PieChart as PieChartIcon, Settings, Users, Cpu,
 } from "lucide-react";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import IotDashboard from "@/pages/IotDashboard";
 import SurveyPlanner from "@/pages/SurveyPlanner";
 import {
