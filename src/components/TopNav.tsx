@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
-  FileText, BarChart3, ShoppingCart, Wrench, Users, Ship, Settings, Shield,
+  LayoutDashboard, FileText, BarChart3, ShoppingCart, Wrench, Users, Ship, Settings, Shield,
   ChevronDown, Bell, User,
 } from "lucide-react";
 import {
@@ -86,6 +86,13 @@ export default function TopNav({ breadcrumb = "User / Dashboard", rightContent }
         </div>
 
         <nav className="flex items-center gap-0.5 flex-1">
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-accent rounded-md transition-colors outline-none"
+          >
+            <LayoutDashboard className="w-3.5 h-3.5" />
+            Dashboard
+          </button>
           {menuItems.map((menu) => (
             <DropdownMenu key={menu.label}>
               <DropdownMenuTrigger asChild>
