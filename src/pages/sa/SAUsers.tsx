@@ -11,7 +11,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
-  Users, Shield, Ship, Search, Plus, Edit2, Eye,
+  Users, Shield, Ship, Search, Plus, Edit2, Eye, Upload,
   UserCheck, UserX, Anchor, CheckCircle2, XCircle, Clock, ArrowLeft,
 } from "lucide-react";
 import {
@@ -121,8 +121,8 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
 
       <Card>
         <CardContent className="pt-6">
-          <div className="grid gap-5 max-w-3xl">
-            <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-5">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Primary Company</Label>
                 <Select value={form.company || ""} onValueChange={v => set("company", v)}>
@@ -137,8 +137,15 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
                   <SelectContent>{countries.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Upload User Image</Label>
+                <div className="border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
+                  <Upload className="w-5 h-5 mb-1" />
+                  <span className="text-xs">Click or Drop file</span>
+                </div>
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <Label className="text-xs">Full Name</Label>
                 <Input className="h-9 text-sm" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Full Name" />
@@ -147,6 +154,7 @@ function UserForm({ user, onSave, onCancel }: { user: SAUser | null; onSave: (u:
                 <Label className="text-xs">Email</Label>
                 <Input className="h-9 text-sm" type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="Email" />
               </div>
+              <div />
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">

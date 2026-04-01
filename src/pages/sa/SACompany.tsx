@@ -38,15 +38,16 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
       </div>
       <Card>
         <CardContent className="pt-6">
-          <div className="grid gap-5 max-w-3xl">
+          <div className="grid gap-5">
             {/* Basic */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Basic Information</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5"><Label className="text-xs">Company Name</Label><Input className="h-9 text-sm" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Company Name" /></div>
                 <div className="space-y-1.5"><Label className="text-xs">Short Name</Label><Input className="h-9 text-sm" value={form.shortName} onChange={e => set("shortName", e.target.value)} placeholder="Short Name" /></div>
+                <div />
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Country</Label>
                   <Select value={form.country || ""} onValueChange={v => set("country", v)}>
@@ -64,6 +65,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                     </SelectContent>
                   </Select>
                 </div>
+                <div />
               </div>
             </div>
 
@@ -72,7 +74,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
             {/* Fiscal & Config */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Fiscal & Configuration</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Fiscal Start Month</Label>
                   <Select value={form.fiscalStartMonth || "Jan"} onValueChange={v => set("fiscalStartMonth", v)}>
@@ -87,8 +89,9 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                     <SelectContent>{yearPrefixFormats.map(f => <SelectItem key={f} value={f}>{f}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
+                <div />
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Controlling Scope</Label>
                   <Select value={form.controllingScope || "Vessel wise controlling"} onValueChange={v => set("controllingScope", v)}>
@@ -108,6 +111,7 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
                     <Input className="h-9 text-sm flex-1" value={form.companyColor || "#1a365d"} onChange={e => set("companyColor", e.target.value)} placeholder="#000000" />
                   </div>
                 </div>
+                <div />
               </div>
             </div>
 
@@ -116,21 +120,22 @@ function CompanyForm({ company, onSave, onCancel }: { company: Company | null; o
             {/* Logos */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Branding</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs">Company Logo (Main)</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
                     <Upload className="w-5 h-5 mb-1" />
                     <span className="text-xs">Click or Drop file</span>
                   </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Company Logo (PDF Right)</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
+                  <div className="border-2 border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 transition-colors cursor-pointer">
                     <Upload className="w-5 h-5 mb-1" />
                     <span className="text-xs">Click or Drop file</span>
                   </div>
                 </div>
+                <div />
               </div>
             </div>
           </div>

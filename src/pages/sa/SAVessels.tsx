@@ -43,7 +43,7 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
       </div>
       <Card>
         <CardContent className="pt-6">
-          <div className="grid gap-5 max-w-4xl">
+          <div className="grid gap-5">
             {/* Basic Info */}
             <div>
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Basic Information</h3>
@@ -126,9 +126,10 @@ function VesselForm({ vessel, onSave, onCancel }: { vessel: Vessel | null; onSav
                 {field("Net Tonnage", "netTonnage")}
                 {field("Cargo Deck Area (m²)", "cargoDeckArea")}
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-3 gap-4 mt-4">
                 {field("Deck Strength (t/m²)", "deckStrength")}
                 {field("Vessel Email", "vesselEmail")}
+                <div />
               </div>
             </div>
 
