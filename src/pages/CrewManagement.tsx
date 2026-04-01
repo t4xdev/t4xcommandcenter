@@ -673,8 +673,18 @@ function EmployeeProfile({ employee }: { employee: Employee }) {
           <div className="card-elevated p-5">
             <div className="flex items-center gap-2 mb-3"><h3 className="text-sm font-bold text-foreground">Salary Details</h3><Edit2 className="w-3.5 h-3.5 text-muted-foreground" /></div>
             <div className="flex gap-6 p-4 rounded-lg border border-border bg-muted/30">
-              <div><p className="text-[10px] text-primary uppercase font-semibold">Annual CTC</p><p className="text-base font-bold font-mono">{fmt(employee.annualCTC)} per year</p></div>
-              <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly CTC</p><p className="text-base font-bold font-mono">{fmt(Math.round(employee.annualCTC / 12))} per month</p></div>
+              {employee.payType === "contract" ? (
+                <>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly Salary</p><p className="text-base font-bold font-mono">{fmt(employee.monthlySalary)} per month</p></div>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Pay Type</p><p className="text-base font-bold font-mono">Contract</p></div>
+                  {employee.contractDurationMonths && <div><p className="text-[10px] text-primary uppercase font-semibold">Duration</p><p className="text-base font-bold font-mono">{employee.contractDurationMonths} months</p></div>}
+                </>
+              ) : (
+                <>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Annual CTC</p><p className="text-base font-bold font-mono">{fmt(employee.annualCTC)} per year</p></div>
+                  <div><p className="text-[10px] text-primary uppercase font-semibold">Monthly CTC</p><p className="text-base font-bold font-mono">{fmt(employee.monthlySalary)} per month</p></div>
+                </>
+              )}
             </div>
           </div>
           <div className="card-elevated p-5">
