@@ -73,6 +73,8 @@ const comparisonMetrics = [
 ];
 
 const ROTATION_INTERVAL = 5000;
+const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
+const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
 
 export default function CommandCenter() {
   const navigate = useNavigate();
