@@ -1,5 +1,14 @@
 // Command Center - Fleet Monitoring Dashboard
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 import adaniLogo from "@/assets/adani-logo.png";
 import vesselImg1 from "@/assets/vessel-deck.webp";
@@ -144,6 +153,7 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [vesselSearch, setVesselSearch] = useState("");
   const [showVesselSearch, setShowVesselSearch] = useState(false);
   const [showInfoPopup, setShowInfoPopup] = useState(true);
@@ -397,17 +407,35 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
           </span>
           <img src={adaniLogo} alt="Adani" className="h-5 w-auto" />
           <button
-            onClick={() => onLogout?.()}
+            onClick={() => setShowLogoutDialog(true)}
             className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
-            title="Exit Command Center"
+            title="Logout"
           >
             <X className="w-3 h-3" />
-            Exit
+            Logout
           </button>
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Logout Confirmation Dialog */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-[360px]">
+          <DialogHeader>
+            <DialogTitle>Confirm Logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to logout from the Command Center?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowLogoutDialog(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={() => onLogout?.()}>
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className="flex-1 flex min-h-0">
         {/* LEFT - Map */}
         <div className="w-1/2 relative border-r border-border bg-accent/30">
