@@ -120,7 +120,10 @@ export default function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border">
+    <Sidebar collapsible="icon" className="border-r border-border group/sidebar-wrapper"
+      onMouseEnter={() => { if (state === "collapsed") toggleSidebar(); }}
+      onMouseLeave={() => { if (state === "expanded") toggleSidebar(); }}
+    >
       <SidebarHeader className="p-3">
         <div
           className="flex items-center gap-2 cursor-pointer"
