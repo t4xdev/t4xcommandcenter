@@ -97,8 +97,8 @@ export default function CommandCenter() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
   const autoRotateRef = useRef(autoRotate);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([70, 0]);
-  const [mapZoom, setMapZoom] = useState(1.2);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([75, 12]);
+  const [mapZoom, setMapZoom] = useState(2.5);
 
   const filteredVessels = useMemo(() =>
     companyFilter ? vesselData.filter((v) => v.company === companyFilter) : vesselData,
