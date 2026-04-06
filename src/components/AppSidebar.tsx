@@ -42,7 +42,7 @@ import { fleets } from "@/data/maritimeData";
 export default function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const collapsed = state === "collapsed";
   const { selectedFleet, setSelectedFleet } = useFleet();
 
@@ -120,7 +120,10 @@ export default function AppSidebar() {
   };
 
   return (
-    <Sidebar collapsible="icon" className="border-r border-border">
+    <Sidebar collapsible="icon" className="border-r border-border group/sidebar-wrapper"
+      onMouseEnter={() => { if (state === "collapsed") toggleSidebar(); }}
+      onMouseLeave={() => { if (state === "expanded") toggleSidebar(); }}
+    >
       <SidebarHeader className="p-3">
         <div
           className="flex items-center gap-2 cursor-pointer"
