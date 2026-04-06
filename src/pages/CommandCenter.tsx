@@ -701,6 +701,21 @@ export default function CommandCenter() {
                         </div>
                       );
                     }}
+                   />
+                  {/* Average lines */}
+                  <ReferenceLine
+                    x={avgEfficiency}
+                    stroke="hsl(215, 40%, 55%)"
+                    strokeDasharray="5 3"
+                    strokeWidth={1.5}
+                    label={{ value: `Avg Eff: ${avgEfficiency}%`, position: "top", fontSize: 8, fill: "hsl(215, 40%, 55%)" }}
+                  />
+                  <ReferenceLine
+                    y={avgFuel}
+                    stroke="hsl(25, 50%, 55%)"
+                    strokeDasharray="5 3"
+                    strokeWidth={1.5}
+                    label={{ value: `Avg Fuel: ${avgFuel} MT`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }}
                   />
                   {/* Background vessels */}
                   <Scatter data={scatterData.filter(e => e.id !== selectedVessel?.id)} name="Fleet">
@@ -753,6 +768,8 @@ export default function CommandCenter() {
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
+              );
+            })()}
 
             {/* Company legend + selected vessel indicator */}
             <div className="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-border">
