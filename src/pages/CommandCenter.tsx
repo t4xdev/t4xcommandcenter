@@ -77,8 +77,8 @@ const severityStyles: Record<string, string> = {
 
 
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
-const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
-const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
+const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5];
+const imageLabels = ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"];
 
 export default function CommandCenter() {
   const navigate = useNavigate();
