@@ -166,9 +166,7 @@ export default function CommandCenter() {
   useEffect(() => {
     if (!selectedVessel) return;
     setImageIndex(0);
-    setShowInfoPopup(false);
-    const timer = setTimeout(() => setShowInfoPopup(true), 450);
-    return () => clearTimeout(timer);
+    setShowInfoPopup(true);
   }, [selectedVessel]);
 
   // Auto-scroll highlights
