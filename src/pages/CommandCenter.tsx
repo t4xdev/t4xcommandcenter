@@ -82,6 +82,7 @@ const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
 export default function CommandCenter() {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedVesselId, setSelectedVesselId] = useState<string | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
   const [rotationInterval, setRotationInterval] = useState(10);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -94,6 +95,7 @@ export default function CommandCenter() {
   const searchRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
+  const autoRotateRef = useRef(autoRotate);
   const [mapCenter, setMapCenter] = useState<[number, number]>([72, 15]);
   const [mapZoom, setMapZoom] = useState(1.5);
 
@@ -102,7 +104,13 @@ export default function CommandCenter() {
     [companyFilter]
   );
 
-  const selectedVessel = filteredVessels[selectedIndex % filteredVessels.length] || filteredVessels[0];
+  const selectedVessel = useMemo(
+    () =>
+      filteredVessels.find((v) => v.id === selectedVesselId) ??
+      filteredVessels[selectedIndex % filteredVessels.length] ??
+      filteredVessels[0],
+    [filteredVessels, selectedIndex, selectedVesselId]
+  );
 
   // Scatter plot data - efficiency vs fuel for all vessels
   const scatterData = useMemo(() => filteredVessels.map((v) => {
@@ -125,13 +133,25 @@ export default function CommandCenter() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    autoRotateRef.current = autoRotate;
+  }, [autoRotate]);
+
+  useEffect(() => {
+    const indexedVessel = filteredVessels[selectedIndex % filteredVessels.length] ?? filteredVessels[0];
+    if (indexedVessel && indexedVessel.id !== selectedVesselId) {
+      setSelectedVesselId(indexedVessel.id);
+    }
+  }, [filteredVessels, selectedIndex, selectedVesselId]);
+
   // Auto-rotation every 5 seconds
   useEffect(() => {
-    if (!autoRotate) return;
-    const interval = setInterval(() => {
+    if (!autoRotate || !filteredVessels.length) return;
+    const interval = window.setInterval(() => {
+      if (!autoRotateRef.current) return;
       setSelectedIndex((prev) => (prev + 1) % filteredVessels.length);
     }, rotationInterval * 1000);
-    return () => clearInterval(interval);
+    return () => window.clearInterval(interval);
   }, [autoRotate, filteredVessels.length, rotationInterval]);
 
   // Image slideshow - cycle every 3 seconds
@@ -144,11 +164,12 @@ export default function CommandCenter() {
 
   // Reset image on vessel change (no map panning — markers stay fixed)
   useEffect(() => {
+    if (!selectedVessel) return;
     setImageIndex(0);
     setShowInfoPopup(false);
     const timer = setTimeout(() => setShowInfoPopup(true), 450);
     return () => clearTimeout(timer);
-  }, [selectedIndex]);
+  }, [selectedVessel]);
 
   // Auto-scroll highlights
   useEffect(() => {
@@ -177,11 +198,13 @@ export default function CommandCenter() {
   }, [scrollPosition]);
 
   const handleVesselClick = useCallback((vessel: VesselData) => {
+    autoRotateRef.current = false;
+    setAutoRotate(false);
+    setShowInfoPopup(false);
+    setSelectedVesselId(vessel.id);
     const idx = filteredVessels.findIndex((v) => v.id === vessel.id);
     if (idx >= 0) {
-      setShowInfoPopup(false);
       setSelectedIndex(idx);
-      setAutoRotate(false);
     }
   }, [filteredVessels]);
 
@@ -453,16 +476,16 @@ export default function CommandCenter() {
                   <button
                     key={v.id}
                     onClick={() => {
-                      // Clear company filter if needed, then select
                       if (companyFilter && v.company !== companyFilter) {
                         setCompanyFilter(null);
                       }
-                      // Find index in the appropriate list
+                      autoRotateRef.current = false;
+                      setAutoRotate(false);
+                      setSelectedVesselId(v.id);
                       const targetList = (companyFilter && v.company === companyFilter) ? filteredVessels : vesselData;
                       const idx = targetList.findIndex((fv) => fv.id === v.id);
                       if (idx >= 0) {
                         setSelectedIndex(idx);
-                        setAutoRotate(false);
                       }
                       setVesselSearch("");
                       setShowVesselSearch(false);
