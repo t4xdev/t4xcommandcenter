@@ -32,6 +32,16 @@ import vdrIlijanForward from "@/assets/vdr-ilijan-forward.png";
 import vdrIlijanEngine from "@/assets/vdr-ilijan-engine.png";
 import vdrIlijanEngine2 from "@/assets/vdr-ilijan-engine2.png";
 import vdrZaharatDeck from "@/assets/vdr-zaharat-deck.png";
+import vdrDolphinDeck from "@/assets/vdr-dolphin-deck.png";
+import vdrDolphinForward from "@/assets/vdr-dolphin-forward.png";
+import vdrDolphinEngine from "@/assets/vdr-dolphin-engine.png";
+import vdrDolphinSteering from "@/assets/vdr-dolphin-steering.png";
+import vdrDolphinGalley from "@/assets/vdr-dolphin-galley.png";
+import vdrIlijanDeck2 from "@/assets/vdr-ilijan-deck2.png";
+import vdrIlijanForward2 from "@/assets/vdr-ilijan-forward2.png";
+import vdrIlijanEngine3 from "@/assets/vdr-ilijan-engine3.png";
+import vdrIlijanSteering2 from "@/assets/vdr-ilijan-steering2.png";
+import vdrIlijanGalley2 from "@/assets/vdr-ilijan-galley2.png";
 import {
   ComposableMap,
   Geographies,
@@ -105,10 +115,12 @@ const severityStyles: Record<string, string> = {
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
 // Vessel-specific image sets from VDR reports
 const vesselImageMap: Record<string, { images: string[], labels: string[] }> = {
+  "v1": { images: [vdrDolphinDeck, vdrDolphinForward, vdrDolphinEngine, vdrDolphinSteering, vdrDolphinGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
   "v5": { images: [vdrProgressDeck, vdrProgressWinch, vdrProgressEngine, vdrProgressSteering, vdrProgressGalley], labels: ["Deck Aft", "Tow Winch", "Engine Room", "Steering Room", "Galley"] },
   "v4": { images: [vdrVerdeDeckAft, vdrVerdeBridge, vdrVerdeEngine, vdrVerdeSteering, vdrVerdeGalley], labels: ["Deck Aft", "Bridge View", "Engine Room", "Steering Room", "Galley"] },
   "v3": { images: [vdrZaharatDeck, vesselImg8, vesselImg7, vesselImg6, vesselImg15], labels: ["Fore Deck", "Port View", "Hydraulic Unit", "Main Engine", "Control Panel"] },
   "v6": { images: [vesselImg11, vesselImg12, vesselImg13, vesselImg14, vesselImg9], labels: ["Cargo Deck", "Engine Bay", "Electrical Room", "Pump Room", "Night Cargo"] },
+  "v7": { images: [vdrIlijanDeck2, vdrIlijanForward2, vdrIlijanEngine3, vdrIlijanSteering2, vdrIlijanGalley2], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
 };
 const defaultImageSets = [
   { images: [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5], labels: ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"] },
