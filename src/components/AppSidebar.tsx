@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   LayoutDashboard, FileText, BarChart3, ShoppingCart, Wrench, Users, Ship, Settings, Shield,
-  ChevronDown, User, LogOut, UserCog, Anchor, ChevronUp,
+  ChevronDown, User, LogOut, UserCog, Anchor, ChevronUp, Radio,
 } from "lucide-react";
 import {
   Sidebar,
