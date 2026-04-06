@@ -1,5 +1,14 @@
 // Command Center - Fleet Monitoring Dashboard
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 import adaniLogo from "@/assets/adani-logo.png";
 import vesselImg1 from "@/assets/vessel-deck.webp";
