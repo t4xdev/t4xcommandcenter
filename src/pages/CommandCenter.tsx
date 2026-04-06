@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import adaniLogo from "@/assets/adani-logo.png";
-import vesselImg1 from "@/assets/vessel-img-1.jpg";
-import vesselImg2 from "@/assets/vessel-img-2.jpg";
-import vesselImg3 from "@/assets/vessel-img-3.jpg";
-import vesselImg4 from "@/assets/vessel-img-4.jpg";
+import vesselImg1 from "@/assets/vessel-deck.webp";
+import vesselImg2 from "@/assets/vessel-engine.webp";
+import vesselImg3 from "@/assets/vessel-cabin.webp";
+import vesselImg4 from "@/assets/vessel-machinery.webp";
+import vesselImg5 from "@/assets/vessel-cargo.jpeg";
 import {
   ComposableMap,
   Geographies,
@@ -76,8 +77,8 @@ const severityStyles: Record<string, string> = {
 
 
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
-const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
-const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
+const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5];
+const imageLabels = ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"];
 
 export default function CommandCenter() {
   const navigate = useNavigate();
