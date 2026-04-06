@@ -1,74 +1,38 @@
 
-## Fix marker and popup alignment in Command Center
 
-### What is going wrong
-The current issue is in the map rendering logic, not the vessel coordinates.
+## Fix Command Center: Markers, Popup, Tooltip, Pan, and Coordinates
 
-From the code in `src/pages/CommandCenter.tsx`:
-- The selected marker is visually enlarged with `scale(1.35)`, which makes it appear to move when clicked.
-- The popup is rendered as a separate `Marker` with a manual SVG `translate(...)` offset, so it can look detached from the selected vessel.
-- The popup hide/show timing adds extra instability during quick selections.
+### 1. Fix ping ring and marker alignment
+The ping ring `<circle>` is rendered outside the `<g transform="rotate(...) scale(0.9)">` group. The `scale(0.9)` with `transformOrigin: "center"` shifts the arrow polygon relative to the unscaled ping ring. Fix: remove the `scale(0.9)` or put the ping ring inside the same transform group (without the rotate).
 
-### Implementation plan
+**Change in `CommandCenter.tsx`:** Remove `scale(0.9)` from the marker `<g>` transform. Keep only `rotate(course)`. The ping circle stays at `(0,0)` and the arrow polygon stays centered at `(0,0)` — both aligned.
 
-**Primary file:** `src/pages/CommandCenter.tsx`
+### 2. Add small info popup on selected marker
+Render a `foreignObject` inside the selected marker's `<Marker>` component showing vessel name, status, speed, and hiring status. This keeps it anchored to the marker coordinate automatically.
 
-1. **Keep the clicked vessel marker fixed**
-   - Remove the selected marker scale-up effect.
-   - Keep the marker anchored at the exact same map coordinate before and after click.
-   - Use only non-positional selection styling:
-     - pulse ring
-     - brighter stroke
-     - slightly stronger opacity
-   - This ensures clicking a marker never makes it appear to shift place.
+**Add inside the `{isSelected && ...}` block:** A `<foreignObject>` positioned above/beside the marker with a small card (vessel name, status badge, speed, company).
 
-2. **Anchor the popup to the same vessel coordinate**
-   - Stop treating the popup like a separately shifted free-floating marker.
-   - Render the popup from the selected vessel anchor using a proper anchored callout approach so the card and its pointer stay visually attached to the same marker.
-   - Keep left/right flipping, but compute it as popup placement only, not as a second independent location.
+### 3. Add hover tooltip on markers
+Add a `<title>` element (already exists but nested inside `<polygon>`). Instead, add an `onMouseEnter`/`onMouseLeave` state-driven tooltip overlay, or use a simpler approach: render a small `<foreignObject>` on hover showing the vessel name.
 
-3. **Make popup offset screen-stable**
-   - Use a popup offset approach that remains visually adjacent during zoom and pan.
-   - Avoid large SVG-space offsets that visually stretch away from the marker as map scale changes.
-   - The popup should sit beside the selected vessel with a short connector/pointer.
+**Add state:** `hoveredVesselId`. On marker `onMouseEnter` set it, `onMouseLeave` clear it. Render a small label `<foreignObject>` when hovered (and not selected).
 
-4. **Simplify selection state transitions**
-   - Keep `selectedVesselId` as the source of truth.
-   - Remove or reduce the delayed popup hide/show behavior that can briefly show stale positioning when switching vessels quickly.
-   - On marker click:
-     - pause auto-rotate
-     - set selected vessel ID
-     - show popup immediately for that vessel
+### 4. Pan map to selected vessel
+When `selectedVessel` changes, update `mapCenter` to the vessel's coordinates.
 
-5. **Preserve current map behavior**
-   - Keep map pan and zoom as-is.
-   - Do not move the map when selecting a vessel.
-   - Only the selected marker styling and popup should update.
+**Change in `CommandCenter.tsx`:** In the `useEffect` that watches `selectedVessel`, add `setMapCenter([selectedVessel.longitude, selectedVessel.latitude])`.
 
-### Technical details
-```text
-Current problem areas:
-- Marker selected state uses: scale(1.35)
-- Popup is another Marker with translate(tx, -78)
-- Popup offset is visually decoupled from the actual clicked icon
+### 5. Spread vessels across real ocean areas
+Replace the current single Indian Ocean cluster with the user-provided ocean regions:
+- Arabian Sea (55-75°E, 10-25°N)
+- Bay of Bengal (80-100°E, 5-22°N)
+- Southern Indian Ocean (20-120°E, -60-0°S)
+- Mozambique Channel (35-50°E, -25 to -10°N)
+- Andaman Sea (92-100°E, 5-20°N)
 
-Planned rendering model:
-Vessel coordinate
-   -> fixed marker stays at same point
-   -> selection halo around same point
-   -> popup/callout attached to same point with stable side offset
-```
+**Change in `commandCenterData.ts`:** Replace `locationPools` with points safely inside these ocean polygons (with margin from coastlines). Distribute vessels across all 5 regions. Update the 6 real vessels similarly. Keep jitter at ±0.5°.
 
-### Expected result
-After this change:
-- Clicking a vessel marker will not make the marker move.
-- The popup will open next to the exact selected marker.
-- Marker and popup will remain visually attached during pan/zoom.
-- Auto-rotation will stay paused after manual selection.
+### Files to modify
+- `src/pages/CommandCenter.tsx` — items 1-4
+- `src/data/commandCenterData.ts` — item 5
 
-### Validation
-1. Click several nearby vessel markers in sequence.
-2. Confirm the selected marker stays in the exact same place.
-3. Confirm the popup always appears adjacent to that same marker.
-4. Zoom in and out and verify the popup remains attached visually.
-5. Pan the map and verify marker/popup alignment still holds.
