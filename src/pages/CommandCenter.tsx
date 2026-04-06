@@ -148,9 +148,8 @@ export default function CommandCenter() {
     setShowInfoPopup(false);
     if (selectedVessel) {
       setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
-      setMapZoom(3.5);
-      // Delay showing popup to prevent two showing at once
-      const timer = setTimeout(() => setShowInfoPopup(true), 300);
+      setMapZoom(2.35);
+      const timer = setTimeout(() => setShowInfoPopup(true), 450);
       return () => clearTimeout(timer);
     }
   }, [selectedIndex, selectedVessel]);
@@ -184,8 +183,9 @@ export default function CommandCenter() {
   const handleVesselClick = useCallback((vessel: VesselData) => {
     const idx = filteredVessels.findIndex((v) => v.id === vessel.id);
     if (idx >= 0) {
+      setShowInfoPopup(false);
       setSelectedIndex(idx);
-      setAutoRotate(false); // pause on manual selection
+      setAutoRotate(false);
     }
   }, [filteredVessels]);
 
@@ -298,79 +298,79 @@ export default function CommandCenter() {
                 }
               </Geographies>
 
-              {filteredVessels.map((vessel) => (
-                <Marker
-                  key={vessel.id}
-                  coordinates={[vessel.longitude, vessel.latitude]}
-                  onClick={() => handleVesselClick(vessel)}
-                >
-                  {vessel.id === selectedVessel?.id && (
-                    <circle
-                      r={12}
-                      fill="none"
-                      stroke={statusColors[vessel.status]}
-                      strokeWidth={1.5}
-                      opacity={0.4}
-                      className="animate-ping"
-                      style={{ animationDuration: "2s" }}
-                    />
-                  )}
-                  {/* Arrow marker rotated by vessel course */}
-                  <g
-                    transform={`rotate(${vessel.course}, 0, 0) scale(${vessel.id === selectedVessel?.id ? 1.4 : 0.9})`}
-                    className="cursor-pointer transition-all duration-300"
-                    style={{ transformOrigin: "center" }}
+              {filteredVessels.map((vessel) => {
+                const isSelected = vessel.id === selectedVessel?.id;
+
+                return (
+                  <Marker
+                    key={vessel.id}
+                    coordinates={[vessel.longitude, vessel.latitude]}
+                    onClick={() => handleVesselClick(vessel)}
                   >
-                    <polygon
-                      points="0,-7 4,5 0,2 -4,5"
-                      fill={statusColors[vessel.status]}
-                      stroke={vessel.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 30%)"}
-                      strokeWidth={vessel.id === selectedVessel?.id ? 1.5 : 0.5}
-                      opacity={vessel.id === selectedVessel?.id ? 1 : 0.8}
-                    />
-                  </g>
-                  {/* Info popup for selected vessel - rendered above markers */}
-                  {vessel.id === selectedVessel?.id && showInfoPopup && (
-                    <g style={{ pointerEvents: "auto" }}>
-                      <rect
-                        x={12}
-                        y={-50}
-                        width={160}
-                        height={56}
-                        rx={5}
-                        fill="hsl(0, 0%, 100%)"
-                        stroke="hsl(216, 15%, 82%)"
-                        strokeWidth={1}
-                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))"
+                    {isSelected && (
+                      <circle
+                        r={12}
+                        fill="none"
+                        stroke={statusColors[vessel.status]}
+                        strokeWidth={1.5}
+                        opacity={0.4}
+                        className="animate-ping"
+                        style={{ animationDuration: "2s" }}
                       />
+                    )}
+                    <g
+                      transform={`rotate(${vessel.course}, 0, 0) scale(${isSelected ? 1.35 : 0.9})`}
+                      className="cursor-pointer transition-all duration-300"
+                      style={{ transformOrigin: "center" }}
+                    >
                       <polygon
-                        points="10,-20 16,-24 16,-16"
-                        fill="hsl(0, 0%, 100%)"
-                        stroke="hsl(216, 15%, 82%)"
-                        strokeWidth={1}
+                        points="0,-7 4,5 0,2 -4,5"
+                        fill={statusColors[vessel.status]}
+                        stroke={isSelected ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 30%)"}
+                        strokeWidth={isSelected ? 1.5 : 0.5}
+                        opacity={isSelected ? 1 : 0.8}
                       />
-                      <rect x={15} y={-25} width={3} height={10} fill="hsl(0, 0%, 100%)" />
-                      {/* Close button */}
-                      <g onClick={(e) => { e.stopPropagation(); setShowInfoPopup(false); }} className="cursor-pointer">
-                        <rect x={156} y={-49} width={14} height={14} rx={3} fill="hsl(0, 0%, 95%)" stroke="hsl(216, 15%, 82%)" strokeWidth={0.5} />
-                        <text x={163} y={-39} fontSize={8} fill="hsl(215, 10%, 46%)" textAnchor="middle" fontFamily="Inter, sans-serif">✕</text>
-                      </g>
-                      <text x={20} y={-36} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
-                        {vessel.name} [{vessel.fleet}]
-                      </text>
-                      <text x={20} y={-25} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
-                        {vessel.speed} kn / {vessel.course}°
-                      </text>
-                      <text x={20} y={-15} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
-                        Destination: <tspan fontWeight={700}>{vessel.client !== "-" ? vessel.client : "N/A"}</tspan>
-                      </text>
-                      <text x={20} y={-5} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
-                        Status: <tspan fontWeight={600} fill={statusColors[vessel.status]}>{vessel.status.toUpperCase()}</tspan>
-                      </text>
                     </g>
-                  )}
-                </Marker>
-              ))}
+                    {isSelected && showInfoPopup && (
+                      <g style={{ pointerEvents: "auto" }} transform="translate(18,-78)">
+                        <rect
+                          x={0}
+                          y={0}
+                          width={170}
+                          height={58}
+                          rx={6}
+                          fill="hsl(0, 0%, 100%)"
+                          stroke="hsl(216, 15%, 82%)"
+                          strokeWidth={1}
+                          filter="drop-shadow(0 3px 6px rgba(0,0,0,0.16))"
+                        />
+                        <polygon
+                          points="0,38 -10,44 0,48"
+                          fill="hsl(0, 0%, 100%)"
+                          stroke="hsl(216, 15%, 82%)"
+                          strokeWidth={1}
+                        />
+                        <g onClick={(e) => { e.stopPropagation(); setShowInfoPopup(false); }} className="cursor-pointer">
+                          <rect x={150} y={6} width={14} height={14} rx={3} fill="hsl(0, 0%, 95%)" stroke="hsl(216, 15%, 82%)" strokeWidth={0.5} />
+                          <text x={157} y={16} fontSize={8} fill="hsl(215, 10%, 46%)" textAnchor="middle" fontFamily="Inter, sans-serif">✕</text>
+                        </g>
+                        <text x={10} y={16} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
+                          {vessel.name} [{vessel.fleet}]
+                        </text>
+                        <text x={10} y={28} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                          {vessel.speed} kn / {vessel.course}°
+                        </text>
+                        <text x={10} y={40} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                          Destination: <tspan fontWeight={700}>{vessel.client !== "-" ? vessel.client : "N/A"}</tspan>
+                        </text>
+                        <text x={10} y={51} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
+                          Status: <tspan fontWeight={600} fill={statusColors[vessel.status]}>{vessel.status.toUpperCase()}</tspan>
+                        </text>
+                      </g>
+                    )}
+                  </Marker>
+                );
+              })}
             </ZoomableGroup>
           </ComposableMap>
 

@@ -270,9 +270,9 @@ function generateVessels(): VesselData[] {
     const locIdx = Math.floor(rand() * locationPools.length);
     const loc = locationPools[locIdx];
 
-    // Add small random offset to coordinates
-    const lonOffset = (rand() - 0.5) * 4;
-    const latOffset = (rand() - 0.5) * 4;
+    // Tight offset so vessels stay in water near their maritime corridors
+    const lonOffset = (rand() - 0.5) * 1.1;
+    const latOffset = (rand() - 0.5) * 0.9;
 
     const statusRoll = rand();
     const status: VesselData["status"] = statusRoll < 0.7 ? "normal" : statusRoll < 0.9 ? "warning" : "critical";
