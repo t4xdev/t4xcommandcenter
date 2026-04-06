@@ -597,6 +597,7 @@ function generateVessels(): VesselData[] {
     },
   ];
 
+  const realVesselIds = new Set(realVessels.map(v => v.id));
   vessels.push(...realVessels);
 
   // Generate ~185 more dummy vessels
