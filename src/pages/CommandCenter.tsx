@@ -738,15 +738,19 @@ export default function CommandCenter() {
                     const sel = scatterData.find(e => e.id === selectedVessel.id);
                     if (!sel) return null;
                     return (
-                      <Scatter data={[sel]} name="Selected">
-                        <Cell
-                          fill={companyColors[sel.company] || "hsl(210, 80%, 52%)"}
-                          opacity={1}
-                          stroke="hsl(0, 0%, 100%)"
-                          strokeWidth={3}
-                          r={10}
-                        />
-                      </Scatter>
+                      <>
+                        {/* Outer glow ring */}
+                        <ReferenceDot x={sel.efficiency} y={sel.fuelUsed} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
+                        <Scatter data={[sel]} name="Selected">
+                          <Cell
+                            fill="hsl(210, 80%, 52%)"
+                            opacity={1}
+                            stroke="hsl(0, 0%, 100%)"
+                            strokeWidth={3}
+                            r={12}
+                          />
+                        </Scatter>
+                      </>
                     );
                   })()}
                   {/* Label for selected vessel */}
