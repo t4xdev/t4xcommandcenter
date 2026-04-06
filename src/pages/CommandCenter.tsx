@@ -16,6 +16,22 @@ import vesselImg12 from "@/assets/vessel-engine3.webp";
 import vesselImg13 from "@/assets/vessel-electrical.webp";
 import vesselImg14 from "@/assets/vessel-machinery2.webp";
 import vesselImg15 from "@/assets/vessel-control-panel.webp";
+// VDR-extracted vessel images
+import vdrProgressDeck from "@/assets/vdr-progress-deck.png";
+import vdrProgressWinch from "@/assets/vdr-progress-winch.png";
+import vdrProgressEngine from "@/assets/vdr-progress-engine.png";
+import vdrProgressSteering from "@/assets/vdr-progress-steering.png";
+import vdrProgressGalley from "@/assets/vdr-progress-galley.png";
+import vdrVerdeDeckAft from "@/assets/vdr-verde-aft.png";
+import vdrVerdeBridge from "@/assets/vdr-verde-bridge.png";
+import vdrVerdeEngine from "@/assets/vdr-verde-engine.png";
+import vdrVerdeSteering from "@/assets/vdr-verde-steering.png";
+import vdrVerdeGalley from "@/assets/vdr-verde-galley.png";
+import vdrIlijanAft from "@/assets/vdr-ilijan-aft.png";
+import vdrIlijanForward from "@/assets/vdr-ilijan-forward.png";
+import vdrIlijanEngine from "@/assets/vdr-ilijan-engine.png";
+import vdrIlijanEngine2 from "@/assets/vdr-ilijan-engine2.png";
+import vdrZaharatDeck from "@/assets/vdr-zaharat-deck.png";
 import {
   ComposableMap,
   Geographies,
@@ -87,15 +103,24 @@ const severityStyles: Record<string, string> = {
 
 
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
-const vesselImageSets = [
+// Vessel-specific image sets from VDR reports
+const vesselImageMap: Record<string, { images: string[], labels: string[] }> = {
+  "v5": { images: [vdrProgressDeck, vdrProgressWinch, vdrProgressEngine, vdrProgressSteering, vdrProgressGalley], labels: ["Deck Aft", "Tow Winch", "Engine Room", "Steering Room", "Galley"] },
+  "v4": { images: [vdrVerdeDeckAft, vdrVerdeBridge, vdrVerdeEngine, vdrVerdeSteering, vdrVerdeGalley], labels: ["Deck Aft", "Bridge View", "Engine Room", "Steering Room", "Galley"] },
+  "v3": { images: [vdrZaharatDeck, vesselImg8, vesselImg7, vesselImg6, vesselImg15], labels: ["Fore Deck", "Port View", "Hydraulic Unit", "Main Engine", "Control Panel"] },
+  "v6": { images: [vesselImg11, vesselImg12, vesselImg13, vesselImg14, vesselImg9], labels: ["Cargo Deck", "Engine Bay", "Electrical Room", "Pump Room", "Night Cargo"] },
+};
+const defaultImageSets = [
   { images: [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5], labels: ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"] },
   { images: [vesselImg6, vesselImg7, vesselImg8, vesselImg9, vesselImg10], labels: ["Main Engine", "Hydraulic Unit", "Port Side", "Night Cargo", "Containers"] },
   { images: [vesselImg11, vesselImg12, vesselImg13, vesselImg14, vesselImg15], labels: ["Cargo Deck", "Engine Bay", "Electrical Room", "Pump Room", "Control Panel"] },
+  { images: [vdrIlijanAft, vdrIlijanForward, vdrIlijanEngine, vdrIlijanEngine2, vesselImg1], labels: ["Deck Aft", "Forward Deck", "Engine Room", "Steering Room", "Deck View"] },
 ];
 const getVesselImageSet = (vesselId: string) => {
+  if (vesselImageMap[vesselId]) return vesselImageMap[vesselId];
   let hash = 0;
   for (let i = 0; i < vesselId.length; i++) hash = ((hash << 5) - hash) + vesselId.charCodeAt(i);
-  return vesselImageSets[Math.abs(hash) % vesselImageSets.length];
+  return defaultImageSets[Math.abs(hash) % defaultImageSets.length];
 };
 
 export default function CommandCenter() {
@@ -176,7 +201,7 @@ export default function CommandCenter() {
 
   // Image slideshow - cycle every 3 seconds
   useEffect(() => {
-    const currentSet = selectedVessel ? getVesselImageSet(selectedVessel.id) : vesselImageSets[0];
+    const currentSet = selectedVessel ? getVesselImageSet(selectedVessel.id) : defaultImageSets[0];
     const interval = setInterval(() => {
       setImageIndex((prev) => (prev + 1) % currentSet.images.length);
     }, 3000);
