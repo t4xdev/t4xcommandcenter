@@ -47,10 +47,10 @@ const statusColors: Record<string, string> = {
 };
 
 const severityStyles: Record<string, string> = {
-  critical: "border-l-4 border-l-[hsl(357,96%,46%)] bg-[hsl(357,96%,46%)]/10",
-  warning: "border-l-4 border-l-[hsl(38,92%,50%)] bg-[hsl(38,92%,50%)]/10",
-  info: "border-l-4 border-l-[hsl(210,80%,52%)] bg-[hsl(210,80%,52%)]/10",
-  normal: "border-l-4 border-l-[hsl(152,55%,42%)] bg-[hsl(152,55%,42%)]/10",
+  critical: "border-l-4 border-l-destructive bg-destructive/5",
+  warning: "border-l-4 border-l-warning bg-warning/5",
+  info: "border-l-4 border-l-info bg-info/5",
+  normal: "border-l-4 border-l-success bg-success/5",
 };
 
 const comparisonMetrics = [
@@ -68,17 +68,14 @@ export default function CommandCenter() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
 
-  // Live clock
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Auto-scroll highlights
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
-
     const scroll = () => {
       setScrollPosition((prev) => {
         const max = container.scrollWidth - container.clientWidth;
@@ -88,24 +85,17 @@ export default function CommandCenter() {
       animationRef.current = requestAnimationFrame(scroll);
     };
     animationRef.current = requestAnimationFrame(scroll);
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
+    return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
   }, []);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollPosition;
-    }
+    if (scrollRef.current) scrollRef.current.scrollLeft = scrollPosition;
   }, [scrollPosition]);
 
   const handleScrollManual = useCallback((dir: "left" | "right") => {
     if (!scrollRef.current) return;
     const amount = 300;
-    const newPos = dir === "left"
-      ? Math.max(0, scrollPosition - amount)
-      : scrollPosition + amount;
-    setScrollPosition(newPos);
+    setScrollPosition(dir === "left" ? Math.max(0, scrollPosition - amount) : scrollPosition + amount);
   }, [scrollPosition]);
 
   const currentMetricData = fleetComparisonData.map((d) => ({
@@ -118,22 +108,22 @@ export default function CommandCenter() {
   const metricInfo = comparisonMetrics.find((m) => m.key === activeMetric)!;
 
   return (
-    <div className="h-screen w-screen bg-[hsl(215,50%,6%)] text-[hsl(216,15%,93%)] overflow-hidden flex flex-col">
+    <div className="h-screen w-screen bg-background text-foreground overflow-hidden flex flex-col">
       {/* Top Bar */}
-      <header className="h-10 flex items-center justify-between px-4 bg-[hsl(215,50%,8%)] border-b border-[hsl(215,30%,15%)] shrink-0">
+      <header className="h-10 flex items-center justify-between px-4 bg-card border-b border-border shrink-0">
         <div className="flex items-center gap-3">
-          <Radio className="w-4 h-4 text-[hsl(357,96%,46%)] animate-pulse" />
-          <span className="text-xs font-semibold tracking-wider uppercase">Command Center</span>
-          <span className="text-[10px] text-[hsl(216,10%,55%)] ml-2">
+          <Radio className="w-4 h-4 text-secondary animate-pulse" />
+          <span className="text-xs font-semibold tracking-wider uppercase text-foreground">Command Center</span>
+          <span className="text-[10px] text-muted-foreground ml-2">
             {vesselData.length} Vessels Tracked
           </span>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5 text-[10px]">
-            <span className="w-2 h-2 rounded-full bg-[hsl(152,55%,42%)] animate-pulse" />
-            <span className="text-[hsl(216,10%,55%)]">LIVE</span>
+            <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
+            <span className="text-muted-foreground">LIVE</span>
           </div>
-          <span className="text-xs font-mono text-[hsl(216,10%,55%)]">
+          <span className="text-xs font-mono text-muted-foreground">
             {currentTime.toLocaleTimeString()} UTC
           </span>
         </div>
@@ -142,7 +132,7 @@ export default function CommandCenter() {
       {/* Main Content */}
       <div className="flex-1 flex min-h-0">
         {/* LEFT - Map */}
-        <div className="w-1/2 relative border-r border-[hsl(215,30%,15%)]">
+        <div className="w-1/2 relative border-r border-border bg-accent/30">
           <ComposableMap
             projection="geoMercator"
             projectionConfig={{ scale: 140, center: [50, 10] }}
@@ -156,12 +146,12 @@ export default function CommandCenter() {
                     <Geography
                       key={geo.rpianoKey || geo.properties.name}
                       geography={geo}
-                      fill="hsl(215, 35%, 15%)"
-                      stroke="hsl(215, 30%, 22%)"
+                      fill="hsl(215, 22%, 88%)"
+                      stroke="hsl(215, 15%, 78%)"
                       strokeWidth={0.5}
                       style={{
                         default: { outline: "none" },
-                        hover: { outline: "none", fill: "hsl(215, 35%, 18%)" },
+                        hover: { outline: "none", fill: "hsl(215, 22%, 82%)" },
                         pressed: { outline: "none" },
                       }}
                     />
@@ -175,32 +165,29 @@ export default function CommandCenter() {
                   coordinates={[vessel.longitude, vessel.latitude]}
                   onClick={() => setSelectedVessel(vessel)}
                 >
-                  {/* Pulse ring */}
                   <circle
                     r={vessel.id === selectedVessel.id ? 12 : 8}
                     fill="none"
                     stroke={statusColors[vessel.status]}
-                    strokeWidth={1}
+                    strokeWidth={1.5}
                     opacity={0.4}
                     className="animate-ping"
                     style={{ animationDuration: "2s" }}
                   />
-                  {/* Vessel dot */}
                   <circle
                     r={vessel.id === selectedVessel.id ? 6 : 4}
                     fill={statusColors[vessel.status]}
-                    stroke={vessel.id === selectedVessel.id ? "#fff" : "none"}
+                    stroke={vessel.id === selectedVessel.id ? "hsl(215, 50%, 23%)" : "none"}
                     strokeWidth={vessel.id === selectedVessel.id ? 2 : 0}
                     className="cursor-pointer transition-all duration-300"
                   />
-                  {/* Label */}
                   {vessel.id === selectedVessel.id && (
                     <text
                       textAnchor="middle"
                       y={-14}
-                      fill="#fff"
+                      fill="hsl(215, 50%, 15%)"
                       fontSize={9}
-                      fontWeight={600}
+                      fontWeight={700}
                       fontFamily="Inter, sans-serif"
                     >
                       {vessel.name}
@@ -212,26 +199,26 @@ export default function CommandCenter() {
           </ComposableMap>
 
           {/* Map Legend */}
-          <div className="absolute bottom-4 left-4 bg-[hsl(215,50%,8%)]/90 backdrop-blur-sm rounded-lg p-3 border border-[hsl(215,30%,15%)]">
-            <p className="text-[10px] text-[hsl(216,10%,55%)] mb-2 font-medium">VESSEL STATUS</p>
+          <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 border border-border shadow-sm">
+            <p className="text-[10px] text-muted-foreground mb-2 font-medium">VESSEL STATUS</p>
             {Object.entries(statusColors).map(([status, color]) => (
               <div key={status} className="flex items-center gap-2 mb-1">
                 <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
-                <span className="text-[10px] capitalize">{status}</span>
+                <span className="text-[10px] capitalize text-foreground">{status}</span>
               </div>
             ))}
           </div>
 
           {/* Fleet quick list */}
-          <div className="absolute top-3 left-3 bg-[hsl(215,50%,8%)]/90 backdrop-blur-sm rounded-lg border border-[hsl(215,30%,15%)] max-w-[200px]">
-            <p className="text-[10px] text-[hsl(216,10%,55%)] px-3 pt-2 pb-1 font-medium">FLEET</p>
+          <div className="absolute top-3 left-3 bg-card/95 backdrop-blur-sm rounded-lg border border-border shadow-sm max-w-[200px]">
+            <p className="text-[10px] text-muted-foreground px-3 pt-2 pb-1 font-medium">FLEET</p>
             {vesselData.map((v) => (
               <button
                 key={v.id}
                 onClick={() => setSelectedVessel(v)}
                 className={cn(
-                  "w-full flex items-center gap-2 px-3 py-1.5 text-[10px] hover:bg-[hsl(215,35%,15%)] transition-colors",
-                  v.id === selectedVessel.id && "bg-[hsl(215,35%,18%)]"
+                  "w-full flex items-center gap-2 px-3 py-1.5 text-[10px] hover:bg-accent transition-colors text-foreground",
+                  v.id === selectedVessel.id && "bg-accent font-medium"
                 )}
               >
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: statusColors[v.status] }} />
@@ -242,22 +229,21 @@ export default function CommandCenter() {
         </div>
 
         {/* RIGHT - Intelligence Panel */}
-        <div className="w-1/2 flex flex-col min-h-0">
+        <div className="w-1/2 flex flex-col min-h-0 bg-background">
           {/* Vessel Summary Card */}
-          <div className="p-4 border-b border-[hsl(215,30%,15%)] shrink-0">
-            <div className="bg-[hsl(215,45%,10%)] rounded-xl border border-[hsl(215,30%,18%)] p-4">
-              {/* Header */}
+          <div className="p-4 border-b border-border shrink-0">
+            <div className="bg-card rounded-xl border border-border shadow-sm p-4">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <Ship className="w-4 h-4 text-[hsl(210,80%,52%)]" />
-                    <h2 className="text-base font-bold">{selectedVessel.name}</h2>
+                    <Ship className="w-4 h-4 text-primary" />
+                    <h2 className="text-base font-bold text-foreground">{selectedVessel.name}</h2>
                     <span
                       className={cn(
                         "text-[9px] px-2 py-0.5 rounded-full font-semibold uppercase",
-                        selectedVessel.status === "normal" && "bg-[hsl(152,55%,42%)]/20 text-[hsl(152,55%,42%)]",
-                        selectedVessel.status === "warning" && "bg-[hsl(38,92%,50%)]/20 text-[hsl(38,92%,50%)]",
-                        selectedVessel.status === "critical" && "bg-[hsl(357,96%,46%)]/20 text-[hsl(357,96%,46%)]"
+                        selectedVessel.status === "normal" && "bg-success/10 text-success",
+                        selectedVessel.status === "warning" && "bg-warning/10 text-warning",
+                        selectedVessel.status === "critical" && "bg-destructive/10 text-destructive"
                       )}
                     >
                       {selectedVessel.status}
@@ -266,14 +252,14 @@ export default function CommandCenter() {
                       className={cn(
                         "text-[9px] px-2 py-0.5 rounded-full font-medium",
                         selectedVessel.hiringStatus === "ON-Hire"
-                          ? "bg-[hsl(152,55%,42%)]/15 text-[hsl(152,55%,42%)]"
-                          : "bg-[hsl(216,10%,55%)]/15 text-[hsl(216,10%,55%)]"
+                          ? "bg-success/10 text-success"
+                          : "bg-muted text-muted-foreground"
                       )}
                     >
                       {selectedVessel.hiringStatus}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 text-[10px] text-[hsl(216,10%,55%)]">
+                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                     <span>IMO: {selectedVessel.imo}</span>
                     <span>•</span>
                     <span>{selectedVessel.company}</span>
@@ -281,31 +267,29 @@ export default function CommandCenter() {
                     <span>Master: {selectedVessel.master}</span>
                   </div>
                 </div>
-                <div className="text-right text-[10px] text-[hsl(216,10%,55%)]">
+                <div className="text-right text-[10px] text-muted-foreground">
                   <p>Report: {selectedVessel.reportDate}</p>
                   <p>At: {selectedVessel.reportTime}</p>
                 </div>
               </div>
 
-              {/* Location Row */}
-              <div className="flex items-center gap-4 mb-3 text-[11px]">
+              <div className="flex items-center gap-4 mb-3 text-[11px] text-foreground">
                 <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-[hsl(210,80%,52%)]" />
+                  <MapPin className="w-3 h-3 text-primary" />
                   <span>{selectedVessel.location}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Navigation className="w-3 h-3 text-[hsl(210,80%,52%)]" />
+                  <Navigation className="w-3 h-3 text-primary" />
                   <span>{selectedVessel.speed} kn / {selectedVessel.course}°</span>
                 </div>
                 {selectedVessel.client !== "-" && (
                   <div className="flex items-center gap-1.5">
-                    <Anchor className="w-3 h-3 text-[hsl(210,80%,52%)]" />
+                    <Anchor className="w-3 h-3 text-primary" />
                     <span>Client: {selectedVessel.client}</span>
                   </div>
                 )}
               </div>
 
-              {/* KPI Grid */}
               <div className="grid grid-cols-4 gap-2">
                 <KpiMini icon={Fuel} label="Fuel Balance" value={`${(selectedVessel.fuelBalance / 1000).toFixed(1)}K L`}
                   trend={selectedVessel.fuelBalance < 20000 ? "down" : "up"}
@@ -330,18 +314,18 @@ export default function CommandCenter() {
           </div>
 
           {/* Scrolling Highlights */}
-          <div className="px-4 py-3 border-b border-[hsl(215,30%,15%)] shrink-0">
+          <div className="px-4 py-3 border-b border-border shrink-0">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[10px] text-[hsl(216,10%,55%)] font-medium tracking-wider uppercase">
+              <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
                 Live Alerts & Insights
               </p>
               <div className="flex gap-1">
                 <button onClick={() => handleScrollManual("left")}
-                  className="p-1 rounded hover:bg-[hsl(215,35%,15%)] text-[hsl(216,10%,55%)]">
+                  className="p-1 rounded hover:bg-accent text-muted-foreground">
                   <ChevronLeft className="w-3 h-3" />
                 </button>
                 <button onClick={() => handleScrollManual("right")}
-                  className="p-1 rounded hover:bg-[hsl(215,35%,15%)] text-[hsl(216,10%,55%)]">
+                  className="p-1 rounded hover:bg-accent text-muted-foreground">
                   <ChevronRight className="w-3 h-3" />
                 </button>
               </div>
@@ -363,7 +347,6 @@ export default function CommandCenter() {
                 animationRef.current = requestAnimationFrame(scroll);
               }}
             >
-              {/* Duplicate alerts for infinite scroll effect */}
               {[...alertHighlights, ...alertHighlights].map((alert, i) => (
                 <div
                   key={`${alert.id}-${i}`}
@@ -372,12 +355,12 @@ export default function CommandCenter() {
                     severityStyles[alert.severity]
                   )}
                 >
-                  <p className="text-[10px] font-semibold mb-0.5 truncate">{alert.title}</p>
-                  <p className="text-[9px] text-[hsl(210,80%,52%)] mb-1">{alert.vesselName}</p>
-                  <p className="text-[9px] text-[hsl(216,10%,55%)] leading-relaxed line-clamp-2">
+                  <p className="text-[10px] font-semibold mb-0.5 truncate text-foreground">{alert.title}</p>
+                  <p className="text-[9px] text-primary mb-1">{alert.vesselName}</p>
+                  <p className="text-[9px] text-muted-foreground leading-relaxed line-clamp-2">
                     {alert.description}
                   </p>
-                  <p className="text-[8px] text-[hsl(216,10%,45%)] mt-1">{alert.timestamp}</p>
+                  <p className="text-[8px] text-muted-foreground/70 mt-1">{alert.timestamp}</p>
                 </div>
               ))}
             </div>
@@ -386,7 +369,7 @@ export default function CommandCenter() {
           {/* Fleet Comparison */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-[10px] text-[hsl(216,10%,55%)] font-medium tracking-wider uppercase">
+              <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
                 Fleet Comparison
               </p>
               <div className="flex gap-1">
@@ -397,8 +380,8 @@ export default function CommandCenter() {
                     className={cn(
                       "text-[9px] px-2 py-1 rounded-md transition-colors",
                       activeMetric === m.key
-                        ? "bg-[hsl(215,35%,20%)] text-[hsl(216,15%,93%)]"
-                        : "text-[hsl(216,10%,55%)] hover:text-[hsl(216,15%,93%)]"
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
                     )}
                   >
                     {m.label}
@@ -410,25 +393,26 @@ export default function CommandCenter() {
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={currentMetricData} barSize={28}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(215, 30%, 15%)" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" vertical={false} />
                   <XAxis
                     dataKey="vessel"
-                    tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 10 }}
-                    axisLine={{ stroke: "hsl(215, 30%, 15%)" }}
+                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }}
+                    axisLine={{ stroke: "hsl(216, 15%, 89%)" }}
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fill: "hsl(216, 10%, 55%)", fontSize: 10 }}
+                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }}
                     axisLine={false}
                     tickLine={false}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "hsl(215, 50%, 10%)",
-                      border: "1px solid hsl(215, 30%, 20%)",
+                      backgroundColor: "hsl(0, 0%, 100%)",
+                      border: "1px solid hsl(216, 15%, 89%)",
                       borderRadius: "8px",
                       fontSize: "11px",
-                      color: "hsl(216, 15%, 93%)",
+                      color: "hsl(215, 50%, 15%)",
+                      boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
                     }}
                     formatter={(value: number) => [value, metricInfo.label]}
                     labelFormatter={(label: string) => {
@@ -440,7 +424,7 @@ export default function CommandCenter() {
                     {currentMetricData.map((entry, index) => (
                       <Cell
                         key={index}
-                        fill={entry.isSelected ? metricInfo.color : `${metricInfo.color}50`}
+                        fill={entry.isSelected ? metricInfo.color : `${metricInfo.color}40`}
                         stroke={entry.isSelected ? metricInfo.color : "none"}
                         strokeWidth={entry.isSelected ? 2 : 0}
                       />
@@ -464,14 +448,14 @@ export default function CommandCenter() {
                   <div
                     key={v.vessel}
                     className={cn(
-                      "flex-1 text-center rounded-md py-1 text-[9px]",
+                      "flex-1 text-center rounded-md py-1 text-[9px] border",
                       v.vessel === selectedVessel.name
-                        ? "bg-[hsl(215,35%,20%)] ring-1 ring-[hsl(210,80%,52%)]"
-                        : "bg-[hsl(215,45%,10%)]"
+                        ? "bg-primary/5 border-primary ring-1 ring-primary/20"
+                        : "bg-card border-border"
                     )}
                   >
-                    <span className="text-[hsl(216,10%,55%)]">#{i + 1}</span>
-                    <p className="font-medium truncate px-1">
+                    <span className="text-muted-foreground">#{i + 1}</span>
+                    <p className="font-medium truncate px-1 text-foreground">
                       {v.vessel.length > 10 ? v.vessel.slice(0, 10) + "…" : v.vessel}
                     </p>
                   </div>
@@ -484,7 +468,6 @@ export default function CommandCenter() {
   );
 }
 
-// Mini KPI component
 function KpiMini({
   icon: Icon,
   label,
@@ -503,20 +486,20 @@ function KpiMini({
   return (
     <div
       className={cn(
-        "rounded-lg bg-[hsl(215,50%,8%)] border border-[hsl(215,30%,15%)] p-2",
-        alert && "border-[hsl(357,96%,46%)]/30"
+        "rounded-lg bg-accent/50 border border-border p-2",
+        alert && "border-destructive/30 bg-destructive/5"
       )}
     >
       <div className="flex items-center justify-between mb-1">
-        <Icon className="w-3 h-3 text-[hsl(216,10%,55%)]" />
-        {trend === "up" && <TrendingUp className="w-3 h-3 text-[hsl(152,55%,42%)]" />}
-        {trend === "down" && <TrendingDown className="w-3 h-3 text-[hsl(357,96%,46%)]" />}
+        <Icon className="w-3 h-3 text-muted-foreground" />
+        {trend === "up" && <TrendingUp className="w-3 h-3 text-success" />}
+        {trend === "down" && <TrendingDown className="w-3 h-3 text-destructive" />}
       </div>
-      <p className={cn("text-sm font-bold font-mono", alert && "text-[hsl(357,96%,46%)]")}>
+      <p className={cn("text-sm font-bold font-mono text-foreground", alert && "text-destructive")}>
         {value}
       </p>
-      <p className="text-[9px] text-[hsl(216,10%,55%)]">{label}</p>
-      {subtitle && <p className="text-[8px] text-[hsl(357,96%,46%)]">{subtitle}</p>}
+      <p className="text-[9px] text-muted-foreground">{label}</p>
+      {subtitle && <p className="text-[8px] text-destructive">{subtitle}</p>}
     </div>
   );
 }
