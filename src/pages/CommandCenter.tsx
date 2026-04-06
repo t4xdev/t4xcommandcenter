@@ -87,7 +87,7 @@ import {
   Search,
   Globe,
 } from "lucide-react";
-import { vesselData, alertHighlights, type VesselData } from "@/data/commandCenterData";
+import { vesselData, alertHighlights, realVessels, type VesselData } from "@/data/commandCenterData";
 import { cn } from "@/lib/utils";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -474,7 +474,7 @@ export default function CommandCenter() {
           <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 border border-border shadow-sm">
             <p className="text-[10px] text-muted-foreground mb-2 font-medium">STATUS</p>
             {(["normal", "warning", "critical"] as const).map((status) => {
-              const count = filteredVessels.filter((v) => v.status === status).length;
+              const count = realVessels.filter((v) => v.status === status).length;
               return (
                 <div key={status} className="flex items-center gap-2 mb-1 px-1 py-0.5">
                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: statusColors[status] }} />
@@ -486,8 +486,7 @@ export default function CommandCenter() {
             <div className="border-t border-border mt-2 pt-2">
               <p className="text-[10px] text-muted-foreground mb-1 font-medium">COMPANIES</p>
               {companyNames.map((name) => {
-                const realCounts: Record<string, number> = { "SSIDL": 14, "Ocean Sparkle": 5, "Adani Ports": 9 };
-                const count = realCounts[name] || 0;
+                const count = realVessels.filter((v) => v.company === name).length;
                 return (
                   <button
                     key={name}
