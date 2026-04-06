@@ -22,6 +22,7 @@ import {
   ResponsiveContainer,
   ZAxis,
   ReferenceDot,
+  ReferenceLine,
   Label,
 } from "recharts";
 import {
@@ -59,10 +60,10 @@ const statusColors: Record<string, string> = {
 };
 
 const companyColors: Record<string, string> = {
-  "Adani Ports": "hsl(215, 50%, 23%)",
-  "Ocean Sparkle": "hsl(357, 96%, 46%)",
-  "Global Maritime": "hsl(152, 55%, 32%)",
-  "Pacific Shipping": "hsl(38, 92%, 45%)",
+  "Adani Ports": "hsl(215, 60%, 45%)",
+  "Ocean Sparkle": "hsl(280, 45%, 45%)",
+  "Global Maritime": "hsl(25, 65%, 45%)",
+  "Pacific Shipping": "hsl(185, 55%, 38%)",
 };
 
 const severityStyles: Record<string, string> = {
@@ -280,7 +281,7 @@ export default function CommandCenter() {
                 >
                   {vessel.id === selectedVessel?.id && (
                     <circle
-                      r={10}
+                      r={12}
                       fill="none"
                       stroke={statusColors[vessel.status]}
                       strokeWidth={1.5}
@@ -289,25 +290,55 @@ export default function CommandCenter() {
                       style={{ animationDuration: "2s" }}
                     />
                   )}
-                  <circle
-                    r={vessel.id === selectedVessel?.id ? 5 : 3}
-                    fill={statusColors[vessel.status]}
-                    stroke={vessel.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "none"}
-                    strokeWidth={vessel.id === selectedVessel?.id ? 2 : 0}
+                  {/* Arrow marker rotated by vessel course */}
+                  <g
+                    transform={`rotate(${vessel.course}, 0, 0) scale(${vessel.id === selectedVessel?.id ? 1.4 : 0.9})`}
                     className="cursor-pointer transition-all duration-300"
-                    opacity={vessel.id === selectedVessel?.id ? 1 : 0.7}
-                  />
+                    style={{ transformOrigin: "center" }}
+                  >
+                    <polygon
+                      points="0,-7 4,5 0,2 -4,5"
+                      fill={statusColors[vessel.status]}
+                      stroke={vessel.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 30%)"}
+                      strokeWidth={vessel.id === selectedVessel?.id ? 1.5 : 0.5}
+                      opacity={vessel.id === selectedVessel?.id ? 1 : 0.8}
+                    />
+                  </g>
+                  {/* Info popup for selected vessel */}
                   {vessel.id === selectedVessel?.id && (
-                    <text
-                      textAnchor="middle"
-                      y={-12}
-                      fill="hsl(215, 50%, 15%)"
-                      fontSize={8}
-                      fontWeight={700}
-                      fontFamily="Inter, sans-serif"
-                    >
-                      {vessel.name}
-                    </text>
+                    <g>
+                      <rect
+                        x={10}
+                        y={-38}
+                        width={140}
+                        height={42}
+                        rx={4}
+                        fill="hsl(0, 0%, 100%)"
+                        stroke="hsl(216, 15%, 82%)"
+                        strokeWidth={1}
+                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.12))"
+                      />
+                      <polygon
+                        points="8,-18 14,-22 14,-14"
+                        fill="hsl(0, 0%, 100%)"
+                        stroke="hsl(216, 15%, 82%)"
+                        strokeWidth={1}
+                      />
+                      {/* White cover for arrow connection */}
+                      <rect x={13} y={-23} width={3} height={10} fill="hsl(0, 0%, 100%)" />
+                      <text x={16} y={-24} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
+                        {vessel.name} [{vessel.fleet}]
+                      </text>
+                      <text x={16} y={-14} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                        {vessel.speed} kn / {vessel.course}°
+                      </text>
+                      <text x={16} y={-5} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                        Destination: <tspan fontWeight={700}>{vessel.client !== "-" ? vessel.client : "N/A"}</tspan>
+                      </text>
+                      <text x={16} y={4} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
+                        Status: <tspan fontWeight={600} fill={statusColors[vessel.status]}>{vessel.status.toUpperCase()}</tspan>
+                      </text>
+                    </g>
                   )}
                 </Marker>
               ))}
@@ -615,9 +646,13 @@ export default function CommandCenter() {
           {/* Fleet Comparison - Scatter Plot */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
-              Fleet Performance Scatter — Efficiency vs Fuel Usage
+              Vessel Performance Scatter — Efficiency vs Fuel Usage
             </p>
 
+            {(() => {
+              const avgEfficiency = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.efficiency, 0) / scatterData.length) : 0;
+              const avgFuel = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.fuelUsed, 0) / scatterData.length) : 0;
+              return (
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
@@ -666,6 +701,21 @@ export default function CommandCenter() {
                         </div>
                       );
                     }}
+                   />
+                  {/* Average lines */}
+                  <ReferenceLine
+                    x={avgEfficiency}
+                    stroke="hsl(215, 40%, 55%)"
+                    strokeDasharray="5 3"
+                    strokeWidth={1.5}
+                    label={{ value: `Avg Eff: ${avgEfficiency}%`, position: "top", fontSize: 8, fill: "hsl(215, 40%, 55%)" }}
+                  />
+                  <ReferenceLine
+                    y={avgFuel}
+                    stroke="hsl(25, 50%, 55%)"
+                    strokeDasharray="5 3"
+                    strokeWidth={1.5}
+                    label={{ value: `Avg Fuel: ${avgFuel} MT`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }}
                   />
                   {/* Background vessels */}
                   <Scatter data={scatterData.filter(e => e.id !== selectedVessel?.id)} name="Fleet">
@@ -718,6 +768,8 @@ export default function CommandCenter() {
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
+              );
+            })()}
 
             {/* Company legend + selected vessel indicator */}
             <div className="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-border">
