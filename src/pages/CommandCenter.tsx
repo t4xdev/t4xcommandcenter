@@ -50,15 +50,17 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import {
-  BarChart,
-  Bar,
+  ScatterChart,
+  Scatter,
   XAxis,
   YAxis,
   CartesianGrid,
   Cell,
   Tooltip,
   ResponsiveContainer,
+  ZAxis,
   ReferenceLine,
+  ReferenceDot,
   Label,
 } from "recharts";
 import {
@@ -167,19 +169,40 @@ export default function CommandCenter() {
     [filteredVessels, selectedIndex, selectedVesselId]
   );
 
-  // Compliance score data from fleet analytics
+  // Compliance score data for all real vessels
   const complianceData = useMemo(() => {
-    const scores: Record<string, { vdr: number; pms: number; utilization: number; fuel: number; score: number }> = {
-      "Tahid Sabarmati": { vdr: 100, pms: 99, utilization: 100, fuel: 70, score: 92 },
-      "Tahid Verde Island": { vdr: 100, pms: 96, utilization: 100, fuel: 50, score: 87 },
-      "Tahid Narmada": { vdr: 100, pms: 87, utilization: 0, fuel: 100, score: 72 },
-      "Tahid Dela Paz": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71 },
-      "Tahid Ilijan": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71 },
-      "Tahid Mahaweli": { vdr: 100, pms: 97, utilization: 0, fuel: 85, score: 71 },
-      "Zaharat Al Behar": { vdr: 100, pms: 88, utilization: 0, fuel: 85, score: 68 },
-      "Dorat Al Behar": { vdr: 0, pms: 100, utilization: 0, fuel: 50, score: 38 },
-      "Ameerat Al Behar": { vdr: 0, pms: 98, utilization: 0, fuel: 50, score: 37 },
-      "Dolphin-30": { vdr: 0, pms: 58, utilization: 0, fuel: 50, score: 27 },
+    const scores: Record<string, { vdr: number; pms: number; utilization: number; fuel: number; score: number; company: string }> = {
+      // Adani Ports / TAHID
+      "Tahid Sabarmati": { vdr: 100, pms: 99, utilization: 100, fuel: 70, score: 92, company: "Adani Ports" },
+      "Tahid Verde Island": { vdr: 100, pms: 96, utilization: 100, fuel: 50, score: 87, company: "Adani Ports" },
+      "Tahid Narmada": { vdr: 100, pms: 87, utilization: 0, fuel: 100, score: 72, company: "Adani Ports" },
+      "Tahid Dela Paz": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71, company: "Adani Ports" },
+      "Tahid Ilijan": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71, company: "Adani Ports" },
+      "Tahid Mahaweli": { vdr: 100, pms: 97, utilization: 0, fuel: 85, score: 71, company: "Adani Ports" },
+      "Zaharat Al Behar": { vdr: 100, pms: 88, utilization: 0, fuel: 85, score: 68, company: "Adani Ports" },
+      "Dorat Al Behar": { vdr: 0, pms: 100, utilization: 0, fuel: 50, score: 38, company: "Adani Ports" },
+      "Ameerat Al Behar": { vdr: 0, pms: 98, utilization: 0, fuel: 50, score: 37, company: "Adani Ports" },
+      // SSIDL
+      "Dolphin-04": { vdr: 100, pms: 95, utilization: 89, fuel: 75, score: 90, company: "SSIDL" },
+      "Dolphin-07": { vdr: 100, pms: 92, utilization: 81, fuel: 80, score: 88, company: "SSIDL" },
+      "Dolphin-10": { vdr: 100, pms: 90, utilization: 24, fuel: 85, score: 75, company: "SSIDL" },
+      "Dolphin-11": { vdr: 100, pms: 88, utilization: 0, fuel: 70, score: 65, company: "SSIDL" },
+      "Dolphin-15": { vdr: 100, pms: 94, utilization: 23, fuel: 82, score: 75, company: "SSIDL" },
+      "Dolphin-16": { vdr: 100, pms: 91, utilization: 68, fuel: 78, score: 84, company: "SSIDL" },
+      "Dolphin-17": { vdr: 100, pms: 93, utilization: 53, fuel: 90, score: 84, company: "SSIDL" },
+      "Dolphin-18": { vdr: 100, pms: 89, utilization: 63, fuel: 60, score: 78, company: "SSIDL" },
+      "Dolphin-23": { vdr: 100, pms: 96, utilization: 8, fuel: 88, score: 73, company: "SSIDL" },
+      "Dolphin-30": { vdr: 100, pms: 85, utilization: 47, fuel: 65, score: 74, company: "SSIDL" },
+      "Dolphin-37": { vdr: 100, pms: 90, utilization: 68, fuel: 72, score: 83, company: "SSIDL" },
+      "Dolphin-42": { vdr: 100, pms: 93, utilization: 71, fuel: 70, score: 84, company: "SSIDL" },
+      "B1-Brahmani": { vdr: 100, pms: 87, utilization: 20, fuel: 90, score: 74, company: "SSIDL" },
+      "B3-Baitarani": { vdr: 100, pms: 84, utilization: 4, fuel: 88, score: 69, company: "SSIDL" },
+      // Ocean Sparkle
+      "Ocean Lancer": { vdr: 100, pms: 94, utilization: 23, fuel: 78, score: 74, company: "Ocean Sparkle" },
+      "Ocean Progress": { vdr: 100, pms: 80, utilization: 0, fuel: 45, score: 56, company: "Ocean Sparkle" },
+      "Ocean Challenger": { vdr: 100, pms: 92, utilization: 24, fuel: 76, score: 73, company: "Ocean Sparkle" },
+      "Ocean Promise": { vdr: 100, pms: 88, utilization: 0, fuel: 60, score: 62, company: "Ocean Sparkle" },
+      "Ocean Quest": { vdr: 80, pms: 82, utilization: 0, fuel: 55, score: 54, company: "Ocean Sparkle" },
     };
     return Object.entries(scores)
       .map(([name, s]) => ({ name, ...s }))
@@ -781,21 +804,23 @@ export default function CommandCenter() {
 
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={complianceData} margin={{ top: 10, right: 10, bottom: 40, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" vertical={false} />
+                <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
                   <XAxis
-                    dataKey="name"
-                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 8 }}
-                    angle={-35}
-                    textAnchor="end"
-                    interval={0}
-                    height={60}
+                    type="number"
+                    dataKey="pms"
+                    domain={[50, 105]}
+                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
+                    label={{ value: "PMS Score %", position: "bottom", fontSize: 9, fill: "hsl(216, 10%, 46%)", offset: 2 }}
                   />
                   <YAxis
-                    domain={[0, 100]}
+                    type="number"
+                    dataKey="score"
+                    domain={[20, 100]}
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Score", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                    label={{ value: "Overall Compliance Score", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
                   />
+                  <ZAxis type="number" dataKey="utilization" range={[30, 200]} name="Utilization" />
                   <Tooltip
                     content={({ payload }) => {
                       if (!payload || payload.length === 0) return null;
@@ -803,6 +828,7 @@ export default function CommandCenter() {
                       return (
                         <div className="bg-card border border-border rounded-lg p-2 shadow-md text-[10px]">
                           <p className="font-semibold text-foreground">{d?.name}</p>
+                          <p className="text-muted-foreground text-[9px]">{d?.company}</p>
                           <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 mt-1">
                             <span className="text-muted-foreground">VDR:</span><span className="font-mono font-bold">{d?.vdr}%</span>
                             <span className="text-muted-foreground">PMS:</span><span className="font-mono font-bold">{d?.pms}%</span>
@@ -810,40 +836,55 @@ export default function CommandCenter() {
                             <span className="text-muted-foreground">Fuel:</span><span className="font-mono font-bold">{d?.fuel}%</span>
                           </div>
                           <div className="border-t border-border mt-1 pt-1">
-                            <span className="text-muted-foreground">Overall Score: </span>
+                            <span className="text-muted-foreground">Overall: </span>
                             <span className="font-mono font-bold text-foreground">{d?.score}</span>
                           </div>
                         </div>
                       );
                     }}
                   />
-                  <ReferenceLine
-                    y={Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length)}
-                    stroke="hsl(25, 70%, 55%)"
-                    strokeDasharray="5 3"
-                    strokeWidth={1.5}
-                    label={{ value: `Fleet Avg: ${Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length)}`, position: "right", fontSize: 8, fill: "hsl(25, 70%, 55%)" }}
-                  />
-                  <Bar dataKey="score" radius={[3, 3, 0, 0]}>
-                    {complianceData.map((entry, idx) => {
-                      const isSelected = selectedVessel?.name === entry.name;
-                      const color = entry.score >= 80
-                        ? "hsl(152, 60%, 42%)"
-                        : entry.score >= 60
-                        ? "hsl(40, 80%, 50%)"
-                        : "hsl(0, 70%, 55%)";
-                      return (
-                        <Cell
-                          key={idx}
-                          fill={color}
-                          opacity={isSelected ? 1 : 0.6}
-                          stroke={isSelected ? "hsl(210, 80%, 52%)" : "none"}
-                          strokeWidth={isSelected ? 2 : 0}
-                        />
-                      );
-                    })}
-                  </Bar>
-                </BarChart>
+                  {/* Fleet average lines */}
+                  {(() => {
+                    const avgPms = Math.round(complianceData.reduce((s, d) => s + d.pms, 0) / complianceData.length);
+                    const avgScore = Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length);
+                    return (
+                      <>
+                        <ReferenceLine x={avgPms} stroke="hsl(215, 40%, 55%)" strokeDasharray="5 3" strokeWidth={1.5}
+                          label={{ value: `Avg PMS: ${avgPms}%`, position: "top", fontSize: 8, fill: "hsl(215, 40%, 55%)" }} />
+                        <ReferenceLine y={avgScore} stroke="hsl(25, 50%, 55%)" strokeDasharray="5 3" strokeWidth={1.5}
+                          label={{ value: `Avg Score: ${avgScore}`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }} />
+                      </>
+                    );
+                  })()}
+                  {/* Background vessels */}
+                  <Scatter data={complianceData.filter(e => e.name !== selectedVessel?.name)} name="Fleet">
+                    {complianceData.filter(e => e.name !== selectedVessel?.name).map((entry, idx) => (
+                      <Cell
+                        key={idx}
+                        fill={companyColors[entry.company] || "hsl(216, 10%, 60%)"}
+                        opacity={0.5}
+                        r={5}
+                      />
+                    ))}
+                  </Scatter>
+                  {/* Selected vessel */}
+                  {selectedVessel && (() => {
+                    const sel = complianceData.find(e => e.name === selectedVessel.name);
+                    if (!sel) return null;
+                    return (
+                      <>
+                        <ReferenceDot x={sel.pms} y={sel.score} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
+                        <Scatter data={[sel]} name="Selected">
+                          <Cell fill="hsl(210, 80%, 52%)" opacity={1} stroke="hsl(0, 0%, 100%)" strokeWidth={3} r={10} />
+                        </Scatter>
+                        <ReferenceDot x={sel.pms} y={sel.score} r={0} fill="none" stroke="none">
+                          <Label value={`▶ ${sel.name} (${sel.score})`} position="right" offset={14}
+                            style={{ fontSize: 9, fontWeight: 700, fill: "hsl(215, 50%, 15%)" }} />
+                        </ReferenceDot>
+                      </>
+                    );
+                  })()}
+                </ScatterChart>
               </ResponsiveContainer>
             </div>
 
