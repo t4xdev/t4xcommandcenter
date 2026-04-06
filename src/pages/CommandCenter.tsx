@@ -368,7 +368,7 @@ export default function CommandCenter() {
                        <foreignObject x={-90} y={-70} width={180} height={60} style={{ overflow: "visible", pointerEvents: "all" }}>
                          <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 4, padding: "2px 4px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)", fontSize: 5, lineHeight: 1.3, position: "relative" }}>
                           <button
-                            onClick={(e) => { e.stopPropagation(); setSelectedVessel(null); setShowInfoPopup(false); }}
+                            onClick={(e) => { e.stopPropagation(); setSelectedVesselId(null); setShowInfoPopup(false); }}
                             style={{ position: "absolute", top: 1, right: 2, background: "none", border: "none", cursor: "pointer", fontSize: 7, lineHeight: 1, color: "hsl(215, 15%, 55%)", padding: 0 }}
                           >×</button>
                           <div style={{ fontWeight: 700, fontSize: 6, marginBottom: 1, paddingRight: 8 }}>{vessel.name}</div>
