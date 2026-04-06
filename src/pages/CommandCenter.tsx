@@ -72,7 +72,7 @@ const comparisonMetrics = [
   { key: "compliance", label: "Compliance %", color: "hsl(210, 80%, 52%)" },
 ];
 
-const ROTATION_INTERVAL = 5000;
+const ROTATION_INTERVAL = 10000;
 const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
 const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
 
