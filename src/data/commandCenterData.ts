@@ -55,31 +55,42 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations across major ocean regions (safely away from coastlines) ---
+// --- Seed locations along realistic shipping lanes & port approaches ---
 const locationPools = [
-  // Arabian Sea (55-75°E, 10-25°N) — points with 3°+ margin from coasts
-  { name: "Arabian Sea West", lon: 60.0, lat: 18.0, region: "Arabian Sea" },
-  { name: "Arabian Sea Central", lon: 64.0, lat: 16.0, region: "Arabian Sea" },
-  { name: "Arabian Sea East", lon: 68.0, lat: 14.0, region: "Arabian Sea" },
-  { name: "Arabian Sea South", lon: 62.0, lat: 12.0, region: "Arabian Sea" },
-  // Bay of Bengal (80-100°E, 5-22°N)
-  { name: "Bay of Bengal North", lon: 87.0, lat: 18.0, region: "Bay of Bengal" },
-  { name: "Bay of Bengal Central", lon: 86.0, lat: 14.0, region: "Bay of Bengal" },
-  { name: "Bay of Bengal South", lon: 85.0, lat: 10.0, region: "Bay of Bengal" },
-  { name: "Bay of Bengal East", lon: 90.0, lat: 12.0, region: "Bay of Bengal" },
-  // Southern Indian Ocean (20-120°E, 0 to -60°S)
-  { name: "S Indian Ocean NW", lon: 55.0, lat: -15.0, region: "Southern Indian Ocean" },
-  { name: "S Indian Ocean Central", lon: 70.0, lat: -20.0, region: "Southern Indian Ocean" },
-  { name: "S Indian Ocean East", lon: 85.0, lat: -18.0, region: "Southern Indian Ocean" },
-  { name: "S Indian Ocean Deep", lon: 75.0, lat: -30.0, region: "Southern Indian Ocean" },
-  // Mozambique Channel (35-50°E, -10 to -25°S)
-  { name: "Mozambique Channel North", lon: 42.0, lat: -13.0, region: "Mozambique Channel" },
-  { name: "Mozambique Channel Central", lon: 43.0, lat: -18.0, region: "Mozambique Channel" },
-  { name: "Mozambique Channel South", lon: 42.0, lat: -22.0, region: "Mozambique Channel" },
-  // Andaman Sea (92-100°E, 5-20°N)
-  { name: "Andaman Sea North", lon: 95.0, lat: 14.0, region: "Andaman Sea" },
-  { name: "Andaman Sea Central", lon: 96.0, lat: 10.0, region: "Andaman Sea" },
-  { name: "Andaman Sea South", lon: 95.0, lat: 7.0, region: "Andaman Sea" },
+  // West coast India — Mumbai / Gujarat approaches
+  { name: "Off Mumbai", lon: 71.5, lat: 19.0, region: "Arabian Sea" },
+  { name: "Off Kandla", lon: 69.0, lat: 22.5, region: "Arabian Sea" },
+  { name: "Gujarat Offshore", lon: 70.0, lat: 20.5, region: "Arabian Sea" },
+  { name: "Off Goa", lon: 72.5, lat: 15.5, region: "Arabian Sea" },
+  // West coast India — Kerala / Karnataka
+  { name: "Off Mangalore", lon: 73.5, lat: 13.0, region: "Arabian Sea" },
+  { name: "Off Kochi", lon: 75.0, lat: 10.0, region: "Arabian Sea" },
+  { name: "Lakshadweep Sea", lon: 72.0, lat: 11.0, region: "Arabian Sea" },
+  // Arabian Sea shipping lane (Middle East corridor)
+  { name: "Arabian Sea West", lon: 62.0, lat: 16.0, region: "Arabian Sea" },
+  { name: "Arabian Sea Central", lon: 64.0, lat: 14.0, region: "Arabian Sea" },
+  { name: "Off Oman", lon: 59.0, lat: 20.0, region: "Arabian Sea" },
+  // South India / Sri Lanka corridor
+  { name: "Off Tuticorin", lon: 78.0, lat: 8.5, region: "Coastal" },
+  { name: "Palk Strait", lon: 79.5, lat: 9.5, region: "Coastal" },
+  { name: "South of Sri Lanka", lon: 80.5, lat: 5.5, region: "Coastal" },
+  { name: "Off Kanyakumari", lon: 77.0, lat: 7.5, region: "Coastal" },
+  // Bay of Bengal — East coast India
+  { name: "Off Chennai", lon: 80.5, lat: 13.5, region: "Bay of Bengal" },
+  { name: "Off Vizag", lon: 84.0, lat: 17.5, region: "Bay of Bengal" },
+  { name: "Off Paradip", lon: 87.0, lat: 20.0, region: "Bay of Bengal" },
+  { name: "Off Kolkata", lon: 88.5, lat: 21.0, region: "Bay of Bengal" },
+  { name: "Bay of Bengal Central", lon: 85.0, lat: 14.0, region: "Bay of Bengal" },
+  { name: "Bay of Bengal South", lon: 83.0, lat: 10.0, region: "Bay of Bengal" },
+  // Andaman Sea / Strait of Malacca approach
+  { name: "Andaman Sea", lon: 94.0, lat: 11.0, region: "Andaman Sea" },
+  { name: "Off Port Blair", lon: 92.5, lat: 12.0, region: "Andaman Sea" },
+  // Shipping lane — Maldives / Sri Lanka to Middle East
+  { name: "Off Maldives", lon: 73.0, lat: 4.0, region: "Transit" },
+  { name: "Equatorial Lane", lon: 68.0, lat: 2.0, region: "Transit" },
+  // Southern shipping lane
+  { name: "South Indian Ocean Lane", lon: 65.0, lat: -5.0, region: "Transit" },
+  { name: "SE Trade Route", lon: 78.0, lat: -3.0, region: "Transit" },
 ];
 
 const vesselPrefixes = [
@@ -262,9 +273,9 @@ function generateVessels(): VesselData[] {
     const locIdx = Math.floor(rand() * locationPools.length);
     const loc = locationPools[locIdx];
 
-    // Wider jitter (±3°) spreads markers across the ocean region
-    const lonOffset = (rand() - 0.5) * 6;
-    const latOffset = (rand() - 0.5) * 6;
+    // Jitter ±1.5° to spread along lanes without landing on coast
+    const lonOffset = (rand() - 0.5) * 3;
+    const latOffset = (rand() - 0.5) * 3;
 
     const statusRoll = rand();
     const status: VesselData["status"] = statusRoll < 0.7 ? "normal" : statusRoll < 0.9 ? "warning" : "critical";
