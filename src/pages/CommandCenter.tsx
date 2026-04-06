@@ -162,8 +162,8 @@ export default function CommandCenter() {
     [companyFilter]
   );
 
-  // Offset overlapping markers in a spiral pattern
-  const vesselOffsets = useMemo(() => {
+  // Offset overlapping markers in a spiral pattern + cluster info
+  const { vesselOffsets, clusterBadges } = useMemo(() => {
     const offsets: Record<string, [number, number]> = {};
     const gridSize = 0.08;
     const groups: Record<string, string[]> = {};
@@ -172,8 +172,14 @@ export default function CommandCenter() {
       if (!groups[key]) groups[key] = [];
       groups[key].push(v.id);
     });
+    const badges: { lon: number; lat: number; count: number }[] = [];
     Object.values(groups).forEach(ids => {
       if (ids.length <= 1) { ids.forEach(id => { offsets[id] = [0, 0]; }); return; }
+      // Compute cluster center
+      const clusterVessels = ids.map(id => filteredVessels.find(v => v.id === id)!);
+      const avgLon = clusterVessels.reduce((s, v) => s + v.longitude, 0) / clusterVessels.length;
+      const avgLat = clusterVessels.reduce((s, v) => s + v.latitude, 0) / clusterVessels.length;
+      badges.push({ lon: avgLon, lat: avgLat, count: ids.length });
       const spread = 0.6 / mapZoom;
       ids.forEach((id, i) => {
         if (i === 0) { offsets[id] = [0, 0]; return; }
@@ -182,7 +188,7 @@ export default function CommandCenter() {
         offsets[id] = [Math.cos(angle) * r, Math.sin(angle) * r];
       });
     });
-    return offsets;
+    return { vesselOffsets: offsets, clusterBadges: badges };
   }, [filteredVessels, mapZoom]);
 
   const selectedVessel = useMemo(
@@ -499,6 +505,15 @@ export default function CommandCenter() {
                 );
               })}
 
+              {/* Cluster count badges */}
+              {clusterBadges.map((cluster, i) => (
+                <Marker key={`cluster-${i}`} coordinates={[cluster.lon, cluster.lat]}>
+                  <g transform="translate(0, -10)">
+                    <circle r={5} fill="hsl(215, 80%, 55%)" stroke="hsl(0, 0%, 100%)" strokeWidth={1} />
+                    <text textAnchor="middle" y={2} style={{ fontSize: 5, fill: "#fff", fontWeight: 700 }}>{cluster.count}</text>
+                  </g>
+                </Marker>
+              ))}
 
             </ZoomableGroup>
           </ComposableMap>
