@@ -26,19 +26,21 @@ const App = () => {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <FleetProvider>
-          <Toaster />
-          <Sonner />
-          {authenticated ? (
-            <CommandCenter onLogout={handleLogout} />
-          ) : (
-            <Login onLogin={handleLogin} />
-          )}
-        </FleetProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <FleetProvider>
+            <Toaster />
+            <Sonner />
+            {authenticated ? (
+              <CommandCenter onLogout={handleLogout} />
+            ) : (
+              <Login onLogin={handleLogin} />
+            )}
+          </FleetProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 };
 
