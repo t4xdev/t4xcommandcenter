@@ -91,6 +91,8 @@ export default function CommandCenter() {
   const searchRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
+  const [mapCenter, setMapCenter] = useState<[number, number]>([72, 15]);
+  const [mapZoom, setMapZoom] = useState(2.5);
 
   const filteredVessels = useMemo(() =>
     companyFilter ? vesselData.filter((v) => v.company === companyFilter) : vesselData,
@@ -137,10 +139,14 @@ export default function CommandCenter() {
     return () => clearInterval(interval);
   }, []);
 
-  // Reset image on vessel change
+  // Reset image on vessel change + zoom map to vessel
   useEffect(() => {
     setImageIndex(0);
-  }, [selectedIndex]);
+    if (selectedVessel) {
+      setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
+      setMapZoom(3.5);
+    }
+  }, [selectedIndex, selectedVessel]);
 
   // Auto-scroll highlights
   useEffect(() => {
@@ -253,7 +259,7 @@ export default function CommandCenter() {
             className="w-full h-full"
             style={{ width: "100%", height: "100%" }}
           >
-            <ZoomableGroup zoom={1} minZoom={0.5} maxZoom={8} translateExtent={[[-500, -300], [1500, 900]]}>
+            <ZoomableGroup center={mapCenter} zoom={mapZoom} minZoom={0.5} maxZoom={8} onMoveEnd={({ coordinates, zoom }) => { setMapCenter(coordinates as [number, number]); setMapZoom(zoom); }}>
               <Geographies geography={GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => (
@@ -732,15 +738,19 @@ export default function CommandCenter() {
                     const sel = scatterData.find(e => e.id === selectedVessel.id);
                     if (!sel) return null;
                     return (
-                      <Scatter data={[sel]} name="Selected">
-                        <Cell
-                          fill={companyColors[sel.company] || "hsl(210, 80%, 52%)"}
-                          opacity={1}
-                          stroke="hsl(0, 0%, 100%)"
-                          strokeWidth={3}
-                          r={10}
-                        />
-                      </Scatter>
+                      <>
+                        {/* Outer glow ring */}
+                        <ReferenceDot x={sel.efficiency} y={sel.fuelUsed} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
+                        <Scatter data={[sel]} name="Selected">
+                          <Cell
+                            fill="hsl(210, 80%, 52%)"
+                            opacity={1}
+                            stroke="hsl(0, 0%, 100%)"
+                            strokeWidth={3}
+                            r={12}
+                          />
+                        </Scatter>
+                      </>
                     );
                   })()}
                   {/* Label for selected vessel */}

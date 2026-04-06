@@ -55,38 +55,39 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations around major maritime hubs ---
+// --- Seed locations in water near India & nearby seas ---
 const locationPools = [
-  { name: "Mundra Port", lon: 69.72, lat: 22.74, region: "India" },
-  { name: "Kandla Port", lon: 70.22, lat: 23.01, region: "India" },
-  { name: "JNPT Mumbai", lon: 72.95, lat: 18.95, region: "India" },
-  { name: "Vizag Port", lon: 83.30, lat: 17.69, region: "India" },
-  { name: "Chennai Port", lon: 80.30, lat: 13.10, region: "India" },
-  { name: "Cochin Port", lon: 76.27, lat: 9.97, region: "India" },
-  { name: "Paradip Port", lon: 86.67, lat: 20.27, region: "India" },
-  { name: "Haldia Port", lon: 88.06, lat: 22.03, region: "India" },
-  { name: "Duqm, Oman", lon: 57.72, lat: 19.66, region: "Middle East" },
-  { name: "Jebel Ali, UAE", lon: 55.03, lat: 25.01, region: "Middle East" },
-  { name: "Fujairah, UAE", lon: 56.36, lat: 25.12, region: "Middle East" },
-  { name: "Ras Tanura, KSA", lon: 50.17, lat: 26.64, region: "Middle East" },
-  { name: "Kharg Island, Iran", lon: 50.33, lat: 29.23, region: "Middle East" },
-  { name: "Singapore Strait", lon: 103.85, lat: 1.26, region: "SE Asia" },
-  { name: "Port Klang, MY", lon: 101.39, lat: 3.00, region: "SE Asia" },
-  { name: "Tanjung Priok, ID", lon: 106.88, lat: -6.10, region: "SE Asia" },
-  { name: "Laem Chabang, TH", lon: 100.88, lat: 13.08, region: "SE Asia" },
-  { name: "Capetown, SA", lon: 18.42, lat: -33.92, region: "Africa" },
-  { name: "Durban, SA", lon: 31.03, lat: -29.87, region: "Africa" },
-  { name: "Mombasa, KE", lon: 39.67, lat: -4.04, region: "Africa" },
-  { name: "Suez Canal", lon: 32.55, lat: 30.00, region: "Middle East" },
-  { name: "Arabian Sea", lon: 65.00, lat: 18.00, region: "Transit" },
-  { name: "Bay of Bengal", lon: 87.00, lat: 14.00, region: "Transit" },
-  { name: "Indian Ocean", lon: 75.00, lat: -5.00, region: "Transit" },
-  { name: "South China Sea", lon: 112.00, lat: 10.00, region: "Transit" },
-  { name: "Red Sea", lon: 38.00, lat: 20.00, region: "Transit" },
-  { name: "Malacca Strait", lon: 100.50, lat: 2.50, region: "Transit" },
-  { name: "Persian Gulf", lon: 52.00, lat: 26.50, region: "Middle East" },
-  { name: "Gulf of Aden", lon: 47.00, lat: 12.50, region: "Transit" },
-  { name: "Mozambique Channel", lon: 42.00, lat: -18.00, region: "Transit" },
+  // West coast of India (Arabian Sea)
+  { name: "Off Mundra", lon: 68.8, lat: 22.5, region: "India" },
+  { name: "Off Kandla", lon: 69.5, lat: 22.8, region: "India" },
+  { name: "Off Mumbai", lon: 71.5, lat: 18.8, region: "India" },
+  { name: "Off Goa", lon: 72.5, lat: 15.2, region: "India" },
+  { name: "Off Cochin", lon: 75.0, lat: 9.5, region: "India" },
+  { name: "Off Mangalore", lon: 73.5, lat: 12.5, region: "India" },
+  // East coast of India (Bay of Bengal)
+  { name: "Off Vizag", lon: 84.0, lat: 17.2, region: "India" },
+  { name: "Off Chennai", lon: 81.0, lat: 12.8, region: "India" },
+  { name: "Off Paradip", lon: 87.5, lat: 19.8, region: "India" },
+  { name: "Off Haldia", lon: 88.5, lat: 21.0, region: "India" },
+  { name: "Off Tuticorin", lon: 78.5, lat: 8.2, region: "India" },
+  // Arabian Sea transit
+  { name: "Arabian Sea West", lon: 63.0, lat: 18.0, region: "Transit" },
+  { name: "Arabian Sea Central", lon: 66.0, lat: 15.0, region: "Transit" },
+  { name: "Arabian Sea South", lon: 68.0, lat: 12.0, region: "Transit" },
+  { name: "Lakshadweep Sea", lon: 72.0, lat: 11.0, region: "Transit" },
+  // Bay of Bengal transit
+  { name: "Bay of Bengal North", lon: 86.0, lat: 16.0, region: "Transit" },
+  { name: "Bay of Bengal Central", lon: 84.0, lat: 12.0, region: "Transit" },
+  { name: "Bay of Bengal South", lon: 82.0, lat: 8.0, region: "Transit" },
+  // Gulf & Middle East (water)
+  { name: "Persian Gulf", lon: 52.0, lat: 26.0, region: "Middle East" },
+  { name: "Gulf of Oman", lon: 58.0, lat: 24.0, region: "Middle East" },
+  { name: "Off Fujairah", lon: 56.8, lat: 25.0, region: "Middle East" },
+  { name: "Off Duqm", lon: 57.5, lat: 19.2, region: "Middle East" },
+  // Indian Ocean
+  { name: "Indian Ocean NW", lon: 60.0, lat: 10.0, region: "Transit" },
+  { name: "Indian Ocean Central", lon: 72.0, lat: 5.0, region: "Transit" },
+  { name: "Maldives Waters", lon: 73.5, lat: 3.0, region: "Transit" },
 ];
 
 const vesselPrefixes = [
@@ -177,7 +178,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v1", name: "Dolphin-04", imo: "9328364", master: "Santosh K. Pandey",
       company: "Adani Ports", fleet: "Adani Fleet", location: "B-12 INBUNT VESSEL",
-      longitude: 69.71, latitude: 22.71, status: "normal", hiringStatus: "ON-Hire",
+      longitude: 68.8, latitude: 22.5, status: "normal", hiringStatus: "ON-Hire",
       client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "07:07",
       speed: 0, course: 0, fuelBalance: 27922, fuelUsed: 2963, fuelStart: 30885,
       waterBalance: 22000, dpOpsHrs: "21:24", transitHrs: "00:00", portHrs: "02:36",
@@ -191,7 +192,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v2", name: "Ocean Lancer", imo: "9719604", master: "Mostafijur R. Sapui",
       company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "KANDLA PORT",
-      longitude: 70.22, latitude: 23.01, status: "normal", hiringStatus: "ON-Hire",
+      longitude: 69.5, latitude: 22.8, status: "normal", hiringStatus: "ON-Hire",
       client: "Ocean Sparkle Ltd", reportDate: "04-Apr-2026", reportTime: "00:00",
       speed: 0, course: 0, fuelBalance: 36701, fuelUsed: 1422, fuelStart: 38123,
       waterBalance: 22, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "09:18",
@@ -205,7 +206,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v3", name: "Zaharat Al Behar", imo: "9581473", master: "Akhilesh Mondal",
       company: "Adani Ports", fleet: "Adani Fleet", location: "ADS Dock2, Duqm, Oman",
-      longitude: 57.72, latitude: 19.66, status: "warning", hiringStatus: "OFF-Hire",
+      longitude: 57.5, latitude: 19.2, status: "warning", hiringStatus: "OFF-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "00:01",
       speed: 0, course: 0, fuelBalance: 54140, fuelUsed: 0, fuelStart: 54140,
       waterBalance: 37180, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
@@ -219,7 +220,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v4", name: "Tahid Verde Island", imo: "1099929", master: "Milan Hajdukovic",
       company: "Adani Ports", fleet: "Adani Fleet", location: "At Sea - Indian Ocean",
-      longitude: 32.84, latitude: -31.82, status: "warning", hiringStatus: "OFF-Hire",
+      longitude: 60.0, latitude: 10.0, status: "warning", hiringStatus: "OFF-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "12:00",
       speed: 12.5, course: 220, fuelBalance: 93500, fuelUsed: 3700, fuelStart: 97200,
       waterBalance: 15000, dpOpsHrs: "00:00", transitHrs: "24:00", portHrs: "00:00",
@@ -233,7 +234,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v5", name: "Ocean Progress", imo: "9766451", master: "Naresh M. Patil",
       company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "KANDLA PORT",
-      longitude: 70.23, latitude: 23.01, status: "critical", hiringStatus: "ON-Hire",
+      longitude: 69.5, latitude: 22.9, status: "critical", hiringStatus: "ON-Hire",
       client: "Ocean Sparkle Ltd", reportDate: "04-Apr-2026", reportTime: "00:00",
       speed: 0, course: 0, fuelBalance: 14413, fuelUsed: 1232, fuelStart: 15645,
       waterBalance: 10, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "05:30",
@@ -247,7 +248,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v6", name: "Tahid Sabarmati", imo: "9960681", master: "Ahmed Abdelaziz",
       company: "Adani Ports", fleet: "Adani Fleet", location: "Buchanan Port, Liberia",
-      longitude: -10.048, latitude: 5.854, status: "normal", hiringStatus: "ON-Hire",
+      longitude: 63.0, latitude: 18.0, status: "normal", hiringStatus: "ON-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "12:01",
       speed: 0, course: 0, fuelBalance: 35153, fuelUsed: 200, fuelStart: 35353,
       waterBalance: 27000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
