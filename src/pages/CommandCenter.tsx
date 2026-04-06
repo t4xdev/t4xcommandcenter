@@ -71,6 +71,7 @@ const comparisonMetrics = [
 const ROTATION_INTERVAL = 5000;
 
 export default function CommandCenter() {
+  const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   
