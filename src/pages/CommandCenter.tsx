@@ -139,10 +139,14 @@ export default function CommandCenter() {
     return () => clearInterval(interval);
   }, []);
 
-  // Reset image on vessel change
+  // Reset image on vessel change + zoom map to vessel
   useEffect(() => {
     setImageIndex(0);
-  }, [selectedIndex]);
+    if (selectedVessel) {
+      setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
+      setMapZoom(3.5);
+    }
+  }, [selectedIndex, selectedVessel]);
 
   // Auto-scroll highlights
   useEffect(() => {
