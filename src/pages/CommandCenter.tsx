@@ -646,9 +646,13 @@ export default function CommandCenter() {
           {/* Fleet Comparison - Scatter Plot */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
-              Fleet Performance Scatter — Efficiency vs Fuel Usage
+              Vessel Performance Scatter — Efficiency vs Fuel Usage
             </p>
 
+            {(() => {
+              const avgEfficiency = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.efficiency, 0) / scatterData.length) : 0;
+              const avgFuel = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.fuelUsed, 0) / scatterData.length) : 0;
+              return (
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
                 <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
