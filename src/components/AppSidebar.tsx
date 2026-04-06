@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   LayoutDashboard, FileText, BarChart3, ShoppingCart, Wrench, Users, Ship, Settings, Shield,
-  ChevronDown, User, LogOut, UserCog, Anchor, ChevronUp,
+  ChevronDown, User, LogOut, UserCog, Anchor, ChevronUp, Radio,
 } from "lucide-react";
 import {
   Sidebar,
@@ -149,6 +149,16 @@ export default function AppSidebar() {
             >
               <LayoutDashboard className="h-4 w-4 shrink-0" />
               <span>Dashboard</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={() => navigate("/command-center")}
+              isActive={location.pathname === "/command-center"}
+              tooltip="Command Center"
+            >
+              <Radio className="h-4 w-4 shrink-0" />
+              <span>Command Center</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
