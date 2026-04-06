@@ -42,7 +42,7 @@ import { fleets } from "@/data/maritimeData";
 export default function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const collapsed = state === "collapsed";
   const { selectedFleet, setSelectedFleet } = useFleet();
 
