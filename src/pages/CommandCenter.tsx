@@ -359,7 +359,7 @@ export default function CommandCenter() {
             className="w-full h-full"
             style={{ width: "100%", height: "100%" }}
           >
-            <ZoomableGroup center={mapCenter} zoom={mapZoom} minZoom={0.5} maxZoom={8} onMoveEnd={({ coordinates, zoom }) => { setMapCenter(coordinates as [number, number]); setMapZoom(zoom); }}>
+            <ZoomableGroup center={mapCenter} zoom={mapZoom} minZoom={0.5} maxZoom={12} onMoveEnd={({ coordinates, zoom }) => { setMapCenter(coordinates as [number, number]); setMapZoom(zoom); }} filterZoomEvent={(evt: any) => true}>
               <Geographies geography={GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => (
@@ -449,6 +449,25 @@ export default function CommandCenter() {
 
             </ZoomableGroup>
           </ComposableMap>
+
+          {/* Zoom Controls */}
+          <div className="absolute top-4 right-4 flex flex-col gap-1">
+            <button
+              onClick={() => setMapZoom(z => Math.min(z * 1.5, 12))}
+              className="w-8 h-8 rounded-md bg-card/95 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-accent transition-colors text-sm font-bold"
+            >+</button>
+            <button
+              onClick={() => setMapZoom(z => Math.max(z / 1.5, 0.5))}
+              className="w-8 h-8 rounded-md bg-card/95 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-accent transition-colors text-sm font-bold"
+            >−</button>
+            <button
+              onClick={() => { setMapZoom(1); setMapCenter([55, 15]); }}
+              className="w-8 h-8 rounded-md bg-card/95 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center text-muted-foreground hover:bg-accent transition-colors"
+              title="Reset view"
+            >
+              <Globe className="w-3.5 h-3.5" />
+            </button>
+          </div>
 
           {/* Map Legend */}
           <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 border border-border shadow-sm">
