@@ -148,7 +148,7 @@ export default function CommandCenter() {
     setShowInfoPopup(false);
     if (selectedVessel) {
       setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
-      setMapZoom(2.35);
+      setMapZoom(1.6);
       const timer = setTimeout(() => setShowInfoPopup(true), 450);
       return () => clearTimeout(timer);
     }
