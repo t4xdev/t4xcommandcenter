@@ -55,21 +55,31 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations deep in Indian Ocean, well away from any coastline ---
+// --- Seed locations across major ocean regions (safely away from coastlines) ---
 const locationPools = [
-  { name: "Arabian Sea Deep", lon: 64.0, lat: 8.0, region: "Transit" },
-  { name: "Arabian Sea South", lon: 63.5, lat: 6.0, region: "Transit" },
-  { name: "Central Indian Ocean NW", lon: 64.5, lat: 4.0, region: "Transit" },
-  { name: "Central Indian Ocean N", lon: 66.0, lat: 3.0, region: "Transit" },
-  { name: "Central Indian Ocean NE", lon: 67.5, lat: 1.0, region: "Transit" },
-  { name: "Equatorial Indian Ocean W", lon: 63.5, lat: -1.0, region: "Transit" },
-  { name: "Equatorial Indian Ocean C", lon: 65.5, lat: -3.0, region: "Transit" },
-  { name: "Equatorial Indian Ocean E", lon: 67.0, lat: -4.0, region: "Transit" },
-  { name: "Southern Indian Ocean W", lon: 64.0, lat: -7.0, region: "Transit" },
-  { name: "Southern Indian Ocean C", lon: 65.5, lat: -9.0, region: "Transit" },
-  { name: "Southern Indian Ocean E", lon: 67.5, lat: -8.0, region: "Transit" },
-  { name: "Deep South Indian Ocean", lon: 65.0, lat: -11.0, region: "Transit" },
-  { name: "Mid Indian Ocean", lon: 66.5, lat: -5.0, region: "Transit" },
+  // Arabian Sea (55-75°E, 10-25°N) — points with 3°+ margin from coasts
+  { name: "Arabian Sea West", lon: 60.0, lat: 18.0, region: "Arabian Sea" },
+  { name: "Arabian Sea Central", lon: 64.0, lat: 16.0, region: "Arabian Sea" },
+  { name: "Arabian Sea East", lon: 68.0, lat: 14.0, region: "Arabian Sea" },
+  { name: "Arabian Sea South", lon: 62.0, lat: 12.0, region: "Arabian Sea" },
+  // Bay of Bengal (80-100°E, 5-22°N)
+  { name: "Bay of Bengal North", lon: 87.0, lat: 18.0, region: "Bay of Bengal" },
+  { name: "Bay of Bengal Central", lon: 86.0, lat: 14.0, region: "Bay of Bengal" },
+  { name: "Bay of Bengal South", lon: 85.0, lat: 10.0, region: "Bay of Bengal" },
+  { name: "Bay of Bengal East", lon: 90.0, lat: 12.0, region: "Bay of Bengal" },
+  // Southern Indian Ocean (20-120°E, 0 to -60°S)
+  { name: "S Indian Ocean NW", lon: 55.0, lat: -15.0, region: "Southern Indian Ocean" },
+  { name: "S Indian Ocean Central", lon: 70.0, lat: -20.0, region: "Southern Indian Ocean" },
+  { name: "S Indian Ocean East", lon: 85.0, lat: -18.0, region: "Southern Indian Ocean" },
+  { name: "S Indian Ocean Deep", lon: 75.0, lat: -30.0, region: "Southern Indian Ocean" },
+  // Mozambique Channel (35-50°E, -10 to -25°S)
+  { name: "Mozambique Channel North", lon: 42.0, lat: -13.0, region: "Mozambique Channel" },
+  { name: "Mozambique Channel Central", lon: 43.0, lat: -18.0, region: "Mozambique Channel" },
+  { name: "Mozambique Channel South", lon: 42.0, lat: -22.0, region: "Mozambique Channel" },
+  // Andaman Sea (92-100°E, 5-20°N)
+  { name: "Andaman Sea North", lon: 95.0, lat: 14.0, region: "Andaman Sea" },
+  { name: "Andaman Sea Central", lon: 96.0, lat: 10.0, region: "Andaman Sea" },
+  { name: "Andaman Sea South", lon: 95.0, lat: 7.0, region: "Andaman Sea" },
 ];
 
 const vesselPrefixes = [
