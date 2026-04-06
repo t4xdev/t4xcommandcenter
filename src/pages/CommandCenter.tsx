@@ -173,6 +173,24 @@ export default function CommandCenter() {
     }
   }, [filteredVessels]);
 
+  const searchResults = useMemo(() => {
+    if (!vesselSearch.trim()) return [];
+    const q = vesselSearch.toLowerCase();
+    return vesselData.filter((v) =>
+      v.name.toLowerCase().includes(q) || v.imo.includes(q) || v.company.toLowerCase().includes(q)
+    ).slice(0, 10);
+  }, [vesselSearch]);
+
+  // Close search on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowVesselSearch(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const companyNames = Object.keys(companyColors);
 
