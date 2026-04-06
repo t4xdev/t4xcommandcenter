@@ -130,9 +130,9 @@ export default function CommandCenter() {
     if (!autoRotate) return;
     const interval = setInterval(() => {
       setSelectedIndex((prev) => (prev + 1) % filteredVessels.length);
-    }, ROTATION_INTERVAL);
+    }, rotationInterval * 1000);
     return () => clearInterval(interval);
-  }, [autoRotate, filteredVessels.length]);
+  }, [autoRotate, filteredVessels.length, rotationInterval]);
 
   // Image slideshow - cycle every 3 seconds
   useEffect(() => {
