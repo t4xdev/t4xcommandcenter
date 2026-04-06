@@ -366,14 +366,14 @@ export default function CommandCenter() {
                     {/* Selected info popup - positioned above marker */}
                     {isSelected && showInfoPopup && (
                       <foreignObject x={-90} y={-70} width={180} height={60} style={{ overflow: "visible", pointerEvents: "none" }}>
-                        <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 6, padding: "6px 8px", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", fontSize: 10, lineHeight: 1.5 }}>
-                          <div style={{ fontWeight: 700, fontSize: 11, marginBottom: 2 }}>{vessel.name}</div>
-                          <div style={{ color: "hsl(215, 15%, 45%)" }}>
-                            <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", backgroundColor: statusColors[vessel.status], marginRight: 4 }} />
+                        <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 5, padding: "4px 6px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)", fontSize: 8, lineHeight: 1.4 }}>
+                          <div style={{ fontWeight: 700, fontSize: 9, marginBottom: 1 }}>{vessel.name}</div>
+                          <div style={{ color: "hsl(215, 15%, 45%)", fontSize: 8 }}>
+                            <span style={{ display: "inline-block", width: 5, height: 5, borderRadius: "50%", backgroundColor: statusColors[vessel.status], marginRight: 3 }} />
                             {vessel.status.charAt(0).toUpperCase() + vessel.status.slice(1)} · {vessel.hiringStatus}
                           </div>
-                          <div style={{ color: "hsl(215, 15%, 45%)" }}>Speed: {vessel.speed} kn · Course: {vessel.course}°</div>
-                          <div style={{ color: "hsl(215, 15%, 55%)", fontSize: 9 }}>{vessel.company}</div>
+                          <div style={{ color: "hsl(215, 15%, 45%)", fontSize: 8 }}>Speed: {vessel.speed} kn · Course: {vessel.course}°</div>
+                          <div style={{ color: "hsl(215, 15%, 55%)", fontSize: 7 }}>{vessel.company}</div>
                         </div>
                       </foreignObject>
                     )}
