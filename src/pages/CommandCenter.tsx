@@ -365,7 +365,7 @@ export default function CommandCenter() {
                     )}
                     {/* Selected info popup - positioned above marker */}
                     {isSelected && showInfoPopup && (
-                       <foreignObject x={-90} y={-70} width={180} height={60} style={{ overflow: "visible", pointerEvents: "all" }}>
+                       <foreignObject x={-50} y={-70} width={100} height={60} style={{ overflow: "visible", pointerEvents: "all" }}>
                          <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 4, padding: "2px 4px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)", fontSize: 5, lineHeight: 1.3, position: "relative" }}>
                           <button
                             onClick={(e) => { e.stopPropagation(); setSelectedVesselId(null); setShowInfoPopup(false); }}
