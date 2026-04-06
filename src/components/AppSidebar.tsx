@@ -159,7 +159,7 @@ export default function AppSidebar() {
         {menuGroups.map((group) => (
           <Collapsible
             key={group.label}
-            defaultOpen={isActiveGroup(group.items)}
+            defaultOpen={false}
             className="group/collapsible"
           >
             <SidebarGroup className="p-0">
