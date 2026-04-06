@@ -98,7 +98,13 @@ export default function CommandCenter() {
 
   const selectedVessel = filteredVessels[selectedIndex % filteredVessels.length] || filteredVessels[0];
 
-  // Fleet stats
+  // Scatter plot data - efficiency vs fuel for all vessels
+  const scatterData = useMemo(() => filteredVessels.map((v) => {
+    const dpH = parseInt(v.dpOpsHrs.split(":")[0]) || 0;
+    const efficiency = Math.round((dpH / 24) * 100);
+    return { id: v.id, name: v.name, company: v.company, efficiency, fuelUsed: v.fuelUsed, crewOnBoard: v.crewOnBoard };
+  }), [filteredVessels]);
+
   const fleetStats = useMemo(() => {
     const total = vesselData.length;
     const onHire = vesselData.filter((v) => v.hiringStatus === "ON-Hire").length;
