@@ -75,7 +75,7 @@ const severityStyles: Record<string, string> = {
 };
 
 
-const ROTATION_INTERVAL = 10000;
+const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
 const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
 const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
 
@@ -83,6 +83,7 @@ export default function CommandCenter() {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
+  const [rotationInterval, setRotationInterval] = useState(10);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -129,9 +130,9 @@ export default function CommandCenter() {
     if (!autoRotate) return;
     const interval = setInterval(() => {
       setSelectedIndex((prev) => (prev + 1) % filteredVessels.length);
-    }, ROTATION_INTERVAL);
+    }, rotationInterval * 1000);
     return () => clearInterval(interval);
-  }, [autoRotate, filteredVessels.length]);
+  }, [autoRotate, filteredVessels.length, rotationInterval]);
 
   // Image slideshow - cycle every 3 seconds
   useEffect(() => {
@@ -225,18 +226,29 @@ export default function CommandCenter() {
         </div>
         <div className="flex items-center gap-4">
           {/* Auto-rotate controls */}
-          <button
-            onClick={() => setAutoRotate(!autoRotate)}
-            className={cn(
-              "flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-md border transition-colors",
-              autoRotate
-                ? "border-success/30 bg-success/5 text-success"
-                : "border-border bg-card text-muted-foreground"
-            )}
-          >
-            {autoRotate ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
-            {autoRotate ? "Auto-Cycling" : "Paused"}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setAutoRotate(!autoRotate)}
+              className={cn(
+                "flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-md border transition-colors",
+                autoRotate
+                  ? "border-success/30 bg-success/5 text-success"
+                  : "border-border bg-card text-muted-foreground"
+              )}
+            >
+              {autoRotate ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
+              {autoRotate ? "Auto" : "Paused"}
+            </button>
+            <select
+              value={rotationInterval}
+              onChange={(e) => setRotationInterval(Number(e.target.value))}
+              className="text-[10px] bg-card border border-border rounded-md px-1.5 py-1 text-foreground outline-none cursor-pointer"
+            >
+              {ROTATION_OPTIONS.map((s) => (
+                <option key={s} value={s}>{s}s</option>
+              ))}
+            </select>
+          </div>
           <div className="flex items-center gap-1.5 text-[10px]">
             <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
             <span className="text-muted-foreground">LIVE</span>
@@ -317,37 +329,42 @@ export default function CommandCenter() {
                       opacity={vessel.id === selectedVessel?.id ? 1 : 0.8}
                     />
                   </g>
-                  {/* Info popup for selected vessel */}
+                  {/* Info popup for selected vessel - rendered above markers */}
                   {vessel.id === selectedVessel?.id && showInfoPopup && (
-                    <g>
+                    <g style={{ pointerEvents: "auto" }}>
                       <rect
                         x={12}
-                        y={-42}
-                        width={155}
-                        height={52}
+                        y={-50}
+                        width={160}
+                        height={56}
                         rx={5}
                         fill="hsl(0, 0%, 100%)"
                         stroke="hsl(216, 15%, 82%)"
                         strokeWidth={1}
-                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.12))"
+                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))"
                       />
                       <polygon
-                        points="10,-18 16,-22 16,-14"
+                        points="10,-20 16,-24 16,-16"
                         fill="hsl(0, 0%, 100%)"
                         stroke="hsl(216, 15%, 82%)"
                         strokeWidth={1}
                       />
-                      <rect x={15} y={-23} width={3} height={10} fill="hsl(0, 0%, 100%)" />
-                      <text x={20} y={-28} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
+                      <rect x={15} y={-25} width={3} height={10} fill="hsl(0, 0%, 100%)" />
+                      {/* Close button */}
+                      <g onClick={(e) => { e.stopPropagation(); setShowInfoPopup(false); }} className="cursor-pointer">
+                        <rect x={156} y={-49} width={14} height={14} rx={3} fill="hsl(0, 0%, 95%)" stroke="hsl(216, 15%, 82%)" strokeWidth={0.5} />
+                        <text x={163} y={-39} fontSize={8} fill="hsl(215, 10%, 46%)" textAnchor="middle" fontFamily="Inter, sans-serif">✕</text>
+                      </g>
+                      <text x={20} y={-36} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
                         {vessel.name} [{vessel.fleet}]
                       </text>
-                      <text x={20} y={-17} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-25} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
                         {vessel.speed} kn / {vessel.course}°
                       </text>
-                      <text x={20} y={-7} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-15} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
                         Destination: <tspan fontWeight={700}>{vessel.client !== "-" ? vessel.client : "N/A"}</tspan>
                       </text>
-                      <text x={20} y={3} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-5} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
                         Status: <tspan fontWeight={600} fill={statusColors[vessel.status]}>{vessel.status.toUpperCase()}</tspan>
                       </text>
                     </g>
