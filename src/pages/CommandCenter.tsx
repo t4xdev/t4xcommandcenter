@@ -201,7 +201,7 @@ export default function CommandCenter() {
         <div className="w-1/2 relative border-r border-border bg-accent/30">
           <ComposableMap
             projection="geoMercator"
-            projectionConfig={{ scale: 140, center: [50, 10] }}
+            projectionConfig={{ scale: 220, center: [55, 15] }}
             className="w-full h-full"
             style={{ width: "100%", height: "100%" }}
           >
