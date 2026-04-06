@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   LayoutDashboard, FileText, BarChart3, ShoppingCart, Wrench, Users, Ship, Settings, Shield,
-  ChevronDown, Bell, User, LogOut,
+  ChevronDown, User, LogOut, UserCog, Anchor, ChevronUp,
 } from "lucide-react";
 import {
   Sidebar,
@@ -23,12 +23,28 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@/components/ui/dropdown-menu";
+import { useFleet } from "@/contexts/FleetContext";
+import { fleets } from "@/data/maritimeData";
 
 export default function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const { selectedFleet, setSelectedFleet } = useFleet();
 
   const menuGroups = [
     {
@@ -181,18 +197,62 @@ export default function AppSidebar() {
 
       <SidebarSeparator />
 
-      <SidebarFooter className="p-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shrink-0">
-            <User className="w-3.5 h-3.5 text-primary-foreground" />
-          </div>
-          {!collapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">Admin User</p>
-              <p className="text-[10px] text-muted-foreground truncate">admin@twenty4x.com</p>
-            </div>
-          )}
-        </div>
+      <SidebarFooter className="p-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex w-full items-center gap-2 rounded-md p-2 hover:bg-accent transition-colors outline-none">
+              <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center shrink-0">
+                <User className="w-3.5 h-3.5 text-primary-foreground" />
+              </div>
+              {!collapsed && (
+                <>
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-xs font-medium text-foreground truncate">Admin User</p>
+                    <p className="text-[10px] text-muted-foreground truncate">{selectedFleet}</p>
+                  </div>
+                  <ChevronUp className="h-3 w-3 text-muted-foreground shrink-0" />
+                </>
+              )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align="start" className="w-56">
+            <DropdownMenuLabel className="text-xs font-normal">
+              <div>
+                <p className="text-sm font-medium text-foreground">Admin User</p>
+                <p className="text-xs text-muted-foreground">admin@twenty4x.com</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-xs cursor-pointer gap-2">
+              <UserCog className="h-3.5 w-3.5" />
+              Update Profile
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="text-xs cursor-pointer gap-2">
+                <Anchor className="h-3.5 w-3.5" />
+                Fleet: {selectedFleet}
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuRadioGroup value={selectedFleet} onValueChange={(v) => setSelectedFleet(v as any)}>
+                  {fleets.map((f) => (
+                    <DropdownMenuRadioItem key={f} value={f} className="text-xs cursor-pointer">
+                      {f}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuItem className="text-xs cursor-pointer gap-2">
+              <Ship className="h-3.5 w-3.5" />
+              Manage Fleet
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-xs cursor-pointer gap-2 text-destructive focus:text-destructive">
+              <LogOut className="h-3.5 w-3.5" />
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
     </Sidebar>
   );
