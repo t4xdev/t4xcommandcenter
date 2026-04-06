@@ -95,7 +95,7 @@ export default function CommandCenter() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
   const [mapCenter, setMapCenter] = useState<[number, number]>([72, 15]);
-  const [mapZoom, setMapZoom] = useState(2.5);
+  const [mapZoom, setMapZoom] = useState(1.5);
 
   const filteredVessels = useMemo(() =>
     companyFilter ? vesselData.filter((v) => v.company === companyFilter) : vesselData,
@@ -148,7 +148,7 @@ export default function CommandCenter() {
     setShowInfoPopup(false);
     if (selectedVessel) {
       setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
-      setMapZoom(2.35);
+      setMapZoom(1.6);
       const timer = setTimeout(() => setShowInfoPopup(true), 450);
       return () => clearTimeout(timer);
     }
