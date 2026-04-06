@@ -136,8 +136,7 @@ const getVesselImageSet = (vesselId: string) => {
   return defaultImageSets[Math.abs(hash) % defaultImageSets.length];
 };
 
-export default function CommandCenter() {
-  const navigate = useNavigate();
+export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedVesselId, setSelectedVesselId] = useState<string | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
