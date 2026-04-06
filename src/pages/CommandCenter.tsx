@@ -282,7 +282,7 @@ export default function CommandCenter() {
                     <circle
                       r={10}
                       fill="none"
-                      stroke={companyColors[vessel.company] || statusColors[vessel.status]}
+                      stroke={statusColors[vessel.status]}
                       strokeWidth={1.5}
                       opacity={0.4}
                       className="animate-ping"
@@ -291,8 +291,8 @@ export default function CommandCenter() {
                   )}
                   <circle
                     r={vessel.id === selectedVessel?.id ? 5 : 3}
-                    fill={companyColors[vessel.company] || statusColors[vessel.status]}
-                    stroke={vessel.id === selectedVessel?.id ? "hsl(215, 50%, 23%)" : "none"}
+                    fill={statusColors[vessel.status]}
+                    stroke={vessel.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "none"}
                     strokeWidth={vessel.id === selectedVessel?.id ? 2 : 0}
                     className="cursor-pointer transition-all duration-300"
                     opacity={vessel.id === selectedVessel?.id ? 1 : 0.7}
@@ -427,8 +427,8 @@ export default function CommandCenter() {
             <div className="p-4 border-b border-border shrink-0">
               <div className="flex gap-3">
                 {/* Vessel Image Slideshow Card */}
-                <div className="w-[180px] shrink-0 rounded-xl border border-border overflow-hidden bg-card shadow-sm">
-                  <div className="relative h-[130px] overflow-hidden">
+                <div className="w-[180px] shrink-0 rounded-xl border border-border overflow-hidden bg-card shadow-sm flex flex-col">
+                  <div className="relative flex-1 min-h-0 overflow-hidden">
                     {vesselImages.map((img, i) => (
                       <img
                         key={i}
@@ -439,8 +439,6 @@ export default function CommandCenter() {
                           i === imageIndex ? "opacity-100" : "opacity-0"
                         )}
                         loading="lazy"
-                        width={768}
-                        height={512}
                       />
                     ))}
                     <div className="absolute bottom-1.5 left-1.5 bg-foreground/60 backdrop-blur-sm rounded px-1.5 py-0.5">
@@ -459,10 +457,6 @@ export default function CommandCenter() {
                         />
                       ))}
                     </div>
-                  </div>
-                  <div className="px-2 py-1.5">
-                    <p className="text-[9px] font-semibold text-foreground truncate">{selectedVessel.name}</p>
-                    <p className="text-[8px] text-muted-foreground">VDR Images • Auto-play</p>
                   </div>
                 </div>
 
