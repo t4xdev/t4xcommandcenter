@@ -343,8 +343,8 @@ export default function CommandCenter() {
                       <polygon
                         points="0,-7 4,5 0,2 -4,5"
                         fill={statusColors[vessel.status]}
-                        stroke={isSelected ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 30%)"}
-                        strokeWidth={isSelected ? 1.5 : 0.5}
+                        stroke={isSelected ? statusColors[vessel.status] : "hsl(0, 0%, 30%)"}
+                        strokeWidth={isSelected ? 2 : 0.5}
                         opacity={isSelected ? 1 : 0.8}
                       >
                         <title>{vessel.name}</title>
