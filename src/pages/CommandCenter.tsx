@@ -50,16 +50,14 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import {
-  ScatterChart,
-  Scatter,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Cell,
   Tooltip,
   ResponsiveContainer,
-  ZAxis,
-  ReferenceDot,
   ReferenceLine,
   Label,
 } from "recharts";
@@ -169,17 +167,24 @@ export default function CommandCenter() {
     [filteredVessels, selectedIndex, selectedVesselId]
   );
 
-  // Scatter plot data - efficiency vs active operational hours
-  const scatterData = useMemo(() => filteredVessels.map((v) => {
-    const dpH = parseInt(v.dpOpsHrs.split(":")[0]) || 0;
-    const dpM = parseInt(v.dpOpsHrs.split(":")[1]) || 0;
-    const transitH = parseInt(v.transitHrs.split(":")[0]) || 0;
-    const transitM = parseInt(v.transitHrs.split(":")[1]) || 0;
-    const activeHrs = Math.round((dpH + dpM / 60 + transitH + transitM / 60) * 10) / 10;
-    const totalH = parseInt(v.totalOpsHrs.split(":")[0]) || 24;
-    const efficiency = totalH > 0 ? Math.round((activeHrs / totalH) * 100) : 0;
-    return { id: v.id, name: v.name, company: v.company, efficiency, opsHours: activeHrs, crewOnBoard: v.crewOnBoard };
-  }), [filteredVessels]);
+  // Compliance score data from fleet analytics
+  const complianceData = useMemo(() => {
+    const scores: Record<string, { vdr: number; pms: number; utilization: number; fuel: number; score: number }> = {
+      "Tahid Sabarmati": { vdr: 100, pms: 99, utilization: 100, fuel: 70, score: 92 },
+      "Tahid Verde Island": { vdr: 100, pms: 96, utilization: 100, fuel: 50, score: 87 },
+      "Tahid Narmada": { vdr: 100, pms: 87, utilization: 0, fuel: 100, score: 72 },
+      "Tahid Dela Paz": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71 },
+      "Tahid Ilijan": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71 },
+      "Tahid Mahaweli": { vdr: 100, pms: 97, utilization: 0, fuel: 85, score: 71 },
+      "Zaharat Al Behar": { vdr: 100, pms: 88, utilization: 0, fuel: 85, score: 68 },
+      "Dorat Al Behar": { vdr: 0, pms: 100, utilization: 0, fuel: 50, score: 38 },
+      "Ameerat Al Behar": { vdr: 0, pms: 98, utilization: 0, fuel: 50, score: 37 },
+      "Tug Dolphin #33": { vdr: 0, pms: 58, utilization: 0, fuel: 50, score: 27 },
+    };
+    return Object.entries(scores)
+      .map(([name, s]) => ({ name, ...s }))
+      .sort((a, b) => b.score - a.score);
+  }, []);
 
   const fleetStats = useMemo(() => {
     const total = vesselData.length;
@@ -768,137 +773,79 @@ export default function CommandCenter() {
             </div>
           </div>
 
-          {/* Fleet Comparison - Scatter Plot */}
+          {/* Fleet Comparison - Compliance Bar Chart */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
-              Vessel Performance — Efficiency vs Active Hours
+              Vessel-wise Compliance Score Comparison
             </p>
 
-            {(() => {
-              const avgEfficiency = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.efficiency, 0) / scatterData.length) : 0;
-              const avgOpsHours = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.opsHours, 0) / scatterData.length * 10) / 10 : 0;
-              return (
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
-                <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                <BarChart data={complianceData} margin={{ top: 10, right: 10, bottom: 40, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" vertical={false} />
                   <XAxis
-                    type="number"
-                    dataKey="efficiency"
-                    name="Efficiency"
-                    unit="%"
-                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Operational Efficiency %", position: "bottom", fontSize: 9, fill: "hsl(216, 10%, 46%)", offset: 2 }}
+                    dataKey="name"
+                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 8 }}
+                    angle={-35}
+                    textAnchor="end"
+                    interval={0}
+                    height={60}
                   />
                   <YAxis
-                    type="number"
-                    dataKey="opsHours"
-                    name="Ops Hours"
-                    unit=" hrs"
+                    domain={[0, 100]}
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Active Hours (DP + Transit)", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                    label={{ value: "Score", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
                   />
-                  <ZAxis type="number" dataKey="crewOnBoard" range={[40, 200]} name="Crew" />
                   <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(0, 0%, 100%)",
-                      border: "1px solid hsl(216, 15%, 89%)",
-                      borderRadius: "8px",
-                      fontSize: "10px",
-                      color: "hsl(215, 50%, 15%)",
-                      boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
-                    }}
-                    formatter={(value: number, name: string) => [
-                      name === "Ops Hours" ? `${value} hrs` : name === "Efficiency" ? `${value}%` : value,
-                      name,
-                    ]}
-                    labelFormatter={() => ""}
                     content={({ payload }) => {
                       if (!payload || payload.length === 0) return null;
                       const d = payload[0]?.payload;
                       return (
                         <div className="bg-card border border-border rounded-lg p-2 shadow-md text-[10px]">
                           <p className="font-semibold text-foreground">{d?.name}</p>
-                          <p className="text-muted-foreground">{d?.company}</p>
-                          <p>Efficiency: <span className="font-mono font-bold">{d?.efficiency}%</span></p>
-                          <p>Ops Hours: <span className="font-mono font-bold">{d?.opsHours} hrs</span></p>
-                          <p>Crew: <span className="font-mono font-bold">{d?.crewOnBoard}</span></p>
+                          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 mt-1">
+                            <span className="text-muted-foreground">VDR:</span><span className="font-mono font-bold">{d?.vdr}%</span>
+                            <span className="text-muted-foreground">PMS:</span><span className="font-mono font-bold">{d?.pms}%</span>
+                            <span className="text-muted-foreground">Utilization:</span><span className="font-mono font-bold">{d?.utilization}%</span>
+                            <span className="text-muted-foreground">Fuel:</span><span className="font-mono font-bold">{d?.fuel}%</span>
+                          </div>
+                          <div className="border-t border-border mt-1 pt-1">
+                            <span className="text-muted-foreground">Overall Score: </span>
+                            <span className="font-mono font-bold text-foreground">{d?.score}</span>
+                          </div>
                         </div>
                       );
                     }}
-                   />
-                  {/* Average lines */}
-                  <ReferenceLine
-                    x={avgEfficiency}
-                    stroke="hsl(215, 40%, 55%)"
-                    strokeDasharray="5 3"
-                    strokeWidth={1.5}
-                    label={{ value: `Avg Eff: ${avgEfficiency}%`, position: "top", fontSize: 8, fill: "hsl(215, 40%, 55%)" }}
                   />
                   <ReferenceLine
-                    y={avgOpsHours}
-                    stroke="hsl(25, 50%, 55%)"
+                    y={Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length)}
+                    stroke="hsl(25, 70%, 55%)"
                     strokeDasharray="5 3"
                     strokeWidth={1.5}
-                    label={{ value: `Avg Hrs: ${avgOpsHours}`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }}
+                    label={{ value: `Fleet Avg: ${Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length)}`, position: "right", fontSize: 8, fill: "hsl(25, 70%, 55%)" }}
                   />
-                  {/* Background vessels */}
-                  <Scatter data={scatterData.filter(e => e.id !== selectedVessel?.id)} name="Fleet">
-                    {scatterData.filter(e => e.id !== selectedVessel?.id).map((entry, idx) => (
-                      <Cell
-                        key={idx}
-                        fill={companyColors[entry.company] || "hsl(216, 10%, 60%)"}
-                        opacity={0.35}
-                        r={4}
-                      />
-                    ))}
-                  </Scatter>
-                  {/* Selected vessel - prominent */}
-                  {selectedVessel && (() => {
-                    const sel = scatterData.find(e => e.id === selectedVessel.id);
-                    if (!sel) return null;
-                    return (
-                      <>
-                        {/* Outer glow ring */}
-                        <ReferenceDot x={sel.efficiency} y={sel.opsHours} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
-                        <Scatter data={[sel]} name="Selected">
-                          <Cell
-                            fill="hsl(210, 80%, 52%)"
-                            opacity={1}
-                            stroke="hsl(0, 0%, 100%)"
-                            strokeWidth={3}
-                            r={12}
-                          />
-                        </Scatter>
-                      </>
-                    );
-                  })()}
-                  {/* Label for selected vessel */}
-                  {selectedVessel && (() => {
-                    const sel = scatterData.find(e => e.id === selectedVessel.id);
-                    if (!sel) return null;
-                    return (
-                      <ReferenceDot
-                        x={sel.efficiency}
-                        y={sel.opsHours}
-                        r={0}
-                        fill="none"
-                        stroke="none"
-                      >
-                        <Label
-                          value={`▶ ${sel.name}`}
-                          position="right"
-                          offset={12}
-                          style={{ fontSize: 9, fontWeight: 700, fill: "hsl(215, 50%, 15%)" }}
+                  <Bar dataKey="score" radius={[3, 3, 0, 0]}>
+                    {complianceData.map((entry, idx) => {
+                      const isSelected = selectedVessel?.name === entry.name;
+                      const color = entry.score >= 80
+                        ? "hsl(152, 60%, 42%)"
+                        : entry.score >= 60
+                        ? "hsl(40, 80%, 50%)"
+                        : "hsl(0, 70%, 55%)";
+                      return (
+                        <Cell
+                          key={idx}
+                          fill={color}
+                          opacity={isSelected ? 1 : 0.6}
+                          stroke={isSelected ? "hsl(210, 80%, 52%)" : "none"}
+                          strokeWidth={isSelected ? 2 : 0}
                         />
-                      </ReferenceDot>
-                    );
-                  })()}
-                </ScatterChart>
+                      );
+                    })}
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
             </div>
-              );
-            })()}
 
             {/* Company legend + selected vessel indicator */}
             <div className="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-border">
