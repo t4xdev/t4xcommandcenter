@@ -75,7 +75,7 @@ const severityStyles: Record<string, string> = {
 };
 
 
-const ROTATION_INTERVAL = 10000;
+const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
 const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
 const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
 
