@@ -282,7 +282,7 @@ export default function CommandCenter() {
                     <circle
                       r={10}
                       fill="none"
-                      stroke={companyColors[vessel.company] || statusColors[vessel.status]}
+                      stroke={statusColors[vessel.status]}
                       strokeWidth={1.5}
                       opacity={0.4}
                       className="animate-ping"
@@ -291,8 +291,8 @@ export default function CommandCenter() {
                   )}
                   <circle
                     r={vessel.id === selectedVessel?.id ? 5 : 3}
-                    fill={companyColors[vessel.company] || statusColors[vessel.status]}
-                    stroke={vessel.id === selectedVessel?.id ? "hsl(215, 50%, 23%)" : "none"}
+                    fill={statusColors[vessel.status]}
+                    stroke={vessel.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "none"}
                     strokeWidth={vessel.id === selectedVessel?.id ? 2 : 0}
                     className="cursor-pointer transition-all duration-300"
                     opacity={vessel.id === selectedVessel?.id ? 1 : 0.7}
@@ -314,34 +314,47 @@ export default function CommandCenter() {
             </ZoomableGroup>
           </ComposableMap>
 
-          {/* Map Legend - Company colors */}
+          {/* Map Legend */}
           <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 border border-border shadow-sm">
-            <p className="text-[10px] text-muted-foreground mb-2 font-medium">COMPANIES</p>
-            {companyNames.map((name) => {
-              const count = vesselData.filter((v) => v.company === name).length;
+            <p className="text-[10px] text-muted-foreground mb-2 font-medium">STATUS</p>
+            {(["normal", "warning", "critical"] as const).map((status) => {
+              const count = filteredVessels.filter((v) => v.status === status).length;
               return (
-                <button
-                  key={name}
-                  onClick={() => setCompanyFilter(companyFilter === name ? null : name)}
-                  className={cn(
-                    "w-full flex items-center gap-2 mb-1 text-left rounded px-1 py-0.5 transition-colors",
-                    companyFilter === name && "bg-accent"
-                  )}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: companyColors[name] }} />
-                  <span className="text-[10px] text-foreground">{name}</span>
+                <div key={status} className="flex items-center gap-2 mb-1 px-1 py-0.5">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: statusColors[status] }} />
+                  <span className="text-[10px] text-foreground capitalize">{status}</span>
                   <span className="text-[9px] text-muted-foreground ml-auto">{count}</span>
-                </button>
+                </div>
               );
             })}
-            {companyFilter && (
-              <button
-                onClick={() => setCompanyFilter(null)}
-                className="text-[9px] text-primary mt-1 hover:underline"
-              >
-                Show All
-              </button>
-            )}
+            <div className="border-t border-border mt-2 pt-2">
+              <p className="text-[10px] text-muted-foreground mb-1 font-medium">COMPANIES</p>
+              {companyNames.map((name) => {
+                const count = vesselData.filter((v) => v.company === name).length;
+                return (
+                  <button
+                    key={name}
+                    onClick={() => setCompanyFilter(companyFilter === name ? null : name)}
+                    className={cn(
+                      "w-full flex items-center gap-2 mb-1 text-left rounded px-1 py-0.5 transition-colors",
+                      companyFilter === name && "bg-accent"
+                    )}
+                  >
+                    <span className="w-2.5 h-2.5 rounded shrink-0 border" style={{ borderColor: companyColors[name] }} />
+                    <span className="text-[10px] text-foreground">{name}</span>
+                    <span className="text-[9px] text-muted-foreground ml-auto">{count}</span>
+                  </button>
+                );
+              })}
+              {companyFilter && (
+                <button
+                  onClick={() => setCompanyFilter(null)}
+                  className="text-[9px] text-primary mt-1 hover:underline"
+                >
+                  Show All
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Vessel counter */}
@@ -379,7 +392,17 @@ export default function CommandCenter() {
                   <button
                     key={v.id}
                     onClick={() => {
-                      handleVesselClick(v);
+                      // Clear company filter if needed, then select
+                      if (companyFilter && v.company !== companyFilter) {
+                        setCompanyFilter(null);
+                      }
+                      // Find index in the appropriate list
+                      const targetList = (companyFilter && v.company === companyFilter) ? filteredVessels : vesselData;
+                      const idx = targetList.findIndex((fv) => fv.id === v.id);
+                      if (idx >= 0) {
+                        setSelectedIndex(idx);
+                        setAutoRotate(false);
+                      }
                       setVesselSearch("");
                       setShowVesselSearch(false);
                     }}
@@ -417,8 +440,8 @@ export default function CommandCenter() {
             <div className="p-4 border-b border-border shrink-0">
               <div className="flex gap-3">
                 {/* Vessel Image Slideshow Card */}
-                <div className="w-[180px] shrink-0 rounded-xl border border-border overflow-hidden bg-card shadow-sm">
-                  <div className="relative h-[130px] overflow-hidden">
+                <div className="w-[180px] shrink-0 rounded-xl border border-border overflow-hidden bg-card shadow-sm flex flex-col">
+                  <div className="relative flex-1 min-h-0 overflow-hidden">
                     {vesselImages.map((img, i) => (
                       <img
                         key={i}
@@ -429,8 +452,6 @@ export default function CommandCenter() {
                           i === imageIndex ? "opacity-100" : "opacity-0"
                         )}
                         loading="lazy"
-                        width={768}
-                        height={512}
                       />
                     ))}
                     <div className="absolute bottom-1.5 left-1.5 bg-foreground/60 backdrop-blur-sm rounded px-1.5 py-0.5">
@@ -449,10 +470,6 @@ export default function CommandCenter() {
                         />
                       ))}
                     </div>
-                  </div>
-                  <div className="px-2 py-1.5">
-                    <p className="text-[9px] font-semibold text-foreground truncate">{selectedVessel.name}</p>
-                    <p className="text-[8px] text-muted-foreground">VDR Images • Auto-play</p>
                   </div>
                 </div>
 
