@@ -244,6 +244,20 @@ function generateVessels(): VesselData[] {
       maintenanceRemarks: "Main engine port & stbd running at 8.4 hrs",
       overallRemarks: "Low fuel warning - refueling required",
     },
+    {
+      id: "v6", name: "Tahid Sabarmati", imo: "9960681", master: "Ahmed Abdelaziz",
+      company: "Adani Ports", fleet: "Adani Fleet", location: "Buchanan Port, Liberia",
+      longitude: -10.048, latitude: 5.854, status: "normal", hiringStatus: "ON-Hire",
+      client: "-", reportDate: "05-Apr-2026", reportTime: "12:01",
+      speed: 0, course: 0, fuelBalance: 35153, fuelUsed: 200, fuelStart: 35353,
+      waterBalance: 27000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
+      totalOpsHrs: "24:00", crewOnBoard: 7, maintenanceDone: 12, outstandingDefects: 0,
+      certificatesValid: 28, certificatesExpired: 0, provisionDays: 20,
+      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
+      lastOps: "Standby at infield location - Buchanan Port",
+      maintenanceRemarks: "Filter mats replaced, propulsion hydraulic systems inspected, battery terminals cleaned",
+      overallRemarks: "All systems normal, standby operations",
+    },
   ];
 
   vessels.push(...realVessels);
