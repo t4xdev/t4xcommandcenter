@@ -546,7 +546,7 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
           </ComposableMap>
 
           {/* Zoom Controls */}
-          <div className="absolute top-4 right-4 flex flex-col gap-1">
+          <div className="absolute top-14 right-4 flex flex-col gap-1">
             <button
               onClick={() => setMapZoom(z => Math.min(z * 1.5, 12))}
               className="w-8 h-8 rounded-md bg-card/95 backdrop-blur-sm border border-border shadow-sm flex items-center justify-center text-foreground hover:bg-accent transition-colors text-sm font-bold"
