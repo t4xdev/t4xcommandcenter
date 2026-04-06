@@ -308,34 +308,33 @@ export default function CommandCenter() {
                   {vessel.id === selectedVessel?.id && (
                     <g>
                       <rect
-                        x={10}
-                        y={-38}
-                        width={140}
-                        height={42}
-                        rx={4}
+                        x={12}
+                        y={-42}
+                        width={155}
+                        height={52}
+                        rx={5}
                         fill="hsl(0, 0%, 100%)"
                         stroke="hsl(216, 15%, 82%)"
                         strokeWidth={1}
                         filter="drop-shadow(0 2px 4px rgba(0,0,0,0.12))"
                       />
                       <polygon
-                        points="8,-18 14,-22 14,-14"
+                        points="10,-18 16,-22 16,-14"
                         fill="hsl(0, 0%, 100%)"
                         stroke="hsl(216, 15%, 82%)"
                         strokeWidth={1}
                       />
-                      {/* White cover for arrow connection */}
-                      <rect x={13} y={-23} width={3} height={10} fill="hsl(0, 0%, 100%)" />
-                      <text x={16} y={-24} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
+                      <rect x={15} y={-23} width={3} height={10} fill="hsl(0, 0%, 100%)" />
+                      <text x={20} y={-28} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
                         {vessel.name} [{vessel.fleet}]
                       </text>
-                      <text x={16} y={-14} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-17} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
                         {vessel.speed} kn / {vessel.course}°
                       </text>
-                      <text x={16} y={-5} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-7} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
                         Destination: <tspan fontWeight={700}>{vessel.client !== "-" ? vessel.client : "N/A"}</tspan>
                       </text>
-                      <text x={16} y={4} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={3} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
                         Status: <tspan fontWeight={600} fill={statusColors[vessel.status]}>{vessel.status.toUpperCase()}</tspan>
                       </text>
                     </g>
