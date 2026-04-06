@@ -71,7 +71,7 @@ const ROTATION_INTERVAL = 5000;
 export default function CommandCenter() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const [activeMetric, setActiveMetric] = useState("efficiency");
+  
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -143,14 +143,6 @@ export default function CommandCenter() {
     }
   }, [filteredVessels]);
 
-  const currentMetricData = fleetComparisonData.map((d) => ({
-    vessel: d.vessel.length > 14 ? d.vessel.slice(0, 14) + "…" : d.vessel,
-    fullName: d.vessel,
-    value: d[activeMetric as keyof typeof d] as number,
-    isSelected: d.vessel === selectedVessel?.company,
-  }));
-
-  const metricInfo = comparisonMetrics.find((m) => m.key === activeMetric)!;
 
   const companyNames = Object.keys(companyColors);
 
