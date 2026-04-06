@@ -82,7 +82,10 @@ export default function CommandCenter() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
+  const [vesselSearch, setVesselSearch] = useState("");
+  const [showVesselSearch, setShowVesselSearch] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
 
