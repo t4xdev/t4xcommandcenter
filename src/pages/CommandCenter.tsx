@@ -354,47 +354,7 @@ export default function CommandCenter() {
                 );
               })}
 
-              {/* Info popup rendered LAST so it's always on top of all markers */}
-              {selectedVessel && showInfoPopup && (() => {
-                const flipLeft = selectedVessel.longitude > mapCenter[0];
-                const popupW = 170;
-                const popupH = 58;
-                const tx = flipLeft ? -(popupW + 12) : 12;
-                const ty = -(popupH / 2);
-                const arrowPts = flipLeft
-                  ? `${popupW},${popupH / 2 - 6} ${popupW + 8},${popupH / 2} ${popupW},${popupH / 2 + 6}`
-                  : `0,${popupH / 2 - 6} -8,${popupH / 2} 0,${popupH / 2 + 6}`;
-                const closeX = flipLeft ? 4 : popupW - 18;
-                return (
-                  <Marker
-                    key="info-popup"
-                    coordinates={[selectedVessel.longitude, selectedVessel.latitude]}
-                  >
-                    <g style={{ pointerEvents: "auto" }} transform={`translate(${tx},${ty})`}>
-                      <rect x={0} y={0} width={popupW} height={popupH} rx={6}
-                        fill="hsl(0, 0%, 100%)" stroke="hsl(216, 15%, 82%)" strokeWidth={1}
-                        filter="drop-shadow(0 3px 6px rgba(0,0,0,0.16))" />
-                      <polygon points={arrowPts} fill="hsl(0, 0%, 100%)" stroke="hsl(216, 15%, 82%)" strokeWidth={1} />
-                      <g onClick={(e) => { e.stopPropagation(); setShowInfoPopup(false); }} className="cursor-pointer">
-                        <rect x={closeX} y={6} width={14} height={14} rx={3} fill="hsl(0, 0%, 95%)" stroke="hsl(216, 15%, 82%)" strokeWidth={0.5} />
-                        <text x={closeX + 7} y={16} fontSize={8} fill="hsl(215, 10%, 46%)" textAnchor="middle" fontFamily="Inter, sans-serif">✕</text>
-                      </g>
-                      <text x={10} y={16} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
-                        {selectedVessel.name} [{selectedVessel.fleet}]
-                      </text>
-                      <text x={10} y={28} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
-                        {selectedVessel.speed} kn / {selectedVessel.course}°
-                      </text>
-                      <text x={10} y={40} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
-                        Destination: <tspan fontWeight={700}>{selectedVessel.client !== "-" ? selectedVessel.client : "N/A"}</tspan>
-                      </text>
-                      <text x={10} y={51} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
-                        Status: <tspan fontWeight={600} fill={statusColors[selectedVessel.status]}>{selectedVessel.status.toUpperCase()}</tspan>
-                      </text>
-                    </g>
-                  </Marker>
-                );
-              })()}
+
             </ZoomableGroup>
           </ComposableMap>
 
