@@ -88,6 +88,7 @@ export default function CommandCenter() {
   const [imageIndex, setImageIndex] = useState(0);
   const [vesselSearch, setVesselSearch] = useState("");
   const [showVesselSearch, setShowVesselSearch] = useState(false);
+  const [showInfoPopup, setShowInfoPopup] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -143,9 +144,13 @@ export default function CommandCenter() {
   // Reset image on vessel change + zoom map to vessel
   useEffect(() => {
     setImageIndex(0);
+    setShowInfoPopup(false);
     if (selectedVessel) {
       setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
       setMapZoom(3.5);
+      // Delay showing popup to prevent two showing at once
+      const timer = setTimeout(() => setShowInfoPopup(true), 300);
+      return () => clearTimeout(timer);
     }
   }, [selectedIndex, selectedVessel]);
 
@@ -313,7 +318,7 @@ export default function CommandCenter() {
                     />
                   </g>
                   {/* Info popup for selected vessel */}
-                  {vessel.id === selectedVessel?.id && (
+                  {vessel.id === selectedVessel?.id && showInfoPopup && (
                     <g>
                       <rect
                         x={12}
