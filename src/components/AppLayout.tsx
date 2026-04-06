@@ -17,7 +17,6 @@ export default function AppLayout({ children, breadcrumb, rightContent }: AppLay
           {/* Top bar with trigger + breadcrumb + actions */}
           <header className="sticky top-0 z-40 h-11 flex items-center justify-between border-b border-border bg-card px-3">
             <div className="flex items-center gap-2">
-              <SidebarTrigger className="h-7 w-7" />
               {breadcrumb && (
                 <span className="text-[11px] text-muted-foreground">{breadcrumb}</span>
               )}
