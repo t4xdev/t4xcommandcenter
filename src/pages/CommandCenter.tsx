@@ -144,9 +144,13 @@ export default function CommandCenter() {
   // Reset image on vessel change + zoom map to vessel
   useEffect(() => {
     setImageIndex(0);
+    setShowInfoPopup(false);
     if (selectedVessel) {
       setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
       setMapZoom(3.5);
+      // Delay showing popup to prevent two showing at once
+      const timer = setTimeout(() => setShowInfoPopup(true), 300);
+      return () => clearTimeout(timer);
     }
   }, [selectedIndex, selectedVessel]);
 
