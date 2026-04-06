@@ -80,9 +80,9 @@ export default function CommandCenter() {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
+  const [imageIndex, setImageIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
