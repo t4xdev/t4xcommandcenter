@@ -153,6 +153,7 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [vesselSearch, setVesselSearch] = useState("");
   const [showVesselSearch, setShowVesselSearch] = useState(false);
   const [showInfoPopup, setShowInfoPopup] = useState(true);
