@@ -336,8 +336,8 @@ export default function CommandCenter() {
                       />
                     )}
                     <g
-                      transform={`rotate(${vessel.course}, 0, 0) scale(${isSelected ? 1.35 : 0.9})`}
-                      className="cursor-pointer transition-all duration-300"
+                      transform={`rotate(${vessel.course}, 0, 0) scale(0.9)`}
+                      className="cursor-pointer"
                       style={{ transformOrigin: "center" }}
                     >
                       <polygon
