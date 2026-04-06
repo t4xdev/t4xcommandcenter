@@ -169,8 +169,8 @@ function generateVessels(): VesselData[] {
   const realVessels: VesselData[] = [
     {
       id: "v1", name: "Dolphin-04", imo: "9328364", master: "Santosh K. Pandey",
-      company: "Adani Ports", fleet: "Adani Fleet", location: "Arabian Sea Deep",
-      longitude: 64.0, latitude: 8.0, status: "normal", hiringStatus: "ON-Hire",
+      company: "Adani Ports", fleet: "Adani Fleet", location: "Arabian Sea Central",
+      longitude: 64.0, latitude: 16.0, status: "normal", hiringStatus: "ON-Hire",
       client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "07:07",
       speed: 0, course: 0, fuelBalance: 27922, fuelUsed: 2963, fuelStart: 30885,
       waterBalance: 22000, dpOpsHrs: "21:24", transitHrs: "00:00", portHrs: "02:36",
@@ -183,8 +183,8 @@ function generateVessels(): VesselData[] {
     },
     {
       id: "v2", name: "Ocean Lancer", imo: "9719604", master: "Mostafijur R. Sapui",
-      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "Arabian Sea South",
-      longitude: 63.5, latitude: 6.0, status: "normal", hiringStatus: "ON-Hire",
+      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "Bay of Bengal Central",
+      longitude: 86.0, latitude: 14.0, status: "normal", hiringStatus: "ON-Hire",
       client: "Ocean Sparkle Ltd", reportDate: "04-Apr-2026", reportTime: "00:00",
       speed: 0, course: 0, fuelBalance: 36701, fuelUsed: 1422, fuelStart: 38123,
       waterBalance: 22, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "09:18",
@@ -197,8 +197,8 @@ function generateVessels(): VesselData[] {
     },
     {
       id: "v3", name: "Zaharat Al Behar", imo: "9581473", master: "Akhilesh Mondal",
-      company: "Adani Ports", fleet: "Adani Fleet", location: "Central Indian Ocean NW",
-      longitude: 64.5, latitude: 4.0, status: "warning", hiringStatus: "OFF-Hire",
+      company: "Adani Ports", fleet: "Adani Fleet", location: "Arabian Sea East",
+      longitude: 68.0, latitude: 14.0, status: "warning", hiringStatus: "OFF-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "00:01",
       speed: 0, course: 0, fuelBalance: 54140, fuelUsed: 0, fuelStart: 54140,
       waterBalance: 37180, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
@@ -211,8 +211,8 @@ function generateVessels(): VesselData[] {
     },
     {
       id: "v4", name: "Tahid Verde Island", imo: "1099929", master: "Milan Hajdukovic",
-      company: "Adani Ports", fleet: "Adani Fleet", location: "Central Indian Ocean N",
-      longitude: 66.0, latitude: 3.0, status: "warning", hiringStatus: "OFF-Hire",
+      company: "Adani Ports", fleet: "Adani Fleet", location: "S Indian Ocean Central",
+      longitude: 70.0, latitude: -20.0, status: "warning", hiringStatus: "OFF-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "12:00",
       speed: 12.5, course: 220, fuelBalance: 93500, fuelUsed: 3700, fuelStart: 97200,
       waterBalance: 15000, dpOpsHrs: "00:00", transitHrs: "24:00", portHrs: "00:00",
@@ -225,8 +225,8 @@ function generateVessels(): VesselData[] {
     },
     {
       id: "v5", name: "Ocean Progress", imo: "9766451", master: "Naresh M. Patil",
-      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "Equatorial Indian Ocean C",
-      longitude: 65.5, latitude: -3.0, status: "critical", hiringStatus: "ON-Hire",
+      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "Mozambique Channel Central",
+      longitude: 43.0, latitude: -18.0, status: "critical", hiringStatus: "ON-Hire",
       client: "Ocean Sparkle Ltd", reportDate: "04-Apr-2026", reportTime: "00:00",
       speed: 0, course: 0, fuelBalance: 14413, fuelUsed: 1232, fuelStart: 15645,
       waterBalance: 10, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "05:30",
@@ -239,8 +239,8 @@ function generateVessels(): VesselData[] {
     },
     {
       id: "v6", name: "Tahid Sabarmati", imo: "9960681", master: "Ahmed Abdelaziz",
-      company: "Adani Ports", fleet: "Adani Fleet", location: "Equatorial Indian Ocean W",
-      longitude: 63.5, latitude: -1.0, status: "normal", hiringStatus: "ON-Hire",
+      company: "Adani Ports", fleet: "Adani Fleet", location: "Andaman Sea Central",
+      longitude: 96.0, latitude: 10.0, status: "normal", hiringStatus: "ON-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "12:01",
       speed: 0, course: 0, fuelBalance: 35153, fuelUsed: 200, fuelStart: 35353,
       waterBalance: 27000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
