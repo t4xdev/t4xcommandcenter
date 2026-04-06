@@ -16,6 +16,22 @@ import vesselImg12 from "@/assets/vessel-engine3.webp";
 import vesselImg13 from "@/assets/vessel-electrical.webp";
 import vesselImg14 from "@/assets/vessel-machinery2.webp";
 import vesselImg15 from "@/assets/vessel-control-panel.webp";
+// VDR-extracted vessel images
+import vdrProgressDeck from "@/assets/vdr-progress-deck.png";
+import vdrProgressWinch from "@/assets/vdr-progress-winch.png";
+import vdrProgressEngine from "@/assets/vdr-progress-engine.png";
+import vdrProgressSteering from "@/assets/vdr-progress-steering.png";
+import vdrProgressGalley from "@/assets/vdr-progress-galley.png";
+import vdrVerdeDeckAft from "@/assets/vdr-verde-aft.png";
+import vdrVerdeBridge from "@/assets/vdr-verde-bridge.png";
+import vdrVerdeEngine from "@/assets/vdr-verde-engine.png";
+import vdrVerdeSteering from "@/assets/vdr-verde-steering.png";
+import vdrVerdeGalley from "@/assets/vdr-verde-galley.png";
+import vdrIlijanAft from "@/assets/vdr-ilijan-aft.png";
+import vdrIlijanForward from "@/assets/vdr-ilijan-forward.png";
+import vdrIlijanEngine from "@/assets/vdr-ilijan-engine.png";
+import vdrIlijanEngine2 from "@/assets/vdr-ilijan-engine2.png";
+import vdrZaharatDeck from "@/assets/vdr-zaharat-deck.png";
 import {
   ComposableMap,
   Geographies,
