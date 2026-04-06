@@ -49,10 +49,9 @@ export interface AlertHighlight {
 
 // --- Company definitions ---
 const companies = [
-  { name: "Adani Ports", fleet: "Adani Fleet", color: "#1c3557" },
+  { name: "Adani Ports", fleet: "TAHID Fleet", color: "#1c3557" },
   { name: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", color: "#e30613" },
-  { name: "Global Maritime", fleet: "Global Maritime Fleet", color: "#0e7c46" },
-  { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
+  { name: "SSIDL", fleet: "SSIDL Fleet", color: "#0e7c46" },
 ];
 
 // --- Seed locations along realistic shipping lanes & port approaches ---
