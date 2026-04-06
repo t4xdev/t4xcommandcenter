@@ -88,6 +88,7 @@ export default function CommandCenter() {
   const [imageIndex, setImageIndex] = useState(0);
   const [vesselSearch, setVesselSearch] = useState("");
   const [showVesselSearch, setShowVesselSearch] = useState(false);
+  const [showInfoPopup, setShowInfoPopup] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
