@@ -12,11 +12,15 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import {
-  PieChart,
-  Pie,
+  ScatterChart,
+  Scatter,
+  XAxis,
+  YAxis,
+  CartesianGrid,
   Cell,
   Tooltip,
   ResponsiveContainer,
+  ZAxis,
 } from "recharts";
 import {
   Ship,
@@ -40,7 +44,7 @@ import {
   Pause,
   Play,
 } from "lucide-react";
-import { vesselData, alertHighlights, fleetComparisonData, type VesselData } from "@/data/commandCenterData";
+import { vesselData, alertHighlights, type VesselData } from "@/data/commandCenterData";
 import { cn } from "@/lib/utils";
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
