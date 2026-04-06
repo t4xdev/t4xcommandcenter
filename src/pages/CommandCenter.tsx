@@ -179,7 +179,7 @@ export default function CommandCenter() {
       "Zaharat Al Behar": { vdr: 100, pms: 88, utilization: 0, fuel: 85, score: 68 },
       "Dorat Al Behar": { vdr: 0, pms: 100, utilization: 0, fuel: 50, score: 38 },
       "Ameerat Al Behar": { vdr: 0, pms: 98, utilization: 0, fuel: 50, score: 37 },
-      "Tug Dolphin #33": { vdr: 0, pms: 58, utilization: 0, fuel: 50, score: 27 },
+      "Dolphin-30": { vdr: 0, pms: 58, utilization: 0, fuel: 50, score: 27 },
     };
     return Object.entries(scores)
       .map(([name, s]) => ({ name, ...s }))
@@ -187,10 +187,10 @@ export default function CommandCenter() {
   }, []);
 
   const fleetStats = useMemo(() => {
-    const total = vesselData.length;
-    const onHire = vesselData.filter((v) => v.hiringStatus === "ON-Hire").length;
-    const critical = vesselData.filter((v) => v.status === "critical").length;
-    const warning = vesselData.filter((v) => v.status === "warning").length;
+    const total = realVessels.length;
+    const onHire = realVessels.filter((v) => v.hiringStatus === "ON-Hire").length;
+    const critical = realVessels.filter((v) => v.status === "critical").length;
+    const warning = realVessels.filter((v) => v.status === "warning").length;
     return { total, onHire, critical, warning };
   }, []);
 
