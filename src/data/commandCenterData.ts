@@ -779,7 +779,7 @@ export const alertHighlights: AlertHighlight[] = generateAlerts();
 
 // Fleet comparison - aggregate by company
 export const fleetComparisonData = companies.map((c) => {
-  const companyVessels = vesselData.filter((v) => v.company === c.name);
+  const companyVessels = realVessels.filter((v) => v.company === c.name);
   const count = companyVessels.length;
   if (count === 0) return { vessel: c.name, efficiency: 0, fuelConsumption: 0, downtime: 0, compliance: 0 };
 
