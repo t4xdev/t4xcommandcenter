@@ -43,6 +43,7 @@ import {
   X,
   Pause,
   Play,
+  Search,
 } from "lucide-react";
 import { vesselData, alertHighlights, type VesselData } from "@/data/commandCenterData";
 import { cn } from "@/lib/utils";
