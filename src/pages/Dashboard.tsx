@@ -199,17 +199,8 @@ export default function Dashboard() {
   const breadcrumb = `User / ${activeLabel}`;
 
 
-  const fleetSelector = (
-    <div className="relative">
-      <select value={selectedFleet} onChange={(e) => setSelectedFleet(e.target.value as FleetName)} className="appearance-none bg-muted pl-3 pr-7 py-1.5 text-[11px] font-medium text-foreground cursor-pointer focus:outline-none focus:ring-1 focus:ring-ring rounded-md border border-border">
-        {fleets.map((f) => <option key={f} value={f}>{f}</option>)}
-      </select>
-      <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
-    </div>
-  );
-
   return (
-    <AppLayout breadcrumb={breadcrumb} rightContent={fleetSelector}>
+    <AppLayout breadcrumb={breadcrumb}>
       <main className="max-w-[1600px] mx-auto px-6 py-5">
         {activeView === "iot" ? (
           <IotDashboard fleet={selectedFleet} />
