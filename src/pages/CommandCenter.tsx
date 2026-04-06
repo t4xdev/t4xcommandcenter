@@ -348,7 +348,7 @@ export default function CommandCenter() {
                       className="cursor-pointer"
                     >
                       <polygon
-                        points="0,-10 6,7 0,3 -6,7"
+                        points="0,-3 2,2 0,1 -2,2"
                         fill={statusColors[vessel.status]}
                         stroke={isSelected ? statusColors[vessel.status] : "hsl(0, 0%, 30%)"}
                         strokeWidth={isSelected ? 2 : 0.5}
