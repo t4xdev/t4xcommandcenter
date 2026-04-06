@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { FleetProvider } from "@/contexts/FleetContext";
 import Dashboard from "@/pages/Dashboard";
 import CrewManagement from "@/pages/CrewManagement";
 import EmissionsTracker from "@/pages/EmissionsTracker";
@@ -15,18 +16,20 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/payroll/*" element={<CrewManagement />} />
-          <Route path="/emissions" element={<EmissionsTracker />} />
-          <Route path="/iot" element={<IotDashboard />} />
-          <Route path="/super-admin/*" element={<SuperAdmin />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <FleetProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/payroll/*" element={<CrewManagement />} />
+            <Route path="/emissions" element={<EmissionsTracker />} />
+            <Route path="/iot" element={<IotDashboard />} />
+            <Route path="/super-admin/*" element={<SuperAdmin />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </FleetProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
