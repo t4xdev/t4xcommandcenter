@@ -100,8 +100,7 @@ const statusColors: Record<string, string> = {
 const companyColors: Record<string, string> = {
   "Adani Ports": "hsl(215, 60%, 45%)",
   "Ocean Sparkle": "hsl(280, 45%, 45%)",
-  "Global Maritime": "hsl(25, 65%, 45%)",
-  "Pacific Shipping": "hsl(185, 55%, 38%)",
+  "SSIDL": "hsl(152, 55%, 38%)",
 };
 
 const severityStyles: Record<string, string> = {
