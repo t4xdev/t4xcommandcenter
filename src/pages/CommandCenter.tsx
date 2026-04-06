@@ -331,8 +331,7 @@ export default function CommandCenter() {
                         opacity={isSelected ? 1 : 0.8}
                       />
                     </g>
-                    {isSelected && showInfoPopup && (
-                    {(() => {
+                    {isSelected && showInfoPopup && (() => {
                       const flipLeft = vessel.longitude > mapCenter[0];
                       const popupW = 170;
                       const tx = flipLeft ? -(popupW + 18) : 18;
@@ -365,7 +364,6 @@ export default function CommandCenter() {
                         </g>
                       );
                     })()}
-                    )}
                   </Marker>
                 );
               })}
