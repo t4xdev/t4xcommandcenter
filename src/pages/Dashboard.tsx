@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import { useFleet } from "@/contexts/FleetContext";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
@@ -126,10 +127,7 @@ const chatCatColors: Record<string, string> = {
 export default function Dashboard() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatFullscreen, setChatFullscreen] = useState(false);
-  const [selectedFleet, setSelectedFleet] = useState<FleetName>(() => {
-    const named = fleets.filter(f => f !== "All Fleets");
-    return named[Math.floor(Math.random() * named.length)];
-  });
+  const { selectedFleet, setSelectedFleet } = useFleet();
   const [activeDomain, setActiveDomain] = useState<DomainId>("qhse");
   const [selectedVesselIds, setSelectedVesselIds] = useState<Set<string>>(new Set(vessels.map(v => v.id)));
   const [vesselFilterOpen, setVesselFilterOpen] = useState(false);
