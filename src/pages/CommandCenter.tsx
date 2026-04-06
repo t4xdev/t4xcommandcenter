@@ -6,6 +6,16 @@ import vesselImg2 from "@/assets/vessel-engine.webp";
 import vesselImg3 from "@/assets/vessel-cabin.webp";
 import vesselImg4 from "@/assets/vessel-machinery.webp";
 import vesselImg5 from "@/assets/vessel-cargo.jpeg";
+import vesselImg6 from "@/assets/vessel-engine2.webp";
+import vesselImg7 from "@/assets/vessel-hydraulic.webp";
+import vesselImg8 from "@/assets/vessel-port.webp";
+import vesselImg9 from "@/assets/vessel-night-cargo.webp";
+import vesselImg10 from "@/assets/vessel-night-containers.webp";
+import vesselImg11 from "@/assets/vessel-cargo-day.jpeg";
+import vesselImg12 from "@/assets/vessel-engine3.webp";
+import vesselImg13 from "@/assets/vessel-electrical.webp";
+import vesselImg14 from "@/assets/vessel-machinery2.webp";
+import vesselImg15 from "@/assets/vessel-control-panel.webp";
 import {
   ComposableMap,
   Geographies,
