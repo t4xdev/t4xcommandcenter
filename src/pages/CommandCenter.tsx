@@ -166,9 +166,7 @@ export default function CommandCenter() {
   useEffect(() => {
     if (!selectedVessel) return;
     setImageIndex(0);
-    setShowInfoPopup(false);
-    const timer = setTimeout(() => setShowInfoPopup(true), 450);
-    return () => clearTimeout(timer);
+    setShowInfoPopup(true);
   }, [selectedVessel]);
 
   // Auto-scroll highlights
@@ -200,8 +198,8 @@ export default function CommandCenter() {
   const handleVesselClick = useCallback((vessel: VesselData) => {
     autoRotateRef.current = false;
     setAutoRotate(false);
-    setShowInfoPopup(false);
     setSelectedVesselId(vessel.id);
+    setShowInfoPopup(true);
     const idx = filteredVessels.findIndex((v) => v.id === vessel.id);
     if (idx >= 0) {
       setSelectedIndex(idx);
@@ -338,15 +336,15 @@ export default function CommandCenter() {
                       />
                     )}
                     <g
-                      transform={`rotate(${vessel.course}, 0, 0) scale(${isSelected ? 1.35 : 0.9})`}
-                      className="cursor-pointer transition-all duration-300"
+                      transform={`rotate(${vessel.course}, 0, 0) scale(0.9)`}
+                      className="cursor-pointer"
                       style={{ transformOrigin: "center" }}
                     >
                       <polygon
                         points="0,-7 4,5 0,2 -4,5"
                         fill={statusColors[vessel.status]}
-                        stroke={isSelected ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 30%)"}
-                        strokeWidth={isSelected ? 1.5 : 0.5}
+                        stroke={isSelected ? statusColors[vessel.status] : "hsl(0, 0%, 30%)"}
+                        strokeWidth={isSelected ? 2 : 0.5}
                         opacity={isSelected ? 1 : 0.8}
                       >
                         <title>{vessel.name}</title>
@@ -360,18 +358,20 @@ export default function CommandCenter() {
               {selectedVessel && showInfoPopup && (() => {
                 const flipLeft = selectedVessel.longitude > mapCenter[0];
                 const popupW = 170;
-                const tx = flipLeft ? -(popupW + 18) : 18;
+                const popupH = 58;
+                const tx = flipLeft ? -(popupW + 12) : 12;
+                const ty = -(popupH / 2);
                 const arrowPts = flipLeft
-                  ? `${popupW},38 ${popupW + 10},44 ${popupW},48`
-                  : "0,38 -10,44 0,48";
+                  ? `${popupW},${popupH / 2 - 6} ${popupW + 8},${popupH / 2} ${popupW},${popupH / 2 + 6}`
+                  : `0,${popupH / 2 - 6} -8,${popupH / 2} 0,${popupH / 2 + 6}`;
                 const closeX = flipLeft ? 4 : popupW - 18;
                 return (
                   <Marker
                     key="info-popup"
                     coordinates={[selectedVessel.longitude, selectedVessel.latitude]}
                   >
-                    <g style={{ pointerEvents: "auto" }} transform={`translate(${tx},-78)`}>
-                      <rect x={0} y={0} width={popupW} height={58} rx={6}
+                    <g style={{ pointerEvents: "auto" }} transform={`translate(${tx},${ty})`}>
+                      <rect x={0} y={0} width={popupW} height={popupH} rx={6}
                         fill="hsl(0, 0%, 100%)" stroke="hsl(216, 15%, 82%)" strokeWidth={1}
                         filter="drop-shadow(0 3px 6px rgba(0,0,0,0.16))" />
                       <polygon points={arrowPts} fill="hsl(0, 0%, 100%)" stroke="hsl(216, 15%, 82%)" strokeWidth={1} />
