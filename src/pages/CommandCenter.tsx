@@ -329,37 +329,42 @@ export default function CommandCenter() {
                       opacity={vessel.id === selectedVessel?.id ? 1 : 0.8}
                     />
                   </g>
-                  {/* Info popup for selected vessel */}
+                  {/* Info popup for selected vessel - rendered above markers */}
                   {vessel.id === selectedVessel?.id && showInfoPopup && (
-                    <g>
+                    <g style={{ pointerEvents: "auto" }}>
                       <rect
                         x={12}
-                        y={-42}
-                        width={155}
-                        height={52}
+                        y={-50}
+                        width={160}
+                        height={56}
                         rx={5}
                         fill="hsl(0, 0%, 100%)"
                         stroke="hsl(216, 15%, 82%)"
                         strokeWidth={1}
-                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.12))"
+                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))"
                       />
                       <polygon
-                        points="10,-18 16,-22 16,-14"
+                        points="10,-20 16,-24 16,-16"
                         fill="hsl(0, 0%, 100%)"
                         stroke="hsl(216, 15%, 82%)"
                         strokeWidth={1}
                       />
-                      <rect x={15} y={-23} width={3} height={10} fill="hsl(0, 0%, 100%)" />
-                      <text x={20} y={-28} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
+                      <rect x={15} y={-25} width={3} height={10} fill="hsl(0, 0%, 100%)" />
+                      {/* Close button */}
+                      <g onClick={(e) => { e.stopPropagation(); setShowInfoPopup(false); }} className="cursor-pointer">
+                        <rect x={156} y={-49} width={14} height={14} rx={3} fill="hsl(0, 0%, 95%)" stroke="hsl(216, 15%, 82%)" strokeWidth={0.5} />
+                        <text x={163} y={-39} fontSize={8} fill="hsl(215, 10%, 46%)" textAnchor="middle" fontFamily="Inter, sans-serif">✕</text>
+                      </g>
+                      <text x={20} y={-36} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
                         {vessel.name} [{vessel.fleet}]
                       </text>
-                      <text x={20} y={-17} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-25} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
                         {vessel.speed} kn / {vessel.course}°
                       </text>
-                      <text x={20} y={-7} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-15} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
                         Destination: <tspan fontWeight={700}>{vessel.client !== "-" ? vessel.client : "N/A"}</tspan>
                       </text>
-                      <text x={20} y={3} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
+                      <text x={20} y={-5} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
                         Status: <tspan fontWeight={600} fill={statusColors[vessel.status]}>{vessel.status.toUpperCase()}</tspan>
                       </text>
                     </g>
