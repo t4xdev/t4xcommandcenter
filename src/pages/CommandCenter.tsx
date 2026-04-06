@@ -281,7 +281,7 @@ export default function CommandCenter() {
                 >
                   {vessel.id === selectedVessel?.id && (
                     <circle
-                      r={10}
+                      r={12}
                       fill="none"
                       stroke={statusColors[vessel.status]}
                       strokeWidth={1.5}
@@ -290,25 +290,55 @@ export default function CommandCenter() {
                       style={{ animationDuration: "2s" }}
                     />
                   )}
-                  <circle
-                    r={vessel.id === selectedVessel?.id ? 5 : 3}
-                    fill={statusColors[vessel.status]}
-                    stroke={vessel.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "none"}
-                    strokeWidth={vessel.id === selectedVessel?.id ? 2 : 0}
+                  {/* Arrow marker rotated by vessel course */}
+                  <g
+                    transform={`rotate(${vessel.course}, 0, 0) scale(${vessel.id === selectedVessel?.id ? 1.4 : 0.9})`}
                     className="cursor-pointer transition-all duration-300"
-                    opacity={vessel.id === selectedVessel?.id ? 1 : 0.7}
-                  />
+                    style={{ transformOrigin: "center" }}
+                  >
+                    <polygon
+                      points="0,-7 4,5 0,2 -4,5"
+                      fill={statusColors[vessel.status]}
+                      stroke={vessel.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 30%)"}
+                      strokeWidth={vessel.id === selectedVessel?.id ? 1.5 : 0.5}
+                      opacity={vessel.id === selectedVessel?.id ? 1 : 0.8}
+                    />
+                  </g>
+                  {/* Info popup for selected vessel */}
                   {vessel.id === selectedVessel?.id && (
-                    <text
-                      textAnchor="middle"
-                      y={-12}
-                      fill="hsl(215, 50%, 15%)"
-                      fontSize={8}
-                      fontWeight={700}
-                      fontFamily="Inter, sans-serif"
-                    >
-                      {vessel.name}
-                    </text>
+                    <g>
+                      <rect
+                        x={10}
+                        y={-38}
+                        width={140}
+                        height={42}
+                        rx={4}
+                        fill="hsl(0, 0%, 100%)"
+                        stroke="hsl(216, 15%, 82%)"
+                        strokeWidth={1}
+                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.12))"
+                      />
+                      <polygon
+                        points="8,-18 14,-22 14,-14"
+                        fill="hsl(0, 0%, 100%)"
+                        stroke="hsl(216, 15%, 82%)"
+                        strokeWidth={1}
+                      />
+                      {/* White cover for arrow connection */}
+                      <rect x={13} y={-23} width={3} height={10} fill="hsl(0, 0%, 100%)" />
+                      <text x={16} y={-24} fontSize={8} fontWeight={700} fill="hsl(215, 50%, 15%)" fontFamily="Inter, sans-serif">
+                        {vessel.name} [{vessel.fleet}]
+                      </text>
+                      <text x={16} y={-14} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                        {vessel.speed} kn / {vessel.course}°
+                      </text>
+                      <text x={16} y={-5} fontSize={7} fill="hsl(215, 10%, 46%)" fontFamily="Inter, sans-serif">
+                        Destination: <tspan fontWeight={700}>{vessel.client !== "-" ? vessel.client : "N/A"}</tspan>
+                      </text>
+                      <text x={16} y={4} fontSize={6.5} fill="hsl(215, 10%, 55%)" fontFamily="Inter, sans-serif">
+                        Status: <tspan fontWeight={600} fill={statusColors[vessel.status]}>{vessel.status.toUpperCase()}</tspan>
+                      </text>
+                    </g>
                   )}
                 </Marker>
               ))}
