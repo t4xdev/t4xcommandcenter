@@ -87,8 +87,16 @@ const severityStyles: Record<string, string> = {
 
 
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
-const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5];
-const imageLabels = ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"];
+const vesselImageSets = [
+  { images: [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5], labels: ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"] },
+  { images: [vesselImg6, vesselImg7, vesselImg8, vesselImg9, vesselImg10], labels: ["Main Engine", "Hydraulic Unit", "Port Side", "Night Cargo", "Containers"] },
+  { images: [vesselImg11, vesselImg12, vesselImg13, vesselImg14, vesselImg15], labels: ["Cargo Deck", "Engine Bay", "Electrical Room", "Pump Room", "Control Panel"] },
+];
+const getVesselImageSet = (vesselId: string) => {
+  let hash = 0;
+  for (let i = 0; i < vesselId.length; i++) hash = ((hash << 5) - hash) + vesselId.charCodeAt(i);
+  return vesselImageSets[Math.abs(hash) % vesselImageSets.length];
+};
 
 export default function CommandCenter() {
   const navigate = useNavigate();
