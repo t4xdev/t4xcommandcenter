@@ -162,6 +162,29 @@ export default function CommandCenter() {
     [companyFilter]
   );
 
+  // Offset overlapping markers in a spiral pattern
+  const vesselOffsets = useMemo(() => {
+    const offsets: Record<string, [number, number]> = {};
+    const gridSize = 0.08;
+    const groups: Record<string, string[]> = {};
+    filteredVessels.forEach(v => {
+      const key = `${Math.round(v.longitude / gridSize)}_${Math.round(v.latitude / gridSize)}`;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(v.id);
+    });
+    Object.values(groups).forEach(ids => {
+      if (ids.length <= 1) { ids.forEach(id => { offsets[id] = [0, 0]; }); return; }
+      const spread = 0.6 / mapZoom;
+      ids.forEach((id, i) => {
+        if (i === 0) { offsets[id] = [0, 0]; return; }
+        const angle = i * 2.4;
+        const r = spread * Math.sqrt(i);
+        offsets[id] = [Math.cos(angle) * r, Math.sin(angle) * r];
+      });
+    });
+    return offsets;
+  }, [filteredVessels, mapZoom]);
+
   const selectedVessel = useMemo(
     () =>
       filteredVessels.find((v) => v.id === selectedVesselId) ??
@@ -416,7 +439,7 @@ export default function CommandCenter() {
                 return (
                   <Marker
                     key={vessel.id}
-                    coordinates={[vessel.longitude, vessel.latitude]}
+                    coordinates={[vessel.longitude + (vesselOffsets[vessel.id]?.[0] || 0), vessel.latitude + (vesselOffsets[vessel.id]?.[1] || 0)]}
                     onClick={() => handleVesselClick(vessel)}
                     onMouseEnter={() => setHoveredVesselId(vessel.id)}
                     onMouseLeave={() => setHoveredVesselId(null)}
