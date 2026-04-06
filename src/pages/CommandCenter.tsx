@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import vesselImg1 from "@/assets/vessel-img-1.jpg";
+import vesselImg2 from "@/assets/vessel-img-2.jpg";
+import vesselImg3 from "@/assets/vessel-img-3.jpg";
+import vesselImg4 from "@/assets/vessel-img-4.jpg";
 import {
   ComposableMap,
   Geographies,
