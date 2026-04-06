@@ -85,6 +85,7 @@ import {
   Pause,
   Play,
   Search,
+  Globe,
 } from "lucide-react";
 import { vesselData, alertHighlights, type VesselData } from "@/data/commandCenterData";
 import { cn } from "@/lib/utils";
