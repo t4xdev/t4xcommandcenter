@@ -325,22 +325,52 @@ function generateVessels(): VesselData[] {
     const nameNum = Math.floor(rand() * 100);
     const vesselName = rand() > 0.5 ? `${prefix} ${suffix}` : `${prefix}-${String(nameNum).padStart(2, "0")}`;
 
-    const speed = Math.round(rand() * 14 * 10) / 10;
-    const fuelStart = Math.round(15000 + rand() * 85000);
-    const fuelUsed = Math.round(rand() * 5000);
+    // Realistic ops mode: most vessels either DP/berthing ops, transit, or port/standby
+    const opsMode = rand();
+    let speed: number, dpHrs: number, transitHrs: number, portHrs: number;
+    if (opsMode < 0.45) {
+      // DP/berthing operations (like Dolphin-04) - most common
+      dpHrs = Math.round(16 + rand() * 8); // 16-24 hrs
+      transitHrs = 0;
+      portHrs = 24 - dpHrs;
+      speed = 0;
+    } else if (opsMode < 0.65) {
+      // Transit (like Tahid Verde) - vessel underway
+      dpHrs = 0;
+      transitHrs = 24;
+      portHrs = 0;
+      speed = Math.round((8 + rand() * 5) * 10) / 10; // 8-13 knots realistic
+    } else if (opsMode < 0.85) {
+      // Port/standby (like Zaharat, Sabarmati)
+      dpHrs = 0;
+      transitHrs = 0;
+      portHrs = 24;
+      speed = 0;
+    } else {
+      // Mixed ops (partial DP + transit)
+      dpHrs = Math.round(4 + rand() * 10); // 4-14 hrs
+      transitHrs = Math.round(2 + rand() * (20 - dpHrs));
+      portHrs = Math.max(24 - dpHrs - transitHrs, 0);
+      speed = Math.round((4 + rand() * 6) * 10) / 10;
+    }
+
+    // Fuel: realistic ranges from VDRs (15k-97k start, 0-3700 used)
+    const fuelStart = Math.round(20000 + rand() * 75000);
+    const fuelUsed = speed > 0 ? Math.round(200 + rand() * 3500) : Math.round(rand() * 500);
     const fuelBalance = Math.max(fuelStart - fuelUsed, 0);
 
-    const waterBalance = Math.round(5 + rand() * 40000);
-    const crewOnBoard = Math.round(5 + rand() * 20);
-    const maintenanceDone = Math.round(rand() * 10);
-    const outstandingDefects = status === "critical" ? Math.round(1 + rand() * 5) : status === "warning" ? Math.round(rand() * 3) : 0;
-    const certsValid = Math.round(28 + rand() * 10);
-    const certsExpired = status === "critical" ? Math.round(1 + rand() * 3) : status === "warning" && rand() > 0.5 ? 1 : 0;
-    const provisionDays = Math.round(rand() * 30);
-
-    const dpHrs = Math.round(rand() * 24);
-    const transitHrs = Math.round(rand() * (24 - dpHrs));
-    const portHrs = 24 - dpHrs - transitHrs;
+    // Water: realistic (10-40000 ltrs based on vessel size)
+    const waterBalance = Math.round(5000 + rand() * 35000);
+    // Crew: 5-14 from VDRs
+    const crewOnBoard = Math.round(5 + rand() * 9);
+    // Maintenance: 0-12 per day from VDRs
+    const maintenanceDone = Math.round(rand() * 12);
+    const outstandingDefects = status === "critical" ? Math.round(1 + rand() * 4) : status === "warning" ? Math.round(rand() * 2) : 0;
+    // Certs: 22-35 valid from VDRs
+    const certsValid = Math.round(22 + rand() * 13);
+    const certsExpired = status === "critical" ? Math.round(1 + rand() * 2) : status === "warning" && rand() > 0.6 ? 1 : 0;
+    // Provisions: 0-20 days from VDRs
+    const provisionDays = Math.round(rand() * 20);
 
     const pad = (n: number) => String(n).padStart(2, "0");
 
