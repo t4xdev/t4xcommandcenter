@@ -187,10 +187,10 @@ export default function CommandCenter() {
   }, []);
 
   const fleetStats = useMemo(() => {
-    const total = vesselData.length;
-    const onHire = vesselData.filter((v) => v.hiringStatus === "ON-Hire").length;
-    const critical = vesselData.filter((v) => v.status === "critical").length;
-    const warning = vesselData.filter((v) => v.status === "warning").length;
+    const total = realVessels.length;
+    const onHire = realVessels.filter((v) => v.hiringStatus === "ON-Hire").length;
+    const critical = realVessels.filter((v) => v.status === "critical").length;
+    const warning = realVessels.filter((v) => v.status === "warning").length;
     return { total, onHire, critical, warning };
   }, []);
 
