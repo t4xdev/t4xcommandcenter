@@ -351,6 +351,52 @@ export default function CommandCenter() {
             <p className="text-[9px] text-muted-foreground">vessels</p>
           </div>
 
+          {/* Vessel Search */}
+          <div ref={searchRef} className="absolute top-3 right-3 z-10" style={{ width: 220 }}>
+            <div
+              className="flex items-center gap-1.5 bg-card/95 backdrop-blur-sm border border-border rounded-lg px-2 py-1.5 cursor-pointer"
+              onClick={() => setShowVesselSearch(true)}
+            >
+              <Search className="w-3.5 h-3.5 text-muted-foreground" />
+              <input
+                value={vesselSearch}
+                onChange={(e) => { setVesselSearch(e.target.value); setShowVesselSearch(true); }}
+                placeholder="Search vessel name or IMO..."
+                className="bg-transparent text-[10px] text-foreground placeholder:text-muted-foreground outline-none w-full"
+                onFocus={() => setShowVesselSearch(true)}
+              />
+              {vesselSearch && (
+                <button onClick={(e) => { e.stopPropagation(); setVesselSearch(""); }} className="text-muted-foreground hover:text-foreground">
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+            {showVesselSearch && searchResults.length > 0 && (
+              <div className="mt-1 bg-card/95 backdrop-blur-sm border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                {searchResults.map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={() => {
+                      handleVesselClick(v);
+                      setVesselSearch("");
+                      setShowVesselSearch(false);
+                    }}
+                    className={cn(
+                      "w-full flex items-center gap-2 px-3 py-1.5 text-left hover:bg-accent transition-colors",
+                      v.id === selectedVessel?.id && "bg-accent"
+                    )}
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: companyColors[v.company] || "#ccc" }} />
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-medium text-foreground truncate">{v.name}</p>
+                      <p className="text-[8px] text-muted-foreground">{v.company} · IMO {v.imo}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Progress indicator for auto-rotation */}
           {autoRotate && (
             <div className="absolute bottom-4 right-4 bg-card/95 backdrop-blur-sm rounded-lg border border-border shadow-sm px-3 py-2">
