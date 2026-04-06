@@ -804,21 +804,23 @@ export default function CommandCenter() {
 
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={complianceData} margin={{ top: 10, right: 10, bottom: 40, left: 10 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" vertical={false} />
+                <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
                   <XAxis
-                    dataKey="name"
-                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 8 }}
-                    angle={-35}
-                    textAnchor="end"
-                    interval={0}
-                    height={60}
+                    type="number"
+                    dataKey="pms"
+                    domain={[50, 105]}
+                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
+                    label={{ value: "PMS Score %", position: "bottom", fontSize: 9, fill: "hsl(216, 10%, 46%)", offset: 2 }}
                   />
                   <YAxis
-                    domain={[0, 100]}
+                    type="number"
+                    dataKey="score"
+                    domain={[20, 100]}
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Score", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                    label={{ value: "Overall Compliance Score", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
                   />
+                  <ZAxis type="number" dataKey="utilization" range={[30, 200]} name="Utilization" />
                   <Tooltip
                     content={({ payload }) => {
                       if (!payload || payload.length === 0) return null;
@@ -826,6 +828,7 @@ export default function CommandCenter() {
                       return (
                         <div className="bg-card border border-border rounded-lg p-2 shadow-md text-[10px]">
                           <p className="font-semibold text-foreground">{d?.name}</p>
+                          <p className="text-muted-foreground text-[9px]">{d?.company}</p>
                           <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 mt-1">
                             <span className="text-muted-foreground">VDR:</span><span className="font-mono font-bold">{d?.vdr}%</span>
                             <span className="text-muted-foreground">PMS:</span><span className="font-mono font-bold">{d?.pms}%</span>
@@ -833,40 +836,55 @@ export default function CommandCenter() {
                             <span className="text-muted-foreground">Fuel:</span><span className="font-mono font-bold">{d?.fuel}%</span>
                           </div>
                           <div className="border-t border-border mt-1 pt-1">
-                            <span className="text-muted-foreground">Overall Score: </span>
+                            <span className="text-muted-foreground">Overall: </span>
                             <span className="font-mono font-bold text-foreground">{d?.score}</span>
                           </div>
                         </div>
                       );
                     }}
                   />
-                  <ReferenceLine
-                    y={Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length)}
-                    stroke="hsl(25, 70%, 55%)"
-                    strokeDasharray="5 3"
-                    strokeWidth={1.5}
-                    label={{ value: `Fleet Avg: ${Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length)}`, position: "right", fontSize: 8, fill: "hsl(25, 70%, 55%)" }}
-                  />
-                  <Bar dataKey="score" radius={[3, 3, 0, 0]}>
-                    {complianceData.map((entry, idx) => {
-                      const isSelected = selectedVessel?.name === entry.name;
-                      const color = entry.score >= 80
-                        ? "hsl(152, 60%, 42%)"
-                        : entry.score >= 60
-                        ? "hsl(40, 80%, 50%)"
-                        : "hsl(0, 70%, 55%)";
-                      return (
-                        <Cell
-                          key={idx}
-                          fill={color}
-                          opacity={isSelected ? 1 : 0.6}
-                          stroke={isSelected ? "hsl(210, 80%, 52%)" : "none"}
-                          strokeWidth={isSelected ? 2 : 0}
-                        />
-                      );
-                    })}
-                  </Bar>
-                </BarChart>
+                  {/* Fleet average lines */}
+                  {(() => {
+                    const avgPms = Math.round(complianceData.reduce((s, d) => s + d.pms, 0) / complianceData.length);
+                    const avgScore = Math.round(complianceData.reduce((s, d) => s + d.score, 0) / complianceData.length);
+                    return (
+                      <>
+                        <ReferenceLine x={avgPms} stroke="hsl(215, 40%, 55%)" strokeDasharray="5 3" strokeWidth={1.5}
+                          label={{ value: `Avg PMS: ${avgPms}%`, position: "top", fontSize: 8, fill: "hsl(215, 40%, 55%)" }} />
+                        <ReferenceLine y={avgScore} stroke="hsl(25, 50%, 55%)" strokeDasharray="5 3" strokeWidth={1.5}
+                          label={{ value: `Avg Score: ${avgScore}`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }} />
+                      </>
+                    );
+                  })()}
+                  {/* Background vessels */}
+                  <Scatter data={complianceData.filter(e => e.name !== selectedVessel?.name)} name="Fleet">
+                    {complianceData.filter(e => e.name !== selectedVessel?.name).map((entry, idx) => (
+                      <Cell
+                        key={idx}
+                        fill={companyColors[entry.company] || "hsl(216, 10%, 60%)"}
+                        opacity={0.5}
+                        r={5}
+                      />
+                    ))}
+                  </Scatter>
+                  {/* Selected vessel */}
+                  {selectedVessel && (() => {
+                    const sel = complianceData.find(e => e.name === selectedVessel.name);
+                    if (!sel) return null;
+                    return (
+                      <>
+                        <ReferenceDot x={sel.pms} y={sel.score} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
+                        <Scatter data={[sel]} name="Selected">
+                          <Cell fill="hsl(210, 80%, 52%)" opacity={1} stroke="hsl(0, 0%, 100%)" strokeWidth={3} r={10} />
+                        </Scatter>
+                        <ReferenceDot x={sel.pms} y={sel.score} r={0} fill="none" stroke="none">
+                          <Label value={`▶ ${sel.name} (${sel.score})`} position="right" offset={14}
+                            style={{ fontSize: 9, fontWeight: 700, fill: "hsl(215, 50%, 15%)" }} />
+                        </ReferenceDot>
+                      </>
+                    );
+                  })()}
+                </ScatterChart>
               </ResponsiveContainer>
             </div>
 
