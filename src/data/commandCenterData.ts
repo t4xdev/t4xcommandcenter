@@ -55,38 +55,39 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations around major maritime hubs ---
+// --- Seed locations in water near India & nearby seas ---
 const locationPools = [
-  { name: "Mundra Port", lon: 69.72, lat: 22.74, region: "India" },
-  { name: "Kandla Port", lon: 70.22, lat: 23.01, region: "India" },
-  { name: "JNPT Mumbai", lon: 72.95, lat: 18.95, region: "India" },
-  { name: "Vizag Port", lon: 83.30, lat: 17.69, region: "India" },
-  { name: "Chennai Port", lon: 80.30, lat: 13.10, region: "India" },
-  { name: "Cochin Port", lon: 76.27, lat: 9.97, region: "India" },
-  { name: "Paradip Port", lon: 86.67, lat: 20.27, region: "India" },
-  { name: "Haldia Port", lon: 88.06, lat: 22.03, region: "India" },
-  { name: "Duqm, Oman", lon: 57.72, lat: 19.66, region: "Middle East" },
-  { name: "Jebel Ali, UAE", lon: 55.03, lat: 25.01, region: "Middle East" },
-  { name: "Fujairah, UAE", lon: 56.36, lat: 25.12, region: "Middle East" },
-  { name: "Ras Tanura, KSA", lon: 50.17, lat: 26.64, region: "Middle East" },
-  { name: "Kharg Island, Iran", lon: 50.33, lat: 29.23, region: "Middle East" },
-  { name: "Singapore Strait", lon: 103.85, lat: 1.26, region: "SE Asia" },
-  { name: "Port Klang, MY", lon: 101.39, lat: 3.00, region: "SE Asia" },
-  { name: "Tanjung Priok, ID", lon: 106.88, lat: -6.10, region: "SE Asia" },
-  { name: "Laem Chabang, TH", lon: 100.88, lat: 13.08, region: "SE Asia" },
-  { name: "Capetown, SA", lon: 18.42, lat: -33.92, region: "Africa" },
-  { name: "Durban, SA", lon: 31.03, lat: -29.87, region: "Africa" },
-  { name: "Mombasa, KE", lon: 39.67, lat: -4.04, region: "Africa" },
-  { name: "Suez Canal", lon: 32.55, lat: 30.00, region: "Middle East" },
-  { name: "Arabian Sea", lon: 65.00, lat: 18.00, region: "Transit" },
-  { name: "Bay of Bengal", lon: 87.00, lat: 14.00, region: "Transit" },
-  { name: "Indian Ocean", lon: 75.00, lat: -5.00, region: "Transit" },
-  { name: "South China Sea", lon: 112.00, lat: 10.00, region: "Transit" },
-  { name: "Red Sea", lon: 38.00, lat: 20.00, region: "Transit" },
-  { name: "Malacca Strait", lon: 100.50, lat: 2.50, region: "Transit" },
-  { name: "Persian Gulf", lon: 52.00, lat: 26.50, region: "Middle East" },
-  { name: "Gulf of Aden", lon: 47.00, lat: 12.50, region: "Transit" },
-  { name: "Mozambique Channel", lon: 42.00, lat: -18.00, region: "Transit" },
+  // West coast of India (Arabian Sea)
+  { name: "Off Mundra", lon: 68.8, lat: 22.5, region: "India" },
+  { name: "Off Kandla", lon: 69.5, lat: 22.8, region: "India" },
+  { name: "Off Mumbai", lon: 71.5, lat: 18.8, region: "India" },
+  { name: "Off Goa", lon: 72.5, lat: 15.2, region: "India" },
+  { name: "Off Cochin", lon: 75.0, lat: 9.5, region: "India" },
+  { name: "Off Mangalore", lon: 73.5, lat: 12.5, region: "India" },
+  // East coast of India (Bay of Bengal)
+  { name: "Off Vizag", lon: 84.0, lat: 17.2, region: "India" },
+  { name: "Off Chennai", lon: 81.0, lat: 12.8, region: "India" },
+  { name: "Off Paradip", lon: 87.5, lat: 19.8, region: "India" },
+  { name: "Off Haldia", lon: 88.5, lat: 21.0, region: "India" },
+  { name: "Off Tuticorin", lon: 78.5, lat: 8.2, region: "India" },
+  // Arabian Sea transit
+  { name: "Arabian Sea West", lon: 63.0, lat: 18.0, region: "Transit" },
+  { name: "Arabian Sea Central", lon: 66.0, lat: 15.0, region: "Transit" },
+  { name: "Arabian Sea South", lon: 68.0, lat: 12.0, region: "Transit" },
+  { name: "Lakshadweep Sea", lon: 72.0, lat: 11.0, region: "Transit" },
+  // Bay of Bengal transit
+  { name: "Bay of Bengal North", lon: 86.0, lat: 16.0, region: "Transit" },
+  { name: "Bay of Bengal Central", lon: 84.0, lat: 12.0, region: "Transit" },
+  { name: "Bay of Bengal South", lon: 82.0, lat: 8.0, region: "Transit" },
+  // Gulf & Middle East (water)
+  { name: "Persian Gulf", lon: 52.0, lat: 26.0, region: "Middle East" },
+  { name: "Gulf of Oman", lon: 58.0, lat: 24.0, region: "Middle East" },
+  { name: "Off Fujairah", lon: 56.8, lat: 25.0, region: "Middle East" },
+  { name: "Off Duqm", lon: 57.5, lat: 19.2, region: "Middle East" },
+  // Indian Ocean
+  { name: "Indian Ocean NW", lon: 60.0, lat: 10.0, region: "Transit" },
+  { name: "Indian Ocean Central", lon: 72.0, lat: 5.0, region: "Transit" },
+  { name: "Maldives Waters", lon: 73.5, lat: 3.0, region: "Transit" },
 ];
 
 const vesselPrefixes = [
