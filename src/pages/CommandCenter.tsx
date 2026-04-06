@@ -780,7 +780,7 @@ export default function CommandCenter() {
                       boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
                     }}
                     formatter={(value: number, name: string) => [
-                      name === "Fuel Used" ? `${value} MT` : name === "Efficiency" ? `${value}%` : value,
+                      name === "Ops Hours" ? `${value} hrs` : name === "Efficiency" ? `${value}%` : value,
                       name,
                     ]}
                     labelFormatter={() => ""}
@@ -792,7 +792,7 @@ export default function CommandCenter() {
                           <p className="font-semibold text-foreground">{d?.name}</p>
                           <p className="text-muted-foreground">{d?.company}</p>
                           <p>Efficiency: <span className="font-mono font-bold">{d?.efficiency}%</span></p>
-                          <p>Fuel Used: <span className="font-mono font-bold">{d?.fuelUsed} MT</span></p>
+                          <p>Ops Hours: <span className="font-mono font-bold">{d?.opsHours} hrs</span></p>
                           <p>Crew: <span className="font-mono font-bold">{d?.crewOnBoard}</span></p>
                         </div>
                       );
@@ -807,11 +807,11 @@ export default function CommandCenter() {
                     label={{ value: `Avg Eff: ${avgEfficiency}%`, position: "top", fontSize: 8, fill: "hsl(215, 40%, 55%)" }}
                   />
                   <ReferenceLine
-                    y={avgFuel}
+                    y={avgOpsHours}
                     stroke="hsl(25, 50%, 55%)"
                     strokeDasharray="5 3"
                     strokeWidth={1.5}
-                    label={{ value: `Avg Fuel: ${avgFuel} MT`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }}
+                    label={{ value: `Avg Hrs: ${avgOpsHours}`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }}
                   />
                   {/* Background vessels */}
                   <Scatter data={scatterData.filter(e => e.id !== selectedVessel?.id)} name="Fleet">
@@ -831,7 +831,7 @@ export default function CommandCenter() {
                     return (
                       <>
                         {/* Outer glow ring */}
-                        <ReferenceDot x={sel.efficiency} y={sel.fuelUsed} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
+                        <ReferenceDot x={sel.efficiency} y={sel.opsHours} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
                         <Scatter data={[sel]} name="Selected">
                           <Cell
                             fill="hsl(210, 80%, 52%)"
@@ -851,7 +851,7 @@ export default function CommandCenter() {
                     return (
                       <ReferenceDot
                         x={sel.efficiency}
-                        y={sel.fuelUsed}
+                        y={sel.opsHours}
                         r={0}
                         fill="none"
                         stroke="none"
