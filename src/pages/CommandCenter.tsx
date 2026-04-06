@@ -439,7 +439,7 @@ export default function CommandCenter() {
                 return (
                   <Marker
                     key={vessel.id}
-                    coordinates={[vessel.longitude, vessel.latitude]}
+                    coordinates={[vessel.longitude + (vesselOffsets[vessel.id]?.[0] || 0), vessel.latitude + (vesselOffsets[vessel.id]?.[1] || 0)]}
                     onClick={() => handleVesselClick(vessel)}
                     onMouseEnter={() => setHoveredVesselId(vessel.id)}
                     onMouseLeave={() => setHoveredVesselId(null)}
