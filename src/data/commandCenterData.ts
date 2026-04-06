@@ -101,6 +101,19 @@ const locationPools = [
   { name: "Mozambique Channel North", lon: 42.0, lat: -13.0, region: "Mozambique" },
   { name: "Mozambique Channel South", lon: 44.0, lat: -20.0, region: "Mozambique" },
   { name: "Mozambique Channel Central", lon: 43.0, lat: -17.0, region: "Mozambique" },
+  // West Africa — 0-15°W, 0-10°N
+  { name: "Off Monrovia", lon: -10.5, lat: 5.5, region: "West Africa" },
+  { name: "Gulf of Guinea", lon: -3.0, lat: 4.0, region: "West Africa" },
+  { name: "Off Abidjan", lon: -4.0, lat: 5.0, region: "West Africa" },
+  // Southeast Asia — 100-125°E, 5-15°N
+  { name: "Off Batangas", lon: 121.0, lat: 13.5, region: "Southeast Asia" },
+  { name: "South China Sea", lon: 115.0, lat: 10.0, region: "Southeast Asia" },
+  { name: "Strait of Malacca", lon: 100.5, lat: 3.0, region: "Southeast Asia" },
+  { name: "Off Singapore", lon: 104.0, lat: 1.5, region: "Southeast Asia" },
+  // South Africa coast — 18-35°E, -28 to -35°S
+  { name: "Off Durban", lon: 31.5, lat: -30.0, region: "South Africa" },
+  { name: "Off Capetown", lon: 18.5, lat: -34.0, region: "South Africa" },
+  { name: "Off Port Elizabeth", lon: 26.0, lat: -34.0, region: "South Africa" },
 ];
 
 const vesselPrefixes = [
@@ -291,7 +304,7 @@ function generateVessels(): VesselData[] {
   vessels.push(...realVessels);
 
   // Generate ~210 more vessels
-  for (let i = 6; i <= 215; i++) {
+  for (let i = 7; i <= 215; i++) {
     const companyIdx = Math.floor(rand() * companies.length);
     const company = companies[companyIdx];
     const locIdx = Math.floor(rand() * locationPools.length);
