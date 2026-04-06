@@ -319,7 +319,7 @@ export default function CommandCenter() {
               </Geographies>
 
               {/* All vessel markers */}
-              {filteredVessels.map((vessel) => {
+              {[...filteredVessels].sort((a, b) => (a.id === selectedVessel?.id ? 1 : 0) - (b.id === selectedVessel?.id ? 1 : 0)).map((vessel) => {
                 const isSelected = vessel.id === selectedVessel?.id;
                 const isHovered = vessel.id === hoveredVesselId;
                 return (
