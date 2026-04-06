@@ -515,7 +515,7 @@ export default function CommandCenter() {
                 </Marker>
               ))}
 
-
+            </ZoomableGroup>
           </ComposableMap>
 
           {/* Zoom Controls */}
