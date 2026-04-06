@@ -486,7 +486,8 @@ export default function CommandCenter() {
             <div className="border-t border-border mt-2 pt-2">
               <p className="text-[10px] text-muted-foreground mb-1 font-medium">COMPANIES</p>
               {companyNames.map((name) => {
-                const count = vesselData.filter((v) => v.company === name).length;
+                const realCounts: Record<string, number> = { "SSIDL": 14, "Ocean Sparkle": 5, "Adani Ports": 9 };
+                const count = realCounts[name] || 0;
                 return (
                   <button
                     key={name}
