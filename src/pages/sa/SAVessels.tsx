@@ -347,6 +347,6 @@ export default function SAVessels() {
           </div>
         )}
       </div>
-    </div>
+    </AppLayout>
   );
 }

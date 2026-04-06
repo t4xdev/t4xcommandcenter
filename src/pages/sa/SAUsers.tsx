@@ -516,6 +516,6 @@ export default function SAUsers() {
           />
         )}
       </div>
-    </div>
+    </AppLayout>
   );
 }

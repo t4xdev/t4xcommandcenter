@@ -294,6 +294,6 @@ export default function SACompany() {
           </div>
         )}
       </div>
-    </div>
+    </AppLayout>
   );
 }

@@ -267,6 +267,6 @@ export default function SARoles() {
           </div>
         )}
       </div>
-    </div>
+    </AppLayout>
   );
 }
