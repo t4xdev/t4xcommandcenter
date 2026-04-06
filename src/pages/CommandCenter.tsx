@@ -201,7 +201,7 @@ export default function CommandCenter() {
 
   // Image slideshow - cycle every 3 seconds
   useEffect(() => {
-    const currentSet = selectedVessel ? getVesselImageSet(selectedVessel.id) : vesselImageSets[0];
+    const currentSet = selectedVessel ? getVesselImageSet(selectedVessel.id) : defaultImageSets[0];
     const interval = setInterval(() => {
       setImageIndex((prev) => (prev + 1) % currentSet.images.length);
     }, 3000);
