@@ -476,16 +476,16 @@ export default function CommandCenter() {
                   <button
                     key={v.id}
                     onClick={() => {
-                      // Clear company filter if needed, then select
                       if (companyFilter && v.company !== companyFilter) {
                         setCompanyFilter(null);
                       }
-                      // Find index in the appropriate list
+                      autoRotateRef.current = false;
+                      setAutoRotate(false);
+                      setSelectedVesselId(v.id);
                       const targetList = (companyFilter && v.company === companyFilter) ? filteredVessels : vesselData;
                       const idx = targetList.findIndex((fv) => fv.id === v.id);
                       if (idx >= 0) {
                         setSelectedIndex(idx);
-                        setAutoRotate(false);
                       }
                       setVesselSearch("");
                       setShowVesselSearch(false);
