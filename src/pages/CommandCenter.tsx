@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import vesselImg1 from "@/assets/vessel-img-1.jpg";
+import vesselImg2 from "@/assets/vessel-img-2.jpg";
+import vesselImg3 from "@/assets/vessel-img-3.jpg";
+import vesselImg4 from "@/assets/vessel-img-4.jpg";
 import {
   ComposableMap,
   Geographies,
@@ -69,14 +73,16 @@ const comparisonMetrics = [
 ];
 
 const ROTATION_INTERVAL = 5000;
+const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
+const imageLabels = ["Aerial View", "Port Side", "Forward Deck", "Aft Deck"];
 
 export default function CommandCenter() {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
+  const [imageIndex, setImageIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
@@ -111,6 +117,19 @@ export default function CommandCenter() {
     }, ROTATION_INTERVAL);
     return () => clearInterval(interval);
   }, [autoRotate, filteredVessels.length]);
+
+  // Image slideshow - cycle every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImageIndex((prev) => (prev + 1) % vesselImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Reset image on vessel change
+  useEffect(() => {
+    setImageIndex(0);
+  }, [selectedIndex]);
 
   // Auto-scroll highlights
   useEffect(() => {
@@ -201,7 +220,7 @@ export default function CommandCenter() {
         <div className="w-1/2 relative border-r border-border bg-accent/30">
           <ComposableMap
             projection="geoMercator"
-            projectionConfig={{ scale: 140, center: [50, 10] }}
+            projectionConfig={{ scale: 220, center: [55, 15] }}
             className="w-full h-full"
             style={{ width: "100%", height: "100%" }}
           >
@@ -322,85 +341,128 @@ export default function CommandCenter() {
           {/* Vessel Summary Card */}
           {selectedVessel && (
             <div className="p-4 border-b border-border shrink-0">
-              <div className="bg-card rounded-xl border border-border shadow-sm p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <Ship className="w-4 h-4 text-primary" />
-                      <h2 className="text-base font-bold text-foreground">{selectedVessel.name}</h2>
-                      <span
+              <div className="flex gap-3">
+                {/* Vessel Image Slideshow Card */}
+                <div className="w-[180px] shrink-0 rounded-xl border border-border overflow-hidden bg-card shadow-sm">
+                  <div className="relative h-[130px] overflow-hidden">
+                    {vesselImages.map((img, i) => (
+                      <img
+                        key={i}
+                        src={img}
+                        alt={`${selectedVessel.name} - ${imageLabels[i]}`}
                         className={cn(
-                          "text-[9px] px-2 py-0.5 rounded-full font-semibold uppercase",
-                          selectedVessel.status === "normal" && "bg-success/10 text-success",
-                          selectedVessel.status === "warning" && "bg-warning/10 text-warning",
-                          selectedVessel.status === "critical" && "bg-destructive/10 text-destructive"
+                          "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
+                          i === imageIndex ? "opacity-100" : "opacity-0"
                         )}
-                      >
-                        {selectedVessel.status}
-                      </span>
-                      <span
-                        className={cn(
-                          "text-[9px] px-2 py-0.5 rounded-full font-medium",
-                          selectedVessel.hiringStatus === "ON-Hire"
-                            ? "bg-success/10 text-success"
-                            : "bg-muted text-muted-foreground"
-                        )}
-                      >
-                        {selectedVessel.hiringStatus}
-                      </span>
+                        loading="lazy"
+                        width={768}
+                        height={512}
+                      />
+                    ))}
+                    <div className="absolute bottom-1.5 left-1.5 bg-foreground/60 backdrop-blur-sm rounded px-1.5 py-0.5">
+                      <p className="text-[8px] text-white font-medium">{imageLabels[imageIndex]}</p>
                     </div>
-                    <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-                      <span>IMO: {selectedVessel.imo}</span>
-                      <span>•</span>
-                      <span className="font-medium" style={{ color: companyColors[selectedVessel.company] }}>
-                        {selectedVessel.company}
-                      </span>
-                      <span>•</span>
-                      <span>Master: {selectedVessel.master}</span>
+                    {/* Dots */}
+                    <div className="absolute bottom-1.5 right-1.5 flex gap-1">
+                      {vesselImages.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setImageIndex(i)}
+                          className={cn(
+                            "w-1.5 h-1.5 rounded-full transition-all",
+                            i === imageIndex ? "bg-white scale-125" : "bg-white/50"
+                          )}
+                        />
+                      ))}
                     </div>
                   </div>
-                  <div className="text-right text-[10px] text-muted-foreground">
-                    <p>Report: {selectedVessel.reportDate}</p>
-                    <p>At: {selectedVessel.reportTime}</p>
+                  <div className="px-2 py-1.5">
+                    <p className="text-[9px] font-semibold text-foreground truncate">{selectedVessel.name}</p>
+                    <p className="text-[8px] text-muted-foreground">VDR Images • Auto-play</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 mb-3 text-[11px] text-foreground">
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3 h-3 text-primary" />
-                    <span>{selectedVessel.location}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Navigation className="w-3 h-3 text-primary" />
-                    <span>{selectedVessel.speed} kn / {selectedVessel.course}°</span>
-                  </div>
-                  {selectedVessel.client !== "-" && (
-                    <div className="flex items-center gap-1.5">
-                      <Anchor className="w-3 h-3 text-primary" />
-                      <span>Client: {selectedVessel.client}</span>
+                {/* Vessel Summary Card */}
+                <div className="flex-1 bg-card rounded-xl border border-border shadow-sm p-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Ship className="w-4 h-4 text-primary" />
+                        <h2 className="text-sm font-bold text-foreground">{selectedVessel.name}</h2>
+                        <span
+                          className={cn(
+                            "text-[9px] px-2 py-0.5 rounded-full font-semibold uppercase",
+                            selectedVessel.status === "normal" && "bg-success/10 text-success",
+                            selectedVessel.status === "warning" && "bg-warning/10 text-warning",
+                            selectedVessel.status === "critical" && "bg-destructive/10 text-destructive"
+                          )}
+                        >
+                          {selectedVessel.status}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-[9px] px-2 py-0.5 rounded-full font-medium",
+                            selectedVessel.hiringStatus === "ON-Hire"
+                              ? "bg-success/10 text-success"
+                              : "bg-muted text-muted-foreground"
+                          )}
+                        >
+                          {selectedVessel.hiringStatus}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                        <span>IMO: {selectedVessel.imo}</span>
+                        <span>•</span>
+                        <span className="font-medium" style={{ color: companyColors[selectedVessel.company] }}>
+                          {selectedVessel.company}
+                        </span>
+                        <span>•</span>
+                        <span>Master: {selectedVessel.master}</span>
+                      </div>
                     </div>
-                  )}
-                </div>
+                    <div className="text-right text-[10px] text-muted-foreground">
+                      <p>Report: {selectedVessel.reportDate}</p>
+                      <p>At: {selectedVessel.reportTime}</p>
+                    </div>
+                  </div>
 
-                <div className="grid grid-cols-4 gap-2">
-                  <KpiMini icon={Fuel} label="Fuel Balance" value={`${(selectedVessel.fuelBalance / 1000).toFixed(1)}K L`}
-                    trend={selectedVessel.fuelBalance < 20000 ? "down" : "up"}
-                    alert={selectedVessel.fuelBalance < 20000} />
-                  <KpiMini icon={Droplets} label="Water" value={`${selectedVessel.waterBalance > 1000 ? (selectedVessel.waterBalance / 1000).toFixed(1) + "K" : selectedVessel.waterBalance}`}
-                    trend={selectedVessel.waterBalance < 5000 ? "down" : "up"}
-                    alert={selectedVessel.waterBalance < 5000} />
-                  <KpiMini icon={Clock} label="Ops Hours" value={selectedVessel.totalOpsHrs} />
-                  <KpiMini icon={Users} label="Crew" value={`${selectedVessel.crewOnBoard}`} />
-                  <KpiMini icon={Wrench} label="Maint. Done" value={`${selectedVessel.maintenanceDone}`} />
-                  <KpiMini icon={AlertTriangle} label="Defects" value={`${selectedVessel.outstandingDefects}`}
-                    alert={selectedVessel.outstandingDefects > 0}
-                    trend={selectedVessel.outstandingDefects > 0 ? "down" : undefined} />
-                  <KpiMini icon={Shield} label="Certs Valid" value={`${selectedVessel.certificatesValid}`}
-                    alert={selectedVessel.certificatesExpired > 0}
-                    subtitle={selectedVessel.certificatesExpired > 0 ? `${selectedVessel.certificatesExpired} expired` : undefined} />
-                  <KpiMini icon={Activity} label="Provisions" value={`${selectedVessel.provisionDays}d`}
-                    trend={selectedVessel.provisionDays < 5 ? "down" : "up"}
-                    alert={selectedVessel.provisionDays < 5} />
+                  <div className="flex items-center gap-3 mb-2 text-[10px] text-foreground">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-primary" />
+                      <span>{selectedVessel.location}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Navigation className="w-3 h-3 text-primary" />
+                      <span>{selectedVessel.speed} kn / {selectedVessel.course}°</span>
+                    </div>
+                    {selectedVessel.client !== "-" && (
+                      <div className="flex items-center gap-1">
+                        <Anchor className="w-3 h-3 text-primary" />
+                        <span>{selectedVessel.client}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-1.5">
+                    <KpiMini icon={Fuel} label="Fuel" value={`${(selectedVessel.fuelBalance / 1000).toFixed(1)}K`}
+                      trend={selectedVessel.fuelBalance < 20000 ? "down" : "up"}
+                      alert={selectedVessel.fuelBalance < 20000} />
+                    <KpiMini icon={Droplets} label="Water" value={`${selectedVessel.waterBalance > 1000 ? (selectedVessel.waterBalance / 1000).toFixed(1) + "K" : selectedVessel.waterBalance}`}
+                      trend={selectedVessel.waterBalance < 5000 ? "down" : "up"}
+                      alert={selectedVessel.waterBalance < 5000} />
+                    <KpiMini icon={Clock} label="Ops Hrs" value={selectedVessel.totalOpsHrs} />
+                    <KpiMini icon={Users} label="Crew" value={`${selectedVessel.crewOnBoard}`} />
+                    <KpiMini icon={Wrench} label="Maint." value={`${selectedVessel.maintenanceDone}`} />
+                    <KpiMini icon={AlertTriangle} label="Defects" value={`${selectedVessel.outstandingDefects}`}
+                      alert={selectedVessel.outstandingDefects > 0}
+                      trend={selectedVessel.outstandingDefects > 0 ? "down" : undefined} />
+                    <KpiMini icon={Shield} label="Certs" value={`${selectedVessel.certificatesValid}`}
+                      alert={selectedVessel.certificatesExpired > 0}
+                      subtitle={selectedVessel.certificatesExpired > 0 ? `${selectedVessel.certificatesExpired} exp` : undefined} />
+                    <KpiMini icon={Activity} label="Provisions" value={`${selectedVessel.provisionDays}d`}
+                      trend={selectedVessel.provisionDays < 5 ? "down" : "up"}
+                      alert={selectedVessel.provisionDays < 5} />
+                  </div>
                 </div>
               </div>
             </div>
