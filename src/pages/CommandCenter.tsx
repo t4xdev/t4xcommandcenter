@@ -358,18 +358,20 @@ export default function CommandCenter() {
               {selectedVessel && showInfoPopup && (() => {
                 const flipLeft = selectedVessel.longitude > mapCenter[0];
                 const popupW = 170;
-                const tx = flipLeft ? -(popupW + 18) : 18;
+                const popupH = 58;
+                const tx = flipLeft ? -(popupW + 12) : 12;
+                const ty = -(popupH / 2);
                 const arrowPts = flipLeft
-                  ? `${popupW},38 ${popupW + 10},44 ${popupW},48`
-                  : "0,38 -10,44 0,48";
+                  ? `${popupW},${popupH / 2 - 6} ${popupW + 8},${popupH / 2} ${popupW},${popupH / 2 + 6}`
+                  : `0,${popupH / 2 - 6} -8,${popupH / 2} 0,${popupH / 2 + 6}`;
                 const closeX = flipLeft ? 4 : popupW - 18;
                 return (
                   <Marker
                     key="info-popup"
                     coordinates={[selectedVessel.longitude, selectedVessel.latitude]}
                   >
-                    <g style={{ pointerEvents: "auto" }} transform={`translate(${tx},-78)`}>
-                      <rect x={0} y={0} width={popupW} height={58} rx={6}
+                    <g style={{ pointerEvents: "auto" }} transform={`translate(${tx},${ty})`}>
+                      <rect x={0} y={0} width={popupW} height={popupH} rx={6}
                         fill="hsl(0, 0%, 100%)" stroke="hsl(216, 15%, 82%)" strokeWidth={1}
                         filter="drop-shadow(0 3px 6px rgba(0,0,0,0.16))" />
                       <polygon points={arrowPts} fill="hsl(0, 0%, 100%)" stroke="hsl(216, 15%, 82%)" strokeWidth={1} />
