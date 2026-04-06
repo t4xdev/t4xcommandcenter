@@ -740,7 +740,7 @@ export default function CommandCenter() {
           {/* Fleet Comparison - Scatter Plot */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
-              Vessel Performance — Efficiency vs Operational Hours
+              Vessel Performance — Efficiency vs Active Hours
             </p>
 
             {(() => {
@@ -765,7 +765,7 @@ export default function CommandCenter() {
                     name="Ops Hours"
                     unit=" hrs"
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Operational Hours", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                    label={{ value: "Active Hours (DP + Transit)", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
                   />
                   <ZAxis type="number" dataKey="crewOnBoard" range={[40, 200]} name="Crew" />
                   <Tooltip
