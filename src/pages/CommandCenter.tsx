@@ -142,17 +142,13 @@ export default function CommandCenter() {
     return () => clearInterval(interval);
   }, []);
 
-  // Reset image on vessel change + zoom map to vessel
+  // Reset image on vessel change (no map panning — markers stay fixed)
   useEffect(() => {
     setImageIndex(0);
     setShowInfoPopup(false);
-    if (selectedVessel) {
-      setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
-      setMapZoom(1.6);
-      const timer = setTimeout(() => setShowInfoPopup(true), 450);
-      return () => clearTimeout(timer);
-    }
-  }, [selectedIndex, selectedVessel]);
+    const timer = setTimeout(() => setShowInfoPopup(true), 450);
+    return () => clearTimeout(timer);
+  }, [selectedIndex]);
 
   // Auto-scroll highlights
   useEffect(() => {
