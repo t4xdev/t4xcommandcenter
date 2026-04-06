@@ -742,12 +742,12 @@ export default function CommandCenter() {
           {/* Fleet Comparison - Scatter Plot */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
-              Vessel Performance Scatter — Efficiency vs Fuel Usage
+              Vessel Performance — Efficiency vs Operational Hours
             </p>
 
             {(() => {
               const avgEfficiency = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.efficiency, 0) / scatterData.length) : 0;
-              const avgFuel = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.fuelUsed, 0) / scatterData.length) : 0;
+              const avgOpsHours = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.opsHours, 0) / scatterData.length * 10) / 10 : 0;
               return (
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
@@ -763,11 +763,11 @@ export default function CommandCenter() {
                   />
                   <YAxis
                     type="number"
-                    dataKey="fuelUsed"
-                    name="Fuel Used"
-                    unit=" MT"
+                    dataKey="opsHours"
+                    name="Ops Hours"
+                    unit=" hrs"
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Fuel Used (MT)", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                    label={{ value: "Operational Hours", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
                   />
                   <ZAxis type="number" dataKey="crewOnBoard" range={[40, 200]} name="Crew" />
                   <Tooltip
