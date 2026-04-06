@@ -198,8 +198,8 @@ export default function CommandCenter() {
   const handleVesselClick = useCallback((vessel: VesselData) => {
     autoRotateRef.current = false;
     setAutoRotate(false);
-    setShowInfoPopup(false);
     setSelectedVesselId(vessel.id);
+    setShowInfoPopup(true);
     const idx = filteredVessels.findIndex((v) => v.id === vessel.id);
     if (idx >= 0) {
       setSelectedIndex(idx);
