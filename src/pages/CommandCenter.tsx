@@ -21,6 +21,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   ZAxis,
+  ReferenceDot,
+  Label,
 } from "recharts";
 import {
   Ship,
@@ -43,6 +45,7 @@ import {
   X,
   Pause,
   Play,
+  Search,
 } from "lucide-react";
 import { vesselData, alertHighlights, type VesselData } from "@/data/commandCenterData";
 import { cn } from "@/lib/utils";
@@ -81,7 +84,10 @@ export default function CommandCenter() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
+  const [vesselSearch, setVesselSearch] = useState("");
+  const [showVesselSearch, setShowVesselSearch] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
 
@@ -169,6 +175,24 @@ export default function CommandCenter() {
     }
   }, [filteredVessels]);
 
+  const searchResults = useMemo(() => {
+    if (!vesselSearch.trim()) return [];
+    const q = vesselSearch.toLowerCase();
+    return vesselData.filter((v) =>
+      v.name.toLowerCase().includes(q) || v.imo.includes(q) || v.company.toLowerCase().includes(q)
+    ).slice(0, 10);
+  }, [vesselSearch]);
+
+  // Close search on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowVesselSearch(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const companyNames = Object.keys(companyColors);
 
@@ -327,6 +351,52 @@ export default function CommandCenter() {
             </p>
             <p className="text-lg font-bold text-foreground">{filteredVessels.length}</p>
             <p className="text-[9px] text-muted-foreground">vessels</p>
+          </div>
+
+          {/* Vessel Search */}
+          <div ref={searchRef} className="absolute top-3 right-3 z-10" style={{ width: 220 }}>
+            <div
+              className="flex items-center gap-1.5 bg-card/95 backdrop-blur-sm border border-border rounded-lg px-2 py-1.5 cursor-pointer"
+              onClick={() => setShowVesselSearch(true)}
+            >
+              <Search className="w-3.5 h-3.5 text-muted-foreground" />
+              <input
+                value={vesselSearch}
+                onChange={(e) => { setVesselSearch(e.target.value); setShowVesselSearch(true); }}
+                placeholder="Search vessel name or IMO..."
+                className="bg-transparent text-[10px] text-foreground placeholder:text-muted-foreground outline-none w-full"
+                onFocus={() => setShowVesselSearch(true)}
+              />
+              {vesselSearch && (
+                <button onClick={(e) => { e.stopPropagation(); setVesselSearch(""); }} className="text-muted-foreground hover:text-foreground">
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
+            {showVesselSearch && searchResults.length > 0 && (
+              <div className="mt-1 bg-card/95 backdrop-blur-sm border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                {searchResults.map((v) => (
+                  <button
+                    key={v.id}
+                    onClick={() => {
+                      handleVesselClick(v);
+                      setVesselSearch("");
+                      setShowVesselSearch(false);
+                    }}
+                    className={cn(
+                      "w-full flex items-center gap-2 px-3 py-1.5 text-left hover:bg-accent transition-colors",
+                      v.id === selectedVessel?.id && "bg-accent"
+                    )}
+                  >
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: companyColors[v.company] || "#ccc" }} />
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-medium text-foreground truncate">{v.name}</p>
+                      <p className="text-[8px] text-muted-foreground">{v.company} · IMO {v.imo}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Progress indicator for auto-rotation */}
@@ -580,18 +650,54 @@ export default function CommandCenter() {
                       );
                     }}
                   />
-                  <Scatter data={scatterData}>
-                    {scatterData.map((entry, idx) => (
+                  {/* Background vessels */}
+                  <Scatter data={scatterData.filter(e => e.id !== selectedVessel?.id)} name="Fleet">
+                    {scatterData.filter(e => e.id !== selectedVessel?.id).map((entry, idx) => (
                       <Cell
                         key={idx}
                         fill={companyColors[entry.company] || "hsl(216, 10%, 60%)"}
-                        opacity={entry.id === selectedVessel?.id ? 1 : 0.4}
-                        stroke={entry.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "none"}
-                        strokeWidth={entry.id === selectedVessel?.id ? 2 : 0}
-                        r={entry.id === selectedVessel?.id ? 8 : 4}
+                        opacity={0.35}
+                        r={4}
                       />
                     ))}
                   </Scatter>
+                  {/* Selected vessel - prominent */}
+                  {selectedVessel && (() => {
+                    const sel = scatterData.find(e => e.id === selectedVessel.id);
+                    if (!sel) return null;
+                    return (
+                      <Scatter data={[sel]} name="Selected">
+                        <Cell
+                          fill={companyColors[sel.company] || "hsl(210, 80%, 52%)"}
+                          opacity={1}
+                          stroke="hsl(0, 0%, 100%)"
+                          strokeWidth={3}
+                          r={10}
+                        />
+                      </Scatter>
+                    );
+                  })()}
+                  {/* Label for selected vessel */}
+                  {selectedVessel && (() => {
+                    const sel = scatterData.find(e => e.id === selectedVessel.id);
+                    if (!sel) return null;
+                    return (
+                      <ReferenceDot
+                        x={sel.efficiency}
+                        y={sel.fuelUsed}
+                        r={0}
+                        fill="none"
+                        stroke="none"
+                      >
+                        <Label
+                          value={`▶ ${sel.name}`}
+                          position="right"
+                          offset={12}
+                          style={{ fontSize: 9, fontWeight: 700, fill: "hsl(215, 50%, 15%)" }}
+                        />
+                      </ReferenceDot>
+                    );
+                  })()}
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
