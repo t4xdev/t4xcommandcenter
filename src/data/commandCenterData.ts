@@ -55,37 +55,35 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations strictly in open water near India & nearby seas ---
+// --- Seed locations strictly in open ocean near India ---
 const locationPools = [
-  // Arabian Sea (well off India's west coast)
-  { name: "Off Mundra", lon: 67.5, lat: 22.0, region: "India" },
-  { name: "Off Kandla", lon: 68.0, lat: 22.5, region: "India" },
-  { name: "Off Mumbai", lon: 70.5, lat: 18.5, region: "India" },
-  { name: "Off Goa", lon: 71.0, lat: 14.5, region: "India" },
-  { name: "Off Cochin", lon: 74.0, lat: 9.0, region: "India" },
-  { name: "Off Mangalore", lon: 72.5, lat: 12.0, region: "India" },
-  // Bay of Bengal (well off India's east coast)
-  { name: "Off Vizag", lon: 85.0, lat: 16.5, region: "India" },
-  { name: "Off Chennai", lon: 82.0, lat: 12.0, region: "India" },
-  { name: "Off Paradip", lon: 88.0, lat: 19.0, region: "India" },
-  { name: "Off Tuticorin", lon: 79.0, lat: 7.5, region: "India" },
-  // Arabian Sea open water
-  { name: "Arabian Sea West", lon: 62.0, lat: 17.0, region: "Transit" },
-  { name: "Arabian Sea Central", lon: 65.0, lat: 14.0, region: "Transit" },
-  { name: "Arabian Sea South", lon: 67.0, lat: 11.0, region: "Transit" },
-  { name: "Lakshadweep Sea", lon: 71.5, lat: 10.5, region: "Transit" },
+  // Arabian Sea (far off India's west coast)
+  { name: "Arabian Sea NW", lon: 64.0, lat: 21.0, region: "India" },
+  { name: "Arabian Sea W", lon: 65.0, lat: 19.0, region: "India" },
+  { name: "Off Mumbai Deep", lon: 68.0, lat: 18.0, region: "India" },
+  { name: "Off Goa Deep", lon: 69.0, lat: 14.0, region: "India" },
+  { name: "Off Cochin Deep", lon: 73.0, lat: 8.0, region: "India" },
+  { name: "Off Mangalore Deep", lon: 71.0, lat: 11.5, region: "India" },
+  // Bay of Bengal (far off India's east coast)
+  { name: "Bay of Bengal NE", lon: 87.0, lat: 16.0, region: "India" },
+  { name: "Bay of Bengal E", lon: 84.0, lat: 11.0, region: "India" },
+  { name: "Bay of Bengal SE", lon: 85.0, lat: 8.0, region: "India" },
+  // Arabian Sea open water corridors
+  { name: "Arabian Sea Central", lon: 62.0, lat: 16.0, region: "Transit" },
+  { name: "Arabian Sea South", lon: 64.0, lat: 12.0, region: "Transit" },
+  { name: "Arabian Sea Deep", lon: 60.0, lat: 14.0, region: "Transit" },
+  { name: "Lakshadweep Sea", lon: 71.0, lat: 10.0, region: "Transit" },
   // Bay of Bengal open water
-  { name: "Bay of Bengal North", lon: 87.0, lat: 15.0, region: "Transit" },
-  { name: "Bay of Bengal Central", lon: 85.0, lat: 11.0, region: "Transit" },
-  { name: "Bay of Bengal South", lon: 83.0, lat: 7.0, region: "Transit" },
-  // Gulf & Middle East (open water)
-  { name: "Persian Gulf", lon: 52.0, lat: 26.5, region: "Middle East" },
-  { name: "Gulf of Oman", lon: 59.0, lat: 23.5, region: "Middle East" },
-  { name: "Off Duqm", lon: 58.0, lat: 19.0, region: "Middle East" },
+  { name: "Bay of Bengal Mid", lon: 86.0, lat: 13.0, region: "Transit" },
+  { name: "Bay of Bengal Deep", lon: 83.0, lat: 6.0, region: "Transit" },
+  // Gulf (open water only)
+  { name: "Gulf of Oman", lon: 59.0, lat: 23.0, region: "Middle East" },
+  { name: "Off Duqm Sea", lon: 58.0, lat: 18.0, region: "Middle East" },
   // Indian Ocean open water
-  { name: "Indian Ocean NW", lon: 60.0, lat: 9.0, region: "Transit" },
-  { name: "Indian Ocean Central", lon: 72.0, lat: 4.0, region: "Transit" },
-  { name: "Maldives Waters", lon: 73.0, lat: 2.0, region: "Transit" },
+  { name: "Indian Ocean NW", lon: 60.0, lat: 8.0, region: "Transit" },
+  { name: "Indian Ocean Central", lon: 70.0, lat: 3.0, region: "Transit" },
+  { name: "Maldives Waters", lon: 72.0, lat: 1.0, region: "Transit" },
+  { name: "Indian Ocean SW", lon: 58.0, lat: 5.0, region: "Transit" },
 ];
 
 const vesselPrefixes = [
@@ -176,7 +174,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v1", name: "Dolphin-04", imo: "9328364", master: "Santosh K. Pandey",
       company: "Adani Ports", fleet: "Adani Fleet", location: "B-12 INBUNT VESSEL",
-      longitude: 67.5, latitude: 22.0, status: "normal", hiringStatus: "ON-Hire",
+      longitude: 64.0, latitude: 21.0, status: "normal", hiringStatus: "ON-Hire",
       client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "07:07",
       speed: 0, course: 0, fuelBalance: 27922, fuelUsed: 2963, fuelStart: 30885,
       waterBalance: 22000, dpOpsHrs: "21:24", transitHrs: "00:00", portHrs: "02:36",
@@ -190,7 +188,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v2", name: "Ocean Lancer", imo: "9719604", master: "Mostafijur R. Sapui",
       company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "KANDLA PORT",
-      longitude: 68.0, latitude: 22.5, status: "normal", hiringStatus: "ON-Hire",
+      longitude: 65.0, latitude: 19.0, status: "normal", hiringStatus: "ON-Hire",
       client: "Ocean Sparkle Ltd", reportDate: "04-Apr-2026", reportTime: "00:00",
       speed: 0, course: 0, fuelBalance: 36701, fuelUsed: 1422, fuelStart: 38123,
       waterBalance: 22, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "09:18",
@@ -204,7 +202,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v3", name: "Zaharat Al Behar", imo: "9581473", master: "Akhilesh Mondal",
       company: "Adani Ports", fleet: "Adani Fleet", location: "ADS Dock2, Duqm, Oman",
-      longitude: 58.0, latitude: 19.0, status: "warning", hiringStatus: "OFF-Hire",
+      longitude: 59.0, latitude: 23.0, status: "warning", hiringStatus: "OFF-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "00:01",
       speed: 0, course: 0, fuelBalance: 54140, fuelUsed: 0, fuelStart: 54140,
       waterBalance: 37180, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
@@ -218,7 +216,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v4", name: "Tahid Verde Island", imo: "1099929", master: "Milan Hajdukovic",
       company: "Adani Ports", fleet: "Adani Fleet", location: "At Sea - Indian Ocean",
-      longitude: 62.0, latitude: 9.0, status: "warning", hiringStatus: "OFF-Hire",
+      longitude: 60.0, latitude: 8.0, status: "warning", hiringStatus: "OFF-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "12:00",
       speed: 12.5, course: 220, fuelBalance: 93500, fuelUsed: 3700, fuelStart: 97200,
       waterBalance: 15000, dpOpsHrs: "00:00", transitHrs: "24:00", portHrs: "00:00",
@@ -232,7 +230,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v5", name: "Ocean Progress", imo: "9766451", master: "Naresh M. Patil",
       company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "KANDLA PORT",
-      longitude: 68.0, latitude: 22.3, status: "critical", hiringStatus: "ON-Hire",
+      longitude: 64.5, latitude: 20.5, status: "critical", hiringStatus: "ON-Hire",
       client: "Ocean Sparkle Ltd", reportDate: "04-Apr-2026", reportTime: "00:00",
       speed: 0, course: 0, fuelBalance: 14413, fuelUsed: 1232, fuelStart: 15645,
       waterBalance: 10, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "05:30",
@@ -246,7 +244,7 @@ function generateVessels(): VesselData[] {
     {
       id: "v6", name: "Tahid Sabarmati", imo: "9960681", master: "Ahmed Abdelaziz",
       company: "Adani Ports", fleet: "Adani Fleet", location: "Buchanan Port, Liberia",
-      longitude: 62.0, latitude: 17.0, status: "normal", hiringStatus: "ON-Hire",
+      longitude: 62.0, latitude: 16.0, status: "normal", hiringStatus: "ON-Hire",
       client: "-", reportDate: "05-Apr-2026", reportTime: "12:01",
       speed: 0, course: 0, fuelBalance: 35153, fuelUsed: 200, fuelStart: 35353,
       waterBalance: 27000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
