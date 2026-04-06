@@ -55,39 +55,37 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations in water near India & nearby seas ---
+// --- Seed locations strictly in open water near India & nearby seas ---
 const locationPools = [
-  // West coast of India (Arabian Sea)
-  { name: "Off Mundra", lon: 68.8, lat: 22.5, region: "India" },
-  { name: "Off Kandla", lon: 69.5, lat: 22.8, region: "India" },
-  { name: "Off Mumbai", lon: 71.5, lat: 18.8, region: "India" },
-  { name: "Off Goa", lon: 72.5, lat: 15.2, region: "India" },
-  { name: "Off Cochin", lon: 75.0, lat: 9.5, region: "India" },
-  { name: "Off Mangalore", lon: 73.5, lat: 12.5, region: "India" },
-  // East coast of India (Bay of Bengal)
-  { name: "Off Vizag", lon: 84.0, lat: 17.2, region: "India" },
-  { name: "Off Chennai", lon: 81.0, lat: 12.8, region: "India" },
-  { name: "Off Paradip", lon: 87.5, lat: 19.8, region: "India" },
-  { name: "Off Haldia", lon: 88.5, lat: 21.0, region: "India" },
-  { name: "Off Tuticorin", lon: 78.5, lat: 8.2, region: "India" },
-  // Arabian Sea transit
-  { name: "Arabian Sea West", lon: 63.0, lat: 18.0, region: "Transit" },
-  { name: "Arabian Sea Central", lon: 66.0, lat: 15.0, region: "Transit" },
-  { name: "Arabian Sea South", lon: 68.0, lat: 12.0, region: "Transit" },
-  { name: "Lakshadweep Sea", lon: 72.0, lat: 11.0, region: "Transit" },
-  // Bay of Bengal transit
-  { name: "Bay of Bengal North", lon: 86.0, lat: 16.0, region: "Transit" },
-  { name: "Bay of Bengal Central", lon: 84.0, lat: 12.0, region: "Transit" },
-  { name: "Bay of Bengal South", lon: 82.0, lat: 8.0, region: "Transit" },
-  // Gulf & Middle East (water)
-  { name: "Persian Gulf", lon: 52.0, lat: 26.0, region: "Middle East" },
-  { name: "Gulf of Oman", lon: 58.0, lat: 24.0, region: "Middle East" },
-  { name: "Off Fujairah", lon: 56.8, lat: 25.0, region: "Middle East" },
-  { name: "Off Duqm", lon: 57.5, lat: 19.2, region: "Middle East" },
-  // Indian Ocean
-  { name: "Indian Ocean NW", lon: 60.0, lat: 10.0, region: "Transit" },
-  { name: "Indian Ocean Central", lon: 72.0, lat: 5.0, region: "Transit" },
-  { name: "Maldives Waters", lon: 73.5, lat: 3.0, region: "Transit" },
+  // Arabian Sea (well off India's west coast)
+  { name: "Off Mundra", lon: 67.5, lat: 22.0, region: "India" },
+  { name: "Off Kandla", lon: 68.0, lat: 22.5, region: "India" },
+  { name: "Off Mumbai", lon: 70.5, lat: 18.5, region: "India" },
+  { name: "Off Goa", lon: 71.0, lat: 14.5, region: "India" },
+  { name: "Off Cochin", lon: 74.0, lat: 9.0, region: "India" },
+  { name: "Off Mangalore", lon: 72.5, lat: 12.0, region: "India" },
+  // Bay of Bengal (well off India's east coast)
+  { name: "Off Vizag", lon: 85.0, lat: 16.5, region: "India" },
+  { name: "Off Chennai", lon: 82.0, lat: 12.0, region: "India" },
+  { name: "Off Paradip", lon: 88.0, lat: 19.0, region: "India" },
+  { name: "Off Tuticorin", lon: 79.0, lat: 7.5, region: "India" },
+  // Arabian Sea open water
+  { name: "Arabian Sea West", lon: 62.0, lat: 17.0, region: "Transit" },
+  { name: "Arabian Sea Central", lon: 65.0, lat: 14.0, region: "Transit" },
+  { name: "Arabian Sea South", lon: 67.0, lat: 11.0, region: "Transit" },
+  { name: "Lakshadweep Sea", lon: 71.5, lat: 10.5, region: "Transit" },
+  // Bay of Bengal open water
+  { name: "Bay of Bengal North", lon: 87.0, lat: 15.0, region: "Transit" },
+  { name: "Bay of Bengal Central", lon: 85.0, lat: 11.0, region: "Transit" },
+  { name: "Bay of Bengal South", lon: 83.0, lat: 7.0, region: "Transit" },
+  // Gulf & Middle East (open water)
+  { name: "Persian Gulf", lon: 52.0, lat: 26.5, region: "Middle East" },
+  { name: "Gulf of Oman", lon: 59.0, lat: 23.5, region: "Middle East" },
+  { name: "Off Duqm", lon: 58.0, lat: 19.0, region: "Middle East" },
+  // Indian Ocean open water
+  { name: "Indian Ocean NW", lon: 60.0, lat: 9.0, region: "Transit" },
+  { name: "Indian Ocean Central", lon: 72.0, lat: 4.0, region: "Transit" },
+  { name: "Maldives Waters", lon: 73.0, lat: 2.0, region: "Transit" },
 ];
 
 const vesselPrefixes = [
