@@ -69,12 +69,6 @@ const severityStyles: Record<string, string> = {
   normal: "border-l-4 border-l-success bg-success/5",
 };
 
-const comparisonMetrics = [
-  { key: "efficiency", label: "Efficiency %", color: "hsl(152, 55%, 42%)" },
-  { key: "fuelConsumption", label: "Total Fuel Used", color: "hsl(38, 92%, 50%)" },
-  { key: "downtime", label: "Avg Downtime", color: "hsl(357, 96%, 46%)" },
-  { key: "compliance", label: "Compliance %", color: "hsl(210, 80%, 52%)" },
-];
 
 const ROTATION_INTERVAL = 10000;
 const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4];
