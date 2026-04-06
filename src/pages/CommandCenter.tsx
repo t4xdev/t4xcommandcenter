@@ -1,6 +1,6 @@
 // Command Center - Fleet Monitoring Dashboard
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+
 import adaniLogo from "@/assets/adani-logo.png";
 import vesselImg1 from "@/assets/vessel-deck.webp";
 import vesselImg2 from "@/assets/vessel-engine.webp";
@@ -136,8 +136,7 @@ const getVesselImageSet = (vesselId: string) => {
   return defaultImageSets[Math.abs(hash) % defaultImageSets.length];
 };
 
-export default function CommandCenter() {
-  const navigate = useNavigate();
+export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedVesselId, setSelectedVesselId] = useState<string | null>(null);
   const [autoRotate, setAutoRotate] = useState(true);
@@ -398,7 +397,7 @@ export default function CommandCenter() {
           </span>
           <img src={adaniLogo} alt="Adani" className="h-5 w-auto" />
           <button
-            onClick={() => navigate("/")}
+            onClick={() => onLogout?.()}
             className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
             title="Exit Command Center"
           >
