@@ -157,11 +157,16 @@ export default function CommandCenter() {
     [filteredVessels, selectedIndex, selectedVesselId]
   );
 
-  // Scatter plot data - efficiency vs fuel for all vessels
+  // Scatter plot data - efficiency vs active operational hours
   const scatterData = useMemo(() => filteredVessels.map((v) => {
     const dpH = parseInt(v.dpOpsHrs.split(":")[0]) || 0;
-    const efficiency = Math.round((dpH / 24) * 100);
-    return { id: v.id, name: v.name, company: v.company, efficiency, fuelUsed: v.fuelUsed, crewOnBoard: v.crewOnBoard };
+    const dpM = parseInt(v.dpOpsHrs.split(":")[1]) || 0;
+    const transitH = parseInt(v.transitHrs.split(":")[0]) || 0;
+    const transitM = parseInt(v.transitHrs.split(":")[1]) || 0;
+    const activeHrs = Math.round((dpH + dpM / 60 + transitH + transitM / 60) * 10) / 10;
+    const totalH = parseInt(v.totalOpsHrs.split(":")[0]) || 24;
+    const efficiency = totalH > 0 ? Math.round((activeHrs / totalH) * 100) : 0;
+    return { id: v.id, name: v.name, company: v.company, efficiency, opsHours: activeHrs, crewOnBoard: v.crewOnBoard };
   }), [filteredVessels]);
 
   const fleetStats = useMemo(() => {
@@ -735,12 +740,12 @@ export default function CommandCenter() {
           {/* Fleet Comparison - Scatter Plot */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
-              Vessel Performance Scatter — Efficiency vs Fuel Usage
+              Vessel Performance — Efficiency vs Active Hours
             </p>
 
             {(() => {
               const avgEfficiency = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.efficiency, 0) / scatterData.length) : 0;
-              const avgFuel = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.fuelUsed, 0) / scatterData.length) : 0;
+              const avgOpsHours = scatterData.length ? Math.round(scatterData.reduce((s, d) => s + d.opsHours, 0) / scatterData.length * 10) / 10 : 0;
               return (
             <div className="flex-1 min-h-0">
               <ResponsiveContainer width="100%" height="100%">
@@ -756,11 +761,11 @@ export default function CommandCenter() {
                   />
                   <YAxis
                     type="number"
-                    dataKey="fuelUsed"
-                    name="Fuel Used"
-                    unit=" MT"
+                    dataKey="opsHours"
+                    name="Ops Hours"
+                    unit=" hrs"
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Fuel Used (MT)", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                    label={{ value: "Active Hours (DP + Transit)", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
                   />
                   <ZAxis type="number" dataKey="crewOnBoard" range={[40, 200]} name="Crew" />
                   <Tooltip
@@ -773,7 +778,7 @@ export default function CommandCenter() {
                       boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
                     }}
                     formatter={(value: number, name: string) => [
-                      name === "Fuel Used" ? `${value} MT` : name === "Efficiency" ? `${value}%` : value,
+                      name === "Ops Hours" ? `${value} hrs` : name === "Efficiency" ? `${value}%` : value,
                       name,
                     ]}
                     labelFormatter={() => ""}
@@ -785,7 +790,7 @@ export default function CommandCenter() {
                           <p className="font-semibold text-foreground">{d?.name}</p>
                           <p className="text-muted-foreground">{d?.company}</p>
                           <p>Efficiency: <span className="font-mono font-bold">{d?.efficiency}%</span></p>
-                          <p>Fuel Used: <span className="font-mono font-bold">{d?.fuelUsed} MT</span></p>
+                          <p>Ops Hours: <span className="font-mono font-bold">{d?.opsHours} hrs</span></p>
                           <p>Crew: <span className="font-mono font-bold">{d?.crewOnBoard}</span></p>
                         </div>
                       );
@@ -800,11 +805,11 @@ export default function CommandCenter() {
                     label={{ value: `Avg Eff: ${avgEfficiency}%`, position: "top", fontSize: 8, fill: "hsl(215, 40%, 55%)" }}
                   />
                   <ReferenceLine
-                    y={avgFuel}
+                    y={avgOpsHours}
                     stroke="hsl(25, 50%, 55%)"
                     strokeDasharray="5 3"
                     strokeWidth={1.5}
-                    label={{ value: `Avg Fuel: ${avgFuel} MT`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }}
+                    label={{ value: `Avg Hrs: ${avgOpsHours}`, position: "right", fontSize: 8, fill: "hsl(25, 50%, 55%)" }}
                   />
                   {/* Background vessels */}
                   <Scatter data={scatterData.filter(e => e.id !== selectedVessel?.id)} name="Fleet">
@@ -824,7 +829,7 @@ export default function CommandCenter() {
                     return (
                       <>
                         {/* Outer glow ring */}
-                        <ReferenceDot x={sel.efficiency} y={sel.fuelUsed} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
+                        <ReferenceDot x={sel.efficiency} y={sel.opsHours} r={18} fill="hsl(210, 80%, 52%)" fillOpacity={0.15} stroke="hsl(210, 80%, 52%)" strokeWidth={1} strokeOpacity={0.3} />
                         <Scatter data={[sel]} name="Selected">
                           <Cell
                             fill="hsl(210, 80%, 52%)"
@@ -844,7 +849,7 @@ export default function CommandCenter() {
                     return (
                       <ReferenceDot
                         x={sel.efficiency}
-                        y={sel.fuelUsed}
+                        y={sel.opsHours}
                         r={0}
                         fill="none"
                         stroke="none"
