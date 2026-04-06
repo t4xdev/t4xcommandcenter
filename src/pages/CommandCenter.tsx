@@ -163,12 +163,13 @@ export default function CommandCenter() {
     return () => clearInterval(interval);
   }, []);
 
-  // Reset image on vessel change + pan map to selected vessel
+  // Reset image on vessel change + zoom-to-vessel animation
   useEffect(() => {
     if (!selectedVessel) return;
     setImageIndex(0);
     setShowInfoPopup(true);
     setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
+    setMapZoom(3);
   }, [selectedVessel]);
 
   // Auto-scroll highlights
