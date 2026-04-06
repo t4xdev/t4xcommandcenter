@@ -7,14 +7,11 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 import {
   Ship,
@@ -74,7 +71,7 @@ const ROTATION_INTERVAL = 5000;
 export default function CommandCenter() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
-  const [activeMetric, setActiveMetric] = useState("efficiency");
+  
   const [currentTime, setCurrentTime] = useState(new Date());
   const [companyFilter, setCompanyFilter] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -146,14 +143,6 @@ export default function CommandCenter() {
     }
   }, [filteredVessels]);
 
-  const currentMetricData = fleetComparisonData.map((d) => ({
-    vessel: d.vessel.length > 14 ? d.vessel.slice(0, 14) + "…" : d.vessel,
-    fullName: d.vessel,
-    value: d[activeMetric as keyof typeof d] as number,
-    isSelected: d.vessel === selectedVessel?.company,
-  }));
-
-  const metricInfo = comparisonMetrics.find((m) => m.key === activeMetric)!;
 
   const companyNames = Object.keys(companyColors);
 
@@ -459,101 +448,81 @@ export default function CommandCenter() {
             </div>
           </div>
 
-          {/* Fleet Comparison */}
+          {/* Fleet Comparison - Donut Charts */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase">
-                Fleet Comparison by Company
-              </p>
-              <div className="flex gap-1">
-                {comparisonMetrics.map((m) => (
-                  <button
-                    key={m.key}
-                    onClick={() => setActiveMetric(m.key)}
-                    className={cn(
-                      "text-[9px] px-2 py-1 rounded-md transition-colors",
-                      activeMetric === m.key
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                    )}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
+              Fleet Comparison by Company
+            </p>
 
-            <div className="flex-1 min-h-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={currentMetricData} barSize={36}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" vertical={false} />
-                  <XAxis
-                    dataKey="vessel"
-                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }}
-                    axisLine={{ stroke: "hsl(216, 15%, 89%)" }}
-                    tickLine={false}
-                  />
-                  <YAxis
-                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 10 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(0, 0%, 100%)",
-                      border: "1px solid hsl(216, 15%, 89%)",
-                      borderRadius: "8px",
-                      fontSize: "11px",
-                      color: "hsl(215, 50%, 15%)",
-                      boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
-                    }}
-                    formatter={(value: number) => [value.toLocaleString(), metricInfo.label]}
-                    labelFormatter={(label: string) => {
-                      const item = currentMetricData.find((d) => d.vessel === label);
-                      return item?.fullName || label;
-                    }}
-                  />
-                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                    {currentMetricData.map((entry, index) => (
-                      <Cell
-                        key={index}
-                        fill={entry.isSelected ? metricInfo.color : `${metricInfo.color}40`}
-                        stroke={entry.isSelected ? metricInfo.color : "none"}
-                        strokeWidth={entry.isSelected ? 2 : 0}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            <div className="flex-1 min-h-0 grid grid-cols-4 gap-3">
+              {comparisonMetrics.map((metric) => {
+                const donutData = fleetComparisonData.map((d) => ({
+                  name: d.vessel,
+                  value: d[metric.key as keyof typeof d] as number,
+                  isSelected: d.vessel === selectedVessel?.company,
+                }));
+                const total = donutData.reduce((s, d) => s + d.value, 0);
+                const donutColors = fleetComparisonData.map((d) => companyColors[d.vessel] || "#ccc");
 
-            {/* Company ranking strip */}
-            <div className="flex gap-2 mt-2">
-              {[...fleetComparisonData]
-                .sort((a, b) => {
-                  const valA = a[activeMetric as keyof typeof a] as number;
-                  const valB = b[activeMetric as keyof typeof b] as number;
-                  return activeMetric === "downtime" ? valA - valB : valB - valA;
-                })
-                .map((v, i) => (
-                  <div
-                    key={v.vessel}
-                    className={cn(
-                      "flex-1 text-center rounded-md py-1.5 text-[9px] border",
-                      v.vessel === selectedVessel?.company
-                        ? "bg-primary/5 border-primary ring-1 ring-primary/20"
-                        : "bg-card border-border"
-                    )}
-                  >
-                    <span className="text-muted-foreground">#{i + 1}</span>
-                    <p className="font-medium truncate px-1 text-foreground">
-                      {v.vessel.length > 12 ? v.vessel.slice(0, 12) + "…" : v.vessel}
-                    </p>
-                    <p className="text-[8px] text-muted-foreground">
-                      {(v[activeMetric as keyof typeof v] as number).toLocaleString()}
-                    </p>
+                return (
+                  <div key={metric.key} className="flex flex-col items-center">
+                    <p className="text-[9px] text-muted-foreground font-medium mb-1">{metric.label}</p>
+                    <div className="flex-1 w-full min-h-0">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={donutData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius="55%"
+                            outerRadius="85%"
+                            dataKey="value"
+                            stroke="hsl(0, 0%, 100%)"
+                            strokeWidth={2}
+                          >
+                            {donutData.map((entry, idx) => (
+                              <Cell
+                                key={idx}
+                                fill={donutColors[idx]}
+                                opacity={entry.isSelected ? 1 : 0.5}
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "hsl(0, 0%, 100%)",
+                              border: "1px solid hsl(216, 15%, 89%)",
+                              borderRadius: "8px",
+                              fontSize: "10px",
+                              color: "hsl(215, 50%, 15%)",
+                              boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
+                            }}
+                            formatter={(value: number) => [value.toLocaleString(), metric.label]}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <p className="text-xs font-bold font-mono text-foreground">{total.toLocaleString()}</p>
+                    <p className="text-[8px] text-muted-foreground">Total</p>
                   </div>
-                ))}
+                );
+              })}
+            </div>
+
+            {/* Company legend */}
+            <div className="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-border">
+              {fleetComparisonData.map((d) => (
+                <div
+                  key={d.vessel}
+                  className={cn(
+                    "flex items-center gap-1.5 px-2 py-1 rounded-md text-[9px] transition-colors",
+                    d.vessel === selectedVessel?.company && "bg-accent font-medium"
+                  )}
+                >
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: companyColors[d.vessel] }} />
+                  <span className="text-foreground">{d.vessel}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
