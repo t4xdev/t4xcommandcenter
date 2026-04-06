@@ -358,7 +358,7 @@ export default function CommandCenter() {
                     {/* Hover tooltip */}
                     {isHovered && !isSelected && (
                       <foreignObject x={8} y={-12} width={120} height={24} style={{ pointerEvents: "none", overflow: "visible" }}>
-                        <div style={{ background: "hsl(215, 25%, 20%)", color: "#fff", fontSize: 9, padding: "2px 6px", borderRadius: 4, whiteSpace: "nowrap", width: "fit-content" }}>
+                         <div style={{ background: "hsl(215, 25%, 20%)", color: "#fff", fontSize: 6, padding: "1px 4px", borderRadius: 3, whiteSpace: "nowrap", width: "fit-content" }}>
                           {vessel.name}
                         </div>
                       </foreignObject>
@@ -366,14 +366,14 @@ export default function CommandCenter() {
                     {/* Selected info popup - positioned above marker */}
                     {isSelected && showInfoPopup && (
                       <foreignObject x={-90} y={-70} width={180} height={60} style={{ overflow: "visible", pointerEvents: "none" }}>
-                        <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 5, padding: "4px 6px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)", fontSize: 8, lineHeight: 1.4 }}>
-                          <div style={{ fontWeight: 700, fontSize: 9, marginBottom: 1 }}>{vessel.name}</div>
-                          <div style={{ color: "hsl(215, 15%, 45%)", fontSize: 8 }}>
-                            <span style={{ display: "inline-block", width: 5, height: 5, borderRadius: "50%", backgroundColor: statusColors[vessel.status], marginRight: 3 }} />
+                         <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 4, padding: "2px 4px", boxShadow: "0 2px 6px rgba(0,0,0,0.12)", fontSize: 5, lineHeight: 1.3 }}>
+                          <div style={{ fontWeight: 700, fontSize: 6, marginBottom: 1 }}>{vessel.name}</div>
+                          <div style={{ color: "hsl(215, 15%, 45%)", fontSize: 5 }}>
+                            <span style={{ display: "inline-block", width: 4, height: 4, borderRadius: "50%", backgroundColor: statusColors[vessel.status], marginRight: 2 }} />
                             {vessel.status.charAt(0).toUpperCase() + vessel.status.slice(1)} · {vessel.hiringStatus}
                           </div>
-                          <div style={{ color: "hsl(215, 15%, 45%)", fontSize: 8 }}>Speed: {vessel.speed} kn · Course: {vessel.course}°</div>
-                          <div style={{ color: "hsl(215, 15%, 55%)", fontSize: 7 }}>{vessel.company}</div>
+                          <div style={{ color: "hsl(215, 15%, 45%)", fontSize: 5 }}>Speed: {vessel.speed} kn · Course: {vessel.course}°</div>
+                          <div style={{ color: "hsl(215, 15%, 55%)", fontSize: 5 }}>{vessel.company}</div>
                         </div>
                       </foreignObject>
                     )}
