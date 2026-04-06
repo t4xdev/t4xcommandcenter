@@ -252,9 +252,9 @@ function generateVessels(): VesselData[] {
     const locIdx = Math.floor(rand() * locationPools.length);
     const loc = locationPools[locIdx];
 
-    // Zero jitter — all markers stay exactly in Indian Ocean coordinates
-    const lonOffset = 0;
-    const latOffset = 0;
+    // Small deterministic jitter (±2°) to spread markers — stays well within open Indian Ocean
+    const lonOffset = (rand() - 0.5) * 4;
+    const latOffset = (rand() - 0.5) * 4;
 
     const statusRoll = rand();
     const status: VesselData["status"] = statusRoll < 0.7 ? "normal" : statusRoll < 0.9 ? "warning" : "critical";
