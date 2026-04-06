@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -234,8 +234,7 @@ export default function SACompany() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopNav breadcrumb={`SA / Company${view === "create" ? " / New" : view === "edit" && selectedCompany ? ` / ${selectedCompany.name} / Edit` : view === "view" && selectedCompany ? ` / ${selectedCompany.name}` : ""}`} />
+    <AppLayout breadcrumb={`SA / Company${view === "create" ? " / New" : view === "edit" && selectedCompany ? ` / ${selectedCompany.name} / Edit` : view === "view" && selectedCompany ? ` / ${selectedCompany.name}` : ""}`}>
       <div className="p-4 max-w-[1400px] mx-auto">
         {view === "create" && <CompanyForm company={null} onSave={handleSave} onCancel={() => setView("list")} />}
         {view === "edit" && selectedCompany && <CompanyForm company={selectedCompany} onSave={handleSave} onCancel={() => setView("list")} />}
@@ -295,6 +294,6 @@ export default function SACompany() {
           </div>
         )}
       </div>
-    </div>
+    </AppLayout>
   );
 }

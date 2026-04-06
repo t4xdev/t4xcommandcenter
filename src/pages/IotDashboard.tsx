@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import {
   Activity, AlertTriangle, Anchor, Droplets, Gauge, Thermometer, Waves,
   Zap, Wifi, WifiOff, Clock, Circle, BarChart3, Fuel, Cog, Fan,
@@ -408,8 +408,7 @@ export default function IotDashboard({ fleet = "All Fleets" }: { fleet?: string 
   }, [selectedVessel, selectedFleet, filteredVessels]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopNav breadcrumb="IoT Sensors" />
+    <AppLayout breadcrumb="IoT Sensors">
       <div className="p-4 max-w-[1400px] mx-auto space-y-5 animate-fade-in-up">
       {/* Info Bar */}
       <div className="bg-card rounded-xl border border-border p-4">
@@ -1002,6 +1001,6 @@ export default function IotDashboard({ fleet = "All Fleets" }: { fleet?: string 
         </>
       )}
       </div>
-    </div>
+    </AppLayout>
   );
 }
