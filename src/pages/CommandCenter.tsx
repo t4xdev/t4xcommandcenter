@@ -118,6 +118,19 @@ export default function CommandCenter() {
     return () => clearInterval(interval);
   }, [autoRotate, filteredVessels.length]);
 
+  // Image slideshow - cycle every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setImageIndex((prev) => (prev + 1) % vesselImages.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Reset image on vessel change
+  useEffect(() => {
+    setImageIndex(0);
+  }, [selectedIndex]);
+
   // Auto-scroll highlights
   useEffect(() => {
     const container = scrollRef.current;
