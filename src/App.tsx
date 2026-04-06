@@ -1,39 +1,44 @@
+import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FleetProvider } from "@/contexts/FleetContext";
-import Dashboard from "@/pages/Dashboard";
-import CrewManagement from "@/pages/CrewManagement";
-import EmissionsTracker from "@/pages/EmissionsTracker";
-import IotDashboard from "@/pages/IotDashboard";
-import SuperAdmin from "@/pages/SuperAdmin";
+import Login from "@/pages/Login";
 import CommandCenter from "@/pages/CommandCenter";
-import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <FleetProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/payroll/*" element={<CrewManagement />} />
-            <Route path="/emissions" element={<EmissionsTracker />} />
-            <Route path="/iot" element={<IotDashboard />} />
-            <Route path="/command-center" element={<CommandCenter />} />
-            <Route path="/super-admin/*" element={<SuperAdmin />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </FleetProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("t4x_auth");
+    if (stored) setAuthenticated(true);
+  }, []);
+
+  const handleLogin = () => setAuthenticated(true);
+
+  const handleLogout = () => {
+    localStorage.removeItem("t4x_auth");
+    setAuthenticated(false);
+  };
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <FleetProvider>
+          <Toaster />
+          <Sonner />
+          {authenticated ? (
+            <CommandCenter onLogout={handleLogout} />
+          ) : (
+            <Login onLogin={handleLogin} />
+          )}
+        </FleetProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
