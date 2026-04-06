@@ -55,35 +55,34 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations strictly in open ocean near India ---
+// --- Seed locations deep in open ocean, far from any coastline ---
 const locationPools = [
-  // Arabian Sea (far off India's west coast)
-  { name: "Arabian Sea NW", lon: 64.0, lat: 21.0, region: "India" },
-  { name: "Arabian Sea W", lon: 65.0, lat: 19.0, region: "India" },
-  { name: "Off Mumbai Deep", lon: 68.0, lat: 18.0, region: "India" },
-  { name: "Off Goa Deep", lon: 69.0, lat: 14.0, region: "India" },
-  { name: "Off Cochin Deep", lon: 73.0, lat: 8.0, region: "India" },
-  { name: "Off Mangalore Deep", lon: 71.0, lat: 11.5, region: "India" },
-  // Bay of Bengal (far off India's east coast)
-  { name: "Bay of Bengal NE", lon: 87.0, lat: 16.0, region: "India" },
-  { name: "Bay of Bengal E", lon: 84.0, lat: 11.0, region: "India" },
-  { name: "Bay of Bengal SE", lon: 85.0, lat: 8.0, region: "India" },
-  // Arabian Sea open water corridors
-  { name: "Arabian Sea Central", lon: 62.0, lat: 16.0, region: "Transit" },
-  { name: "Arabian Sea South", lon: 64.0, lat: 12.0, region: "Transit" },
-  { name: "Arabian Sea Deep", lon: 60.0, lat: 14.0, region: "Transit" },
-  { name: "Lakshadweep Sea", lon: 71.0, lat: 10.0, region: "Transit" },
-  // Bay of Bengal open water
-  { name: "Bay of Bengal Mid", lon: 86.0, lat: 13.0, region: "Transit" },
-  { name: "Bay of Bengal Deep", lon: 83.0, lat: 6.0, region: "Transit" },
-  // Gulf (open water only)
-  { name: "Gulf of Oman", lon: 59.0, lat: 23.0, region: "Middle East" },
-  { name: "Off Duqm Sea", lon: 58.0, lat: 18.0, region: "Middle East" },
-  // Indian Ocean open water
-  { name: "Indian Ocean NW", lon: 60.0, lat: 8.0, region: "Transit" },
-  { name: "Indian Ocean Central", lon: 70.0, lat: 3.0, region: "Transit" },
-  { name: "Maldives Waters", lon: 72.0, lat: 1.0, region: "Transit" },
-  { name: "Indian Ocean SW", lon: 58.0, lat: 5.0, region: "Transit" },
+  // Central Arabian Sea (200+ km from any coast)
+  { name: "Arabian Sea Alpha", lon: 63.0, lat: 18.0, region: "India" },
+  { name: "Arabian Sea Bravo", lon: 61.0, lat: 15.0, region: "India" },
+  { name: "Arabian Sea Charlie", lon: 64.0, lat: 20.0, region: "India" },
+  { name: "Arabian Sea Delta", lon: 62.0, lat: 12.0, region: "India" },
+  { name: "Arabian Sea Echo", lon: 66.0, lat: 17.0, region: "India" },
+  { name: "Arabian Sea Foxtrot", lon: 60.0, lat: 10.0, region: "India" },
+  // Central Bay of Bengal (far from India & Sri Lanka)
+  { name: "Bay of Bengal Alpha", lon: 86.0, lat: 12.0, region: "India" },
+  { name: "Bay of Bengal Bravo", lon: 85.0, lat: 8.0, region: "India" },
+  { name: "Bay of Bengal Charlie", lon: 88.0, lat: 10.0, region: "India" },
+  // Deep Arabian Sea transit lanes
+  { name: "Transit Alpha", lon: 58.0, lat: 14.0, region: "Transit" },
+  { name: "Transit Bravo", lon: 56.0, lat: 11.0, region: "Transit" },
+  { name: "Transit Charlie", lon: 60.0, lat: 8.0, region: "Transit" },
+  { name: "Transit Delta", lon: 63.0, lat: 10.0, region: "Transit" },
+  // Deep Bay of Bengal transit
+  { name: "BoB Transit Alpha", lon: 84.0, lat: 6.0, region: "Transit" },
+  { name: "BoB Transit Bravo", lon: 87.0, lat: 7.0, region: "Transit" },
+  // Gulf of Oman (center of water body)
+  { name: "Gulf of Oman", lon: 59.5, lat: 23.5, region: "Middle East" },
+  // Deep Indian Ocean
+  { name: "Indian Ocean Alpha", lon: 65.0, lat: 5.0, region: "Transit" },
+  { name: "Indian Ocean Bravo", lon: 68.0, lat: 2.0, region: "Transit" },
+  { name: "Indian Ocean Charlie", lon: 62.0, lat: 3.0, region: "Transit" },
+  { name: "Indian Ocean Delta", lon: 70.0, lat: 0.0, region: "Transit" },
 ];
 
 const vesselPrefixes = [
