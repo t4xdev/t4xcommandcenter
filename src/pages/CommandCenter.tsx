@@ -525,81 +525,97 @@ export default function CommandCenter() {
             </div>
           </div>
 
-          {/* Fleet Comparison - Donut Charts */}
+          {/* Fleet Comparison - Scatter Plot */}
           <div className="flex-1 p-4 min-h-0 flex flex-col">
             <p className="text-[10px] text-muted-foreground font-medium tracking-wider uppercase mb-2">
-              Fleet Comparison by Company
+              Fleet Performance Scatter — Efficiency vs Fuel Usage
             </p>
 
-            <div className="flex-1 min-h-0 grid grid-cols-4 gap-3">
-              {comparisonMetrics.map((metric) => {
-                const donutData = fleetComparisonData.map((d) => ({
-                  name: d.vessel,
-                  value: d[metric.key as keyof typeof d] as number,
-                  isSelected: d.vessel === selectedVessel?.company,
-                }));
-                const total = donutData.reduce((s, d) => s + d.value, 0);
-                const donutColors = fleetComparisonData.map((d) => companyColors[d.vessel] || "#ccc");
-
-                return (
-                  <div key={metric.key} className="flex flex-col items-center">
-                    <p className="text-[9px] text-muted-foreground font-medium mb-1">{metric.label}</p>
-                    <div className="flex-1 w-full min-h-0">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={donutData}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius="55%"
-                            outerRadius="85%"
-                            dataKey="value"
-                            stroke="hsl(0, 0%, 100%)"
-                            strokeWidth={2}
-                          >
-                            {donutData.map((entry, idx) => (
-                              <Cell
-                                key={idx}
-                                fill={donutColors[idx]}
-                                opacity={entry.isSelected ? 1 : 0.5}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            contentStyle={{
-                              backgroundColor: "hsl(0, 0%, 100%)",
-                              border: "1px solid hsl(216, 15%, 89%)",
-                              borderRadius: "8px",
-                              fontSize: "10px",
-                              color: "hsl(215, 50%, 15%)",
-                              boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
-                            }}
-                            formatter={(value: number) => [value.toLocaleString(), metric.label]}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                    <p className="text-xs font-bold font-mono text-foreground">{total.toLocaleString()}</p>
-                    <p className="text-[8px] text-muted-foreground">Total</p>
-                  </div>
-                );
-              })}
+            <div className="flex-1 min-h-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <ScatterChart margin={{ top: 10, right: 20, bottom: 20, left: 10 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(216, 15%, 89%)" />
+                  <XAxis
+                    type="number"
+                    dataKey="efficiency"
+                    name="Efficiency"
+                    unit="%"
+                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
+                    label={{ value: "Operational Efficiency %", position: "bottom", fontSize: 9, fill: "hsl(216, 10%, 46%)", offset: 2 }}
+                  />
+                  <YAxis
+                    type="number"
+                    dataKey="fuelUsed"
+                    name="Fuel Used"
+                    unit=" MT"
+                    tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
+                    label={{ value: "Fuel Used (MT)", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                  />
+                  <ZAxis type="number" dataKey="crewOnBoard" range={[40, 200]} name="Crew" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(0, 0%, 100%)",
+                      border: "1px solid hsl(216, 15%, 89%)",
+                      borderRadius: "8px",
+                      fontSize: "10px",
+                      color: "hsl(215, 50%, 15%)",
+                      boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
+                    }}
+                    formatter={(value: number, name: string) => [
+                      name === "Fuel Used" ? `${value} MT` : name === "Efficiency" ? `${value}%` : value,
+                      name,
+                    ]}
+                    labelFormatter={() => ""}
+                    content={({ payload }) => {
+                      if (!payload || payload.length === 0) return null;
+                      const d = payload[0]?.payload;
+                      return (
+                        <div className="bg-card border border-border rounded-lg p-2 shadow-md text-[10px]">
+                          <p className="font-semibold text-foreground">{d?.name}</p>
+                          <p className="text-muted-foreground">{d?.company}</p>
+                          <p>Efficiency: <span className="font-mono font-bold">{d?.efficiency}%</span></p>
+                          <p>Fuel Used: <span className="font-mono font-bold">{d?.fuelUsed} MT</span></p>
+                          <p>Crew: <span className="font-mono font-bold">{d?.crewOnBoard}</span></p>
+                        </div>
+                      );
+                    }}
+                  />
+                  <Scatter data={scatterData}>
+                    {scatterData.map((entry, idx) => (
+                      <Cell
+                        key={idx}
+                        fill={companyColors[entry.company] || "hsl(216, 10%, 60%)"}
+                        opacity={entry.id === selectedVessel?.id ? 1 : 0.4}
+                        stroke={entry.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "none"}
+                        strokeWidth={entry.id === selectedVessel?.id ? 2 : 0}
+                        r={entry.id === selectedVessel?.id ? 8 : 4}
+                      />
+                    ))}
+                  </Scatter>
+                </ScatterChart>
+              </ResponsiveContainer>
             </div>
 
-            {/* Company legend */}
+            {/* Company legend + selected vessel indicator */}
             <div className="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-border">
-              {fleetComparisonData.map((d) => (
+              {Object.entries(companyColors).map(([name, color]) => (
                 <div
-                  key={d.vessel}
+                  key={name}
                   className={cn(
                     "flex items-center gap-1.5 px-2 py-1 rounded-md text-[9px] transition-colors",
-                    d.vessel === selectedVessel?.company && "bg-accent font-medium"
+                    name === selectedVessel?.company && "bg-accent font-medium"
                   )}
                 >
-                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: companyColors[d.vessel] }} />
-                  <span className="text-foreground">{d.vessel}</span>
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
+                  <span className="text-foreground">{name}</span>
                 </div>
               ))}
+              {selectedVessel && (
+                <div className="flex items-center gap-1 text-[9px] text-primary font-semibold ml-2 pl-2 border-l border-border">
+                  <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  {selectedVessel.name}
+                </div>
+              )}
             </div>
           </div>
         </div>
