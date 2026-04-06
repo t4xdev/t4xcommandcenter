@@ -239,6 +239,7 @@ export default function CommandCenter() {
           <span className="text-xs font-mono text-muted-foreground">
             {currentTime.toLocaleTimeString()} UTC
           </span>
+          <img src={adaniLogo} alt="Adani" className="h-5 w-auto" />
           <button
             onClick={() => navigate("/")}
             className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
