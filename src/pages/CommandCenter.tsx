@@ -185,6 +185,7 @@ export default function CommandCenter() {
     return offsets;
   }, [filteredVessels, mapZoom]);
 
+  const selectedVessel = useMemo(
     () =>
       filteredVessels.find((v) => v.id === selectedVesselId) ??
       filteredVessels[selectedIndex % filteredVessels.length] ??
