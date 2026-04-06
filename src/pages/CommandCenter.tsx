@@ -397,7 +397,7 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
           </span>
           <img src={adaniLogo} alt="Adani" className="h-5 w-auto" />
           <button
-            onClick={() => navigate("/")}
+            onClick={() => onLogout?.()}
             className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
             title="Exit Command Center"
           >
