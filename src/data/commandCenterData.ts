@@ -55,21 +55,21 @@ const companies = [
   { name: "Pacific Shipping", fleet: "Pacific Shipping Fleet", color: "#d97706" },
 ];
 
-// --- Seed locations strictly within the Indian Ocean, far from any coastline ---
+// --- Seed locations deep in Indian Ocean, well away from any coastline ---
 const locationPools = [
-  { name: "North Indian Ocean West", lon: 62.0, lat: 14.0, region: "Transit" },
-  { name: "North Indian Ocean Central", lon: 65.0, lat: 12.0, region: "Transit" },
-  { name: "North Indian Ocean East", lon: 70.0, lat: 10.0, region: "Transit" },
-  { name: "Arabian Basin", lon: 60.0, lat: 16.0, region: "Transit" },
-  { name: "Central Indian Ocean West", lon: 63.0, lat: 8.0, region: "Transit" },
-  { name: "Central Indian Ocean Central", lon: 67.0, lat: 6.0, region: "Transit" },
-  { name: "Central Indian Ocean East", lon: 72.0, lat: 5.0, region: "Transit" },
-  { name: "Equatorial Indian Ocean West", lon: 61.0, lat: 2.0, region: "Transit" },
-  { name: "Equatorial Indian Ocean Central", lon: 66.0, lat: 1.0, region: "Transit" },
-  { name: "Equatorial Indian Ocean East", lon: 71.0, lat: 0.0, region: "Transit" },
-  { name: "Southern Indian Ocean West", lon: 60.0, lat: -4.0, region: "Transit" },
-  { name: "Southern Indian Ocean Central", lon: 66.0, lat: -5.0, region: "Transit" },
-  { name: "Southern Indian Ocean East", lon: 72.0, lat: -3.0, region: "Transit" },
+  { name: "Arabian Sea Deep", lon: 62.0, lat: 12.0, region: "Transit" },
+  { name: "Arabian Sea South", lon: 60.0, lat: 8.0, region: "Transit" },
+  { name: "Central Indian Ocean NW", lon: 64.0, lat: 5.0, region: "Transit" },
+  { name: "Central Indian Ocean N", lon: 67.0, lat: 3.0, region: "Transit" },
+  { name: "Central Indian Ocean NE", lon: 70.0, lat: 1.0, region: "Transit" },
+  { name: "Equatorial Indian Ocean W", lon: 62.0, lat: -2.0, region: "Transit" },
+  { name: "Equatorial Indian Ocean C", lon: 66.0, lat: -3.0, region: "Transit" },
+  { name: "Equatorial Indian Ocean E", lon: 70.0, lat: -4.0, region: "Transit" },
+  { name: "Southern Indian Ocean W", lon: 60.0, lat: -8.0, region: "Transit" },
+  { name: "Southern Indian Ocean C", lon: 65.0, lat: -10.0, region: "Transit" },
+  { name: "Southern Indian Ocean E", lon: 70.0, lat: -9.0, region: "Transit" },
+  { name: "Deep South Indian Ocean", lon: 64.0, lat: -14.0, region: "Transit" },
+  { name: "Mid Indian Ocean", lon: 68.0, lat: -6.0, region: "Transit" },
 ];
 
 const vesselPrefixes = [
@@ -252,9 +252,9 @@ function generateVessels(): VesselData[] {
     const locIdx = Math.floor(rand() * locationPools.length);
     const loc = locationPools[locIdx];
 
-    // Small deterministic jitter (±2°) to spread markers — stays well within open Indian Ocean
-    const lonOffset = (rand() - 0.5) * 4;
-    const latOffset = (rand() - 0.5) * 4;
+    // Small jitter (±1°) keeps markers spread but safely in open ocean
+    const lonOffset = (rand() - 0.5) * 2;
+    const latOffset = (rand() - 0.5) * 2;
 
     const statusRoll = rand();
     const status: VesselData["status"] = statusRoll < 0.7 ? "normal" : statusRoll < 0.9 ? "warning" : "critical";
