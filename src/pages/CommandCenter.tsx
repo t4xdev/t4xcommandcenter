@@ -259,7 +259,7 @@ export default function CommandCenter() {
             className="w-full h-full"
             style={{ width: "100%", height: "100%" }}
           >
-            <ZoomableGroup zoom={1} minZoom={0.5} maxZoom={8} translateExtent={[[-500, -300], [1500, 900]]}>
+            <ZoomableGroup center={mapCenter} zoom={mapZoom} minZoom={0.5} maxZoom={8} onMoveEnd={({ coordinates, zoom }) => { setMapCenter(coordinates as [number, number]); setMapZoom(zoom); }}>
               <Geographies geography={GEO_URL}>
                 {({ geographies }) =>
                   geographies.map((geo) => (
