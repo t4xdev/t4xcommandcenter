@@ -325,7 +325,9 @@ export default function CommandCenter() {
                         stroke={isSelected ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 30%)"}
                         strokeWidth={isSelected ? 1.5 : 0.5}
                         opacity={isSelected ? 1 : 0.8}
-                      />
+                      >
+                        <title>{vessel.name}</title>
+                      </polygon>
                     </g>
                   </Marker>
                 );
