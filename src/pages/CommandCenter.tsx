@@ -583,7 +583,7 @@ export default function CommandCenter() {
                       autoRotateRef.current = false;
                       setAutoRotate(false);
                       setSelectedVesselId(v.id);
-                      const targetList = (companyFilter && v.company === companyFilter) ? filteredVessels : vesselData;
+                      const targetList = (companyFilter && v.company === companyFilter) ? filteredVessels : realVessels;
                       const idx = targetList.findIndex((fv) => fv.id === v.id);
                       if (idx >= 0) {
                         setSelectedIndex(idx);
