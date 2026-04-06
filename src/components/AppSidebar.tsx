@@ -157,44 +157,55 @@ export default function AppSidebar() {
 
         {/* Menu groups */}
         {menuGroups.map((group) => (
-          <Collapsible
-            key={group.label}
-            defaultOpen={false}
-            className="group/collapsible"
-          >
-            <SidebarGroup className="p-0">
-              <SidebarGroupLabel asChild className="px-2 py-1.5">
-                <CollapsibleTrigger className="flex w-full items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+          collapsed ? (
+            <SidebarMenu key={group.label}>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  tooltip={group.label}
+                  isActive={isActiveGroup(group.items)}
+                  onClick={() => navigate(group.items[0].path)}
+                >
                   <group.icon className="h-4 w-4 shrink-0" />
-                  {!collapsed && (
-                    <>
-                      <span className="flex-1 text-left">{group.label}</span>
-                      <ChevronDown className="h-3 w-3 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                    </>
-                  )}
-                </CollapsibleTrigger>
-              </SidebarGroupLabel>
+                  <span>{group.label}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          ) : (
+            <Collapsible
+              key={group.label}
+              defaultOpen={false}
+              className="group/collapsible"
+            >
+              <SidebarGroup className="p-0">
+                <SidebarGroupLabel asChild className="px-2 py-1.5">
+                  <CollapsibleTrigger className="flex w-full items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    <group.icon className="h-4 w-4 shrink-0" />
+                    <span className="flex-1 text-left">{group.label}</span>
+                    <ChevronDown className="h-3 w-3 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                  </CollapsibleTrigger>
+                </SidebarGroupLabel>
 
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {group.items.map((item) => (
-                      <SidebarMenuItem key={item.label}>
-                        <SidebarMenuButton
-                          onClick={() => navigate(item.path)}
-                          isActive={isActivePath(item.path)}
-                          size="sm"
-                          className="pl-8 text-xs"
-                        >
-                          <span>{item.label}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
-          </Collapsible>
+                <CollapsibleContent>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {group.items.map((item) => (
+                        <SidebarMenuItem key={item.label}>
+                          <SidebarMenuButton
+                            onClick={() => navigate(item.path)}
+                            isActive={isActivePath(item.path)}
+                            size="sm"
+                            className="pl-8 text-xs"
+                          >
+                            <span>{item.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
+          )
         ))}
       </SidebarContent>
 
