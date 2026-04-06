@@ -50,15 +50,17 @@ import {
   ZoomableGroup,
 } from "react-simple-maps";
 import {
-  BarChart,
-  Bar,
+  ScatterChart,
+  Scatter,
   XAxis,
   YAxis,
   CartesianGrid,
   Cell,
   Tooltip,
   ResponsiveContainer,
+  ZAxis,
   ReferenceLine,
+  ReferenceDot,
   Label,
 } from "recharts";
 import {
