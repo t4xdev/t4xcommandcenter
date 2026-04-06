@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -362,8 +362,7 @@ export default function SAUsers() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopNav breadcrumb={`SA / Users${view === "create" ? " / New" : view === "edit" && selectedUser ? ` / ${selectedUser.name} / Edit` : view === "view" && selectedUser ? ` / ${selectedUser.name}` : ""}`} />
+    <AppLayout breadcrumb={`SA / Users${view === "create" ? " / New" : view === "edit" && selectedUser ? ` / ${selectedUser.name} / Edit` : view === "view" && selectedUser ? ` / ${selectedUser.name}` : ""}`}>
       <div className="p-4 max-w-[1400px] mx-auto">
 
         {view === "create" && (

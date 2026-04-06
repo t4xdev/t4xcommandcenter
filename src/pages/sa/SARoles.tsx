@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -206,8 +206,7 @@ export default function SARoles() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopNav breadcrumb={`SA / Roles${view === "create" ? " / New" : view === "edit" && selectedRole ? ` / ${selectedRole.name} / Edit` : view === "view" && selectedRole ? ` / ${selectedRole.name}` : ""}`} />
+    <AppLayout breadcrumb={`SA / Roles${view === "create" ? " / New" : view === "edit" && selectedRole ? ` / ${selectedRole.name} / Edit` : view === "view" && selectedRole ? ` / ${selectedRole.name}` : ""}`}>
       <div className="p-4 max-w-[1400px] mx-auto">
 
         {view === "create" && <RoleEditor role={null} onSave={handleSave} onCancel={() => setView("list")} />}

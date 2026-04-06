@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { toast } from "sonner";
 import { designationMaster, getDesignationWage, getDesignationInfo, mockAdjustments, type DesignationWage, type SalaryAdjustment } from "@/data/payrollData";
 import { Routes, Route, useNavigate, useLocation, Link } from "react-router-dom";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import t4xLogo from "@/assets/t4x_logo.png";
 import avatarRajesh from "@/assets/avatars/avatar-rajesh.jpg";
 import avatarPriya from "@/assets/avatars/avatar-priya.jpg";
@@ -247,10 +247,7 @@ export default function CrewManagement() {
   })();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Top Navigation Bar */}
-      <TopNav breadcrumb={`User / Payroll / ${sidebarItems.find(i => i.id === currentPage)?.label || "Dashboard"}`} />
-
+    <AppLayout breadcrumb={`User / Payroll / ${sidebarItems.find(i => i.id === currentPage)?.label || "Dashboard"}`}>
       <div className="flex flex-1">
         {/* Sidebar — text-only, no icons */}
         <aside className="w-48 shrink-0 bg-primary border-r border-primary/80 flex flex-col">
@@ -294,7 +291,7 @@ export default function CrewManagement() {
           </Routes>
         </main>
       </div>
-    </div>
+    </AppLayout>
   );
 }
 

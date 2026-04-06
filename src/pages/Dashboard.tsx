@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import t4xLogo from "@/assets/t4x_logo.png";
 import {
   TrendingUp, TrendingDown, AlertTriangle, ArrowRight, Send, Bot, User,
@@ -211,9 +211,7 @@ export default function Dashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopNav breadcrumb={breadcrumb} rightContent={fleetSelector} />
-
+    <AppLayout breadcrumb={breadcrumb} rightContent={fleetSelector}>
       <main className="max-w-[1600px] mx-auto px-6 py-5">
         {activeView === "iot" ? (
           <IotDashboard fleet={selectedFleet} />
@@ -891,6 +889,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }

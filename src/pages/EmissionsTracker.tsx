@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import {
   BarChart3, Ship, FileText, AlertTriangle, GitCompare, Settings,
   TrendingUp, TrendingDown, Fuel, Leaf, Activity, ChevronDown,
@@ -810,9 +810,8 @@ export default function EmissionsTracker() {
   const unresolvedAlerts = emissionAlerts.filter(a => !a.acknowledged).length;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <TopNav breadcrumb={`User / Vessel / Emissions Tracker / ${sidebarItems.find(i => i.id === activePage)?.label || "Overview"}`} />
-      <div className="flex flex-1">
+    <AppLayout breadcrumb={`User / Vessel / Emissions Tracker / ${sidebarItems.find(i => i.id === activePage)?.label || "Overview"}`}>
+      <div className="flex flex-1 min-h-0">
       {/* Sidebar */}
       <aside className="w-52 bg-card border-r border-border shrink-0">
         <div className="p-4 border-b border-border">
@@ -859,6 +858,6 @@ export default function EmissionsTracker() {
         {activePage === "settings" && <AdminSettings />}
       </main>
       </div>
-    </div>
+    </AppLayout>
   );
 }

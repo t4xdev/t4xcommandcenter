@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TopNav from "@/components/TopNav";
+import AppLayout from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -259,8 +259,7 @@ export default function SAVessels() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <TopNav breadcrumb={`SA / Vessels${view === "create" ? " / New" : view === "edit" && selectedVessel ? ` / ${selectedVessel.name} / Edit` : view === "view" && selectedVessel ? ` / ${selectedVessel.name}` : ""}`} />
+    <AppLayout breadcrumb={`SA / Vessels${view === "create" ? " / New" : view === "edit" && selectedVessel ? ` / ${selectedVessel.name} / Edit` : view === "view" && selectedVessel ? ` / ${selectedVessel.name}` : ""}`}>
       <div className="p-4 max-w-[1400px] mx-auto">
         {view === "create" && <VesselForm vessel={null} onSave={handleSave} onCancel={() => setView("list")} />}
         {view === "edit" && selectedVessel && <VesselForm vessel={selectedVessel} onSave={handleSave} onCancel={() => setView("list")} />}
