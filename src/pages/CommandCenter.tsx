@@ -363,9 +363,9 @@ export default function CommandCenter() {
                         </div>
                       </foreignObject>
                     )}
-                    {/* Selected info popup */}
+                    {/* Selected info popup - positioned above marker */}
                     {isSelected && showInfoPopup && (
-                      <foreignObject x={14} y={-50} width={180} height={100} style={{ overflow: "visible", pointerEvents: "none" }}>
+                      <foreignObject x={-90} y={-70} width={180} height={60} style={{ overflow: "visible", pointerEvents: "none" }}>
                         <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 6, padding: "6px 8px", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", fontSize: 10, lineHeight: 1.5 }}>
                           <div style={{ fontWeight: 700, fontSize: 11, marginBottom: 2 }}>{vessel.name}</div>
                           <div style={{ color: "hsl(215, 15%, 45%)" }}>
