@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ComposableMap,
   Geographies,
@@ -31,6 +32,7 @@ import {
   TrendingUp,
   TrendingDown,
   Radio,
+  X,
   Pause,
   Play,
 } from "lucide-react";
@@ -69,6 +71,7 @@ const comparisonMetrics = [
 const ROTATION_INTERVAL = 5000;
 
 export default function CommandCenter() {
+  const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   
@@ -181,6 +184,14 @@ export default function CommandCenter() {
           <span className="text-xs font-mono text-muted-foreground">
             {currentTime.toLocaleTimeString()} UTC
           </span>
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
+            title="Exit Command Center"
+          >
+            <X className="w-3 h-3" />
+            Exit
+          </button>
         </div>
       </header>
 
