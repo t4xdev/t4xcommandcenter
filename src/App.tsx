@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,19 +26,21 @@ const App = () => {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <FleetProvider>
-          <Toaster />
-          <Sonner />
-          {authenticated ? (
-            <CommandCenter onLogout={handleLogout} />
-          ) : (
-            <Login onLogin={handleLogin} />
-          )}
-        </FleetProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <FleetProvider>
+            <Toaster />
+            <Sonner />
+            {authenticated ? (
+              <CommandCenter onLogout={handleLogout} />
+            ) : (
+              <Login onLogin={handleLogin} />
+            )}
+          </FleetProvider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 };
 
