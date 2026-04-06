@@ -262,9 +262,9 @@ function generateVessels(): VesselData[] {
     const locIdx = Math.floor(rand() * locationPools.length);
     const loc = locationPools[locIdx];
 
-    // Small jitter (±1°) keeps markers spread but safely in open ocean
-    const lonOffset = (rand() - 0.5) * 1;
-    const latOffset = (rand() - 0.5) * 1;
+    // Wider jitter (±3°) spreads markers across the ocean region
+    const lonOffset = (rand() - 0.5) * 6;
+    const latOffset = (rand() - 0.5) * 6;
 
     const statusRoll = rand();
     const status: VesselData["status"] = statusRoll < 0.7 ? "normal" : statusRoll < 0.9 ? "warning" : "critical";
@@ -277,7 +277,7 @@ function generateVessels(): VesselData[] {
     const nameNum = Math.floor(rand() * 100);
     const vesselName = rand() > 0.5 ? `${prefix} ${suffix}` : `${prefix}-${String(nameNum).padStart(2, "0")}`;
 
-    const speed = loc.region === "Transit" ? Math.round(rand() * 14 * 10) / 10 : Math.round(rand() * 3 * 10) / 10;
+    const speed = Math.round(rand() * 14 * 10) / 10;
     const fuelStart = Math.round(15000 + rand() * 85000);
     const fuelUsed = Math.round(rand() * 5000);
     const fuelBalance = Math.max(fuelStart - fuelUsed, 0);
