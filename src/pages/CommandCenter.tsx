@@ -6,6 +6,16 @@ import vesselImg2 from "@/assets/vessel-engine.webp";
 import vesselImg3 from "@/assets/vessel-cabin.webp";
 import vesselImg4 from "@/assets/vessel-machinery.webp";
 import vesselImg5 from "@/assets/vessel-cargo.jpeg";
+import vesselImg6 from "@/assets/vessel-engine2.webp";
+import vesselImg7 from "@/assets/vessel-hydraulic.webp";
+import vesselImg8 from "@/assets/vessel-port.webp";
+import vesselImg9 from "@/assets/vessel-night-cargo.webp";
+import vesselImg10 from "@/assets/vessel-night-containers.webp";
+import vesselImg11 from "@/assets/vessel-cargo-day.jpeg";
+import vesselImg12 from "@/assets/vessel-engine3.webp";
+import vesselImg13 from "@/assets/vessel-electrical.webp";
+import vesselImg14 from "@/assets/vessel-machinery2.webp";
+import vesselImg15 from "@/assets/vessel-control-panel.webp";
 import {
   ComposableMap,
   Geographies,
@@ -77,8 +87,16 @@ const severityStyles: Record<string, string> = {
 
 
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
-const vesselImages = [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5];
-const imageLabels = ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"];
+const vesselImageSets = [
+  { images: [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5], labels: ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"] },
+  { images: [vesselImg6, vesselImg7, vesselImg8, vesselImg9, vesselImg10], labels: ["Main Engine", "Hydraulic Unit", "Port Side", "Night Cargo", "Containers"] },
+  { images: [vesselImg11, vesselImg12, vesselImg13, vesselImg14, vesselImg15], labels: ["Cargo Deck", "Engine Bay", "Electrical Room", "Pump Room", "Control Panel"] },
+];
+const getVesselImageSet = (vesselId: string) => {
+  let hash = 0;
+  for (let i = 0; i < vesselId.length; i++) hash = ((hash << 5) - hash) + vesselId.charCodeAt(i);
+  return vesselImageSets[Math.abs(hash) % vesselImageSets.length];
+};
 
 export default function CommandCenter() {
   const navigate = useNavigate();
@@ -158,11 +176,12 @@ export default function CommandCenter() {
 
   // Image slideshow - cycle every 3 seconds
   useEffect(() => {
+    const currentSet = selectedVessel ? getVesselImageSet(selectedVessel.id) : vesselImageSets[0];
     const interval = setInterval(() => {
-      setImageIndex((prev) => (prev + 1) % vesselImages.length);
+      setImageIndex((prev) => (prev + 1) % currentSet.images.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedVessel]);
 
   // Reset image on vessel change + zoom-to-vessel animation
   useEffect(() => {
@@ -518,24 +537,24 @@ export default function CommandCenter() {
                 {/* Vessel Image Slideshow Card */}
                 <div className="w-[180px] shrink-0 rounded-xl border border-border overflow-hidden bg-card shadow-sm flex flex-col">
                   <div className="relative flex-1 min-h-0 overflow-hidden">
-                    {vesselImages.map((img, i) => (
+                    {(() => { const imgSet = getVesselImageSet(selectedVessel.id); return imgSet.images.map((img, i) => (
                       <img
                         key={i}
                         src={img}
-                        alt={`${selectedVessel.name} - ${imageLabels[i]}`}
+                        alt={`${selectedVessel.name} - ${imgSet.labels[i]}`}
                         className={cn(
                           "absolute inset-0 w-full h-full object-cover transition-opacity duration-700",
                           i === imageIndex ? "opacity-100" : "opacity-0"
                         )}
                         loading="lazy"
                       />
-                    ))}
+                    )); })()}
                     <div className="absolute bottom-1.5 left-1.5 bg-foreground/60 backdrop-blur-sm rounded px-1.5 py-0.5">
-                      <p className="text-[8px] text-white font-medium">{imageLabels[imageIndex]}</p>
+                      <p className="text-[8px] text-white font-medium">{getVesselImageSet(selectedVessel.id).labels[imageIndex]}</p>
                     </div>
                     {/* Dots */}
                     <div className="absolute bottom-1.5 right-1.5 flex gap-1">
-                      {vesselImages.map((_, i) => (
+                      {getVesselImageSet(selectedVessel.id).images.map((_, i) => (
                         <button
                           key={i}
                           onClick={() => setImageIndex(i)}
