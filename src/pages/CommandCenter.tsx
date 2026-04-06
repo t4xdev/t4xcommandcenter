@@ -314,34 +314,47 @@ export default function CommandCenter() {
             </ZoomableGroup>
           </ComposableMap>
 
-          {/* Map Legend - Company colors */}
+          {/* Map Legend */}
           <div className="absolute bottom-4 left-4 bg-card/95 backdrop-blur-sm rounded-lg p-3 border border-border shadow-sm">
-            <p className="text-[10px] text-muted-foreground mb-2 font-medium">COMPANIES</p>
-            {companyNames.map((name) => {
-              const count = vesselData.filter((v) => v.company === name).length;
+            <p className="text-[10px] text-muted-foreground mb-2 font-medium">STATUS</p>
+            {(["normal", "warning", "critical"] as const).map((status) => {
+              const count = filteredVessels.filter((v) => v.status === status).length;
               return (
-                <button
-                  key={name}
-                  onClick={() => setCompanyFilter(companyFilter === name ? null : name)}
-                  className={cn(
-                    "w-full flex items-center gap-2 mb-1 text-left rounded px-1 py-0.5 transition-colors",
-                    companyFilter === name && "bg-accent"
-                  )}
-                >
-                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: companyColors[name] }} />
-                  <span className="text-[10px] text-foreground">{name}</span>
+                <div key={status} className="flex items-center gap-2 mb-1 px-1 py-0.5">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: statusColors[status] }} />
+                  <span className="text-[10px] text-foreground capitalize">{status}</span>
                   <span className="text-[9px] text-muted-foreground ml-auto">{count}</span>
-                </button>
+                </div>
               );
             })}
-            {companyFilter && (
-              <button
-                onClick={() => setCompanyFilter(null)}
-                className="text-[9px] text-primary mt-1 hover:underline"
-              >
-                Show All
-              </button>
-            )}
+            <div className="border-t border-border mt-2 pt-2">
+              <p className="text-[10px] text-muted-foreground mb-1 font-medium">COMPANIES</p>
+              {companyNames.map((name) => {
+                const count = vesselData.filter((v) => v.company === name).length;
+                return (
+                  <button
+                    key={name}
+                    onClick={() => setCompanyFilter(companyFilter === name ? null : name)}
+                    className={cn(
+                      "w-full flex items-center gap-2 mb-1 text-left rounded px-1 py-0.5 transition-colors",
+                      companyFilter === name && "bg-accent"
+                    )}
+                  >
+                    <span className="w-2.5 h-2.5 rounded shrink-0 border" style={{ borderColor: companyColors[name] }} />
+                    <span className="text-[10px] text-foreground">{name}</span>
+                    <span className="text-[9px] text-muted-foreground ml-auto">{count}</span>
+                  </button>
+                );
+              })}
+              {companyFilter && (
+                <button
+                  onClick={() => setCompanyFilter(null)}
+                  className="text-[9px] text-primary mt-1 hover:underline"
+                >
+                  Show All
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Vessel counter */}
