@@ -505,8 +505,17 @@ export default function CommandCenter() {
                 );
               })}
 
+              {/* Cluster count badges */}
+              {clusterBadges.map((cluster, i) => (
+                <Marker key={`cluster-${i}`} coordinates={[cluster.lon, cluster.lat]}>
+                  <g transform="translate(0, -10)">
+                    <circle r={5} fill="hsl(215, 80%, 55%)" stroke="hsl(0, 0%, 100%)" strokeWidth={1} />
+                    <text textAnchor="middle" y={2} style={{ fontSize: 5, fill: "#fff", fontWeight: 700 }}>{cluster.count}</text>
+                  </g>
+                </Marker>
+              ))}
 
-            </ZoomableGroup>
+
           </ComposableMap>
 
           {/* Zoom Controls */}
