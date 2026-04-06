@@ -226,18 +226,29 @@ export default function CommandCenter() {
         </div>
         <div className="flex items-center gap-4">
           {/* Auto-rotate controls */}
-          <button
-            onClick={() => setAutoRotate(!autoRotate)}
-            className={cn(
-              "flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-md border transition-colors",
-              autoRotate
-                ? "border-success/30 bg-success/5 text-success"
-                : "border-border bg-card text-muted-foreground"
-            )}
-          >
-            {autoRotate ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
-            {autoRotate ? "Auto-Cycling" : "Paused"}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setAutoRotate(!autoRotate)}
+              className={cn(
+                "flex items-center gap-1.5 text-[10px] px-2 py-1 rounded-md border transition-colors",
+                autoRotate
+                  ? "border-success/30 bg-success/5 text-success"
+                  : "border-border bg-card text-muted-foreground"
+              )}
+            >
+              {autoRotate ? <Play className="w-3 h-3" /> : <Pause className="w-3 h-3" />}
+              {autoRotate ? "Auto" : "Paused"}
+            </button>
+            <select
+              value={rotationInterval}
+              onChange={(e) => setRotationInterval(Number(e.target.value))}
+              className="text-[10px] bg-card border border-border rounded-md px-1.5 py-1 text-foreground outline-none cursor-pointer"
+            >
+              {ROTATION_OPTIONS.map((s) => (
+                <option key={s} value={s}>{s}s</option>
+              ))}
+            </select>
+          </div>
           <div className="flex items-center gap-1.5 text-[10px]">
             <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
             <span className="text-muted-foreground">LIVE</span>
