@@ -1,6 +1,6 @@
 // Command Center - Fleet Monitoring Dashboard
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+
 import adaniLogo from "@/assets/adani-logo.png";
 import vesselImg1 from "@/assets/vessel-deck.webp";
 import vesselImg2 from "@/assets/vessel-engine.webp";
