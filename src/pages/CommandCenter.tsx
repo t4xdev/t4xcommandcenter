@@ -167,17 +167,24 @@ export default function CommandCenter() {
     [filteredVessels, selectedIndex, selectedVesselId]
   );
 
-  // Scatter plot data - efficiency vs active operational hours
-  const scatterData = useMemo(() => filteredVessels.map((v) => {
-    const dpH = parseInt(v.dpOpsHrs.split(":")[0]) || 0;
-    const dpM = parseInt(v.dpOpsHrs.split(":")[1]) || 0;
-    const transitH = parseInt(v.transitHrs.split(":")[0]) || 0;
-    const transitM = parseInt(v.transitHrs.split(":")[1]) || 0;
-    const activeHrs = Math.round((dpH + dpM / 60 + transitH + transitM / 60) * 10) / 10;
-    const totalH = parseInt(v.totalOpsHrs.split(":")[0]) || 24;
-    const efficiency = totalH > 0 ? Math.round((activeHrs / totalH) * 100) : 0;
-    return { id: v.id, name: v.name, company: v.company, efficiency, opsHours: activeHrs, crewOnBoard: v.crewOnBoard };
-  }), [filteredVessels]);
+  // Compliance score data from fleet analytics
+  const complianceData = useMemo(() => {
+    const scores: Record<string, { vdr: number; pms: number; utilization: number; fuel: number; score: number }> = {
+      "Tahid Sabarmati": { vdr: 100, pms: 99, utilization: 100, fuel: 70, score: 92 },
+      "Tahid Verde Island": { vdr: 100, pms: 96, utilization: 100, fuel: 50, score: 87 },
+      "Tahid Narmada": { vdr: 100, pms: 87, utilization: 0, fuel: 100, score: 72 },
+      "Tahid Dela Paz": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71 },
+      "Tahid Ilijan": { vdr: 100, pms: 100, utilization: 0, fuel: 85, score: 71 },
+      "Tahid Mahaweli": { vdr: 100, pms: 97, utilization: 0, fuel: 85, score: 71 },
+      "Zaharat Al Behar": { vdr: 100, pms: 88, utilization: 0, fuel: 85, score: 68 },
+      "Dorat Al Behar": { vdr: 0, pms: 100, utilization: 0, fuel: 50, score: 38 },
+      "Ameerat Al Behar": { vdr: 0, pms: 98, utilization: 0, fuel: 50, score: 37 },
+      "Tug Dolphin #33": { vdr: 0, pms: 58, utilization: 0, fuel: 50, score: 27 },
+    };
+    return Object.entries(scores)
+      .map(([name, s]) => ({ name, ...s }))
+      .sort((a, b) => b.score - a.score);
+  }, []);
 
   const fleetStats = useMemo(() => {
     const total = vesselData.length;
