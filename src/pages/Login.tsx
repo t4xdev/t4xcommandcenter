@@ -43,23 +43,24 @@ export default function Login({ onLogin }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen flex bg-[hsl(210,30%,92%)]">
-      {/* Left Panel - Login Form */}
-      <div className="w-full max-w-[340px] flex flex-col justify-between px-8 py-8 bg-[hsl(210,30%,95%)]">
-        <div>
+    <div className="min-h-screen flex bg-background">
+      {/* Left Panel */}
+      <div className="w-full md:w-[360px] flex flex-col justify-between px-8 py-10 bg-card border-r border-border">
+        <div className="flex flex-col items-center">
           {/* Adani Logo */}
-          <div className="flex justify-center mb-6">
-            <img src={adaniLogo} alt="Adani" className="h-14 w-auto" />
-          </div>
+          <img
+            src={adaniLogo}
+            alt="Adani"
+            className="h-16 w-auto object-contain mb-6"
+            style={{ mixBlendMode: "multiply" }}
+          />
 
           {/* Welcome Text */}
-          <div className="text-center mb-6">
-            <p className="text-sm font-medium text-info">Welcome Back</p>
-            <p className="text-sm font-semibold text-warning mt-1">Un-Lock-Your-Time</p>
-          </div>
+          <p className="text-sm font-medium text-info mb-0.5">Welcome Back</p>
+          <p className="text-sm font-bold text-warning mb-8">Un-Lock-Your-Time</p>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="w-full space-y-5">
             <div className="space-y-1.5">
               <label htmlFor="username" className="text-sm font-medium text-foreground">
                 Username
@@ -71,7 +72,7 @@ export default function Login({ onLogin }: LoginProps) {
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
                 required
-                className="bg-[hsl(0,0%,95%)] border-border"
+                className="h-11 bg-muted/50 border-border"
               />
             </div>
 
@@ -88,7 +89,7 @@ export default function Login({ onLogin }: LoginProps) {
                   onChange={(e) => setPassword(e.target.value)}
                   autoComplete="current-password"
                   required
-                  className="pr-10 bg-[hsl(0,0%,95%)] border-border"
+                  className="h-11 pr-10 bg-muted/50 border-border"
                 />
                 <button
                   type="button"
@@ -101,7 +102,7 @@ export default function Login({ onLogin }: LoginProps) {
               </div>
             </div>
 
-            <a href="#" className="text-xs text-info hover:underline block">
+            <a href="#" className="text-xs text-info hover:underline inline-block">
               I agree to the Terms & Conditions
             </a>
 
@@ -111,7 +112,7 @@ export default function Login({ onLogin }: LoginProps) {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-[hsl(280,60%,50%)] to-[hsl(200,80%,50%)] hover:from-[hsl(280,60%,45%)] hover:to-[hsl(200,80%,45%)] text-[hsl(0,0%,100%)]"
+              className="w-full h-11 text-sm font-semibold tracking-wide bg-gradient-to-r from-[hsl(280,60%,50%)] to-[hsl(200,80%,55%)] hover:from-[hsl(280,60%,45%)] hover:to-[hsl(200,80%,50%)] text-[hsl(0,0%,100%)] shadow-md"
               disabled={loading}
             >
               {loading ? "Signing in…" : "LOGIN"}
@@ -119,14 +120,17 @@ export default function Login({ onLogin }: LoginProps) {
           </form>
 
           {/* T4X Logo */}
-          <div className="flex justify-center mt-6">
-            <img src={t4xLogo} alt="Twenty4X" className="h-16 w-auto" />
-          </div>
+          <img
+            src={t4xLogo}
+            alt="Twenty4X Digital Fleet Management"
+            className="h-20 w-auto object-contain mt-8"
+            style={{ mixBlendMode: "multiply" }}
+          />
         </div>
 
         {/* Footer */}
-        <div className="text-center">
-          <p className="text-[10px] text-warning">
+        <div className="text-center mt-8">
+          <p className="text-[10px] text-warning leading-relaxed">
             Login access allowed under license to<br />Twenty4x Solutions FZCO
           </p>
           <p className="text-[9px] text-muted-foreground mt-2">
@@ -135,22 +139,13 @@ export default function Login({ onLogin }: LoginProps) {
         </div>
       </div>
 
-      {/* Right Panel - Banner Image */}
-      <div className="hidden md:flex flex-1 relative">
+      {/* Right Panel - Banner Image (no overlay) */}
+      <div className="hidden md:block flex-1">
         <img
           src={adaniBanner}
-          alt="Adani Growth with Goodness"
+          alt="Adani - Growth with Goodness"
           className="w-full h-full object-cover"
         />
-        {/* Overlay with Adani branding */}
-        <div className="absolute top-8 right-8 flex items-center gap-3">
-          <img src={adaniLogo} alt="Adani" className="h-10 w-auto" />
-          <div className="h-10 w-px bg-[hsl(0,0%,60%)]" />
-          <div className="text-[hsl(215,20%,40%)]">
-            <span className="text-lg font-light leading-tight block">Growth</span>
-            <span className="text-sm font-light leading-tight">with <span className="font-medium">Goodness</span></span>
-          </div>
-        </div>
       </div>
     </div>
   );
