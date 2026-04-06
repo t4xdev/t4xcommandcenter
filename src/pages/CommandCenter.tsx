@@ -158,7 +158,7 @@ export default function CommandCenter() {
   const [mapZoom, setMapZoom] = useState(2.5);
 
   const filteredVessels = useMemo(() =>
-    companyFilter ? vesselData.filter((v) => v.company === companyFilter) : vesselData,
+    companyFilter ? realVessels.filter((v) => v.company === companyFilter) : realVessels,
     [companyFilter]
   );
 
@@ -303,7 +303,7 @@ export default function CommandCenter() {
   const searchResults = useMemo(() => {
     if (!vesselSearch.trim()) return [];
     const q = vesselSearch.toLowerCase();
-    return vesselData.filter((v) =>
+    return realVessels.filter((v) =>
       v.name.toLowerCase().includes(q) || v.imo.includes(q) || v.company.toLowerCase().includes(q)
     ).slice(0, 10);
   }, [vesselSearch]);
