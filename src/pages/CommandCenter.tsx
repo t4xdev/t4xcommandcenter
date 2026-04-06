@@ -318,7 +318,7 @@ export default function CommandCenter() {
                     />
                   </g>
                   {/* Info popup for selected vessel */}
-                  {vessel.id === selectedVessel?.id && (
+                  {vessel.id === selectedVessel?.id && showInfoPopup && (
                     <g>
                       <rect
                         x={12}
