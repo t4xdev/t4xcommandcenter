@@ -650,18 +650,54 @@ export default function CommandCenter() {
                       );
                     }}
                   />
-                  <Scatter data={scatterData}>
-                    {scatterData.map((entry, idx) => (
+                  {/* Background vessels */}
+                  <Scatter data={scatterData.filter(e => e.id !== selectedVessel?.id)} name="Fleet">
+                    {scatterData.filter(e => e.id !== selectedVessel?.id).map((entry, idx) => (
                       <Cell
                         key={idx}
                         fill={companyColors[entry.company] || "hsl(216, 10%, 60%)"}
-                        opacity={entry.id === selectedVessel?.id ? 1 : 0.4}
-                        stroke={entry.id === selectedVessel?.id ? "hsl(0, 0%, 100%)" : "none"}
-                        strokeWidth={entry.id === selectedVessel?.id ? 2 : 0}
-                        r={entry.id === selectedVessel?.id ? 8 : 4}
+                        opacity={0.35}
+                        r={4}
                       />
                     ))}
                   </Scatter>
+                  {/* Selected vessel - prominent */}
+                  {selectedVessel && (() => {
+                    const sel = scatterData.find(e => e.id === selectedVessel.id);
+                    if (!sel) return null;
+                    return (
+                      <Scatter data={[sel]} name="Selected">
+                        <Cell
+                          fill={companyColors[sel.company] || "hsl(210, 80%, 52%)"}
+                          opacity={1}
+                          stroke="hsl(0, 0%, 100%)"
+                          strokeWidth={3}
+                          r={10}
+                        />
+                      </Scatter>
+                    );
+                  })()}
+                  {/* Label for selected vessel */}
+                  {selectedVessel && (() => {
+                    const sel = scatterData.find(e => e.id === selectedVessel.id);
+                    if (!sel) return null;
+                    return (
+                      <ReferenceDot
+                        x={sel.efficiency}
+                        y={sel.fuelUsed}
+                        r={0}
+                        fill="none"
+                        stroke="none"
+                      >
+                        <Label
+                          value={`▶ ${sel.name}`}
+                          position="right"
+                          offset={12}
+                          style={{ fontSize: 9, fontWeight: 700, fill: "hsl(215, 50%, 15%)" }}
+                        />
+                      </ReferenceDot>
+                    );
+                  })()}
                 </ScatterChart>
               </ResponsiveContainer>
             </div>
