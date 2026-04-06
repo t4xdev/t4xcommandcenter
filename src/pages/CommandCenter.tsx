@@ -91,13 +91,14 @@ export default function CommandCenter() {
   const [vesselSearch, setVesselSearch] = useState("");
   const [showVesselSearch, setShowVesselSearch] = useState(false);
   const [showInfoPopup, setShowInfoPopup] = useState(true);
+  const [hoveredVesselId, setHoveredVesselId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
   const autoRotateRef = useRef(autoRotate);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([72, 15]);
-  const [mapZoom, setMapZoom] = useState(1.5);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([70, 0]);
+  const [mapZoom, setMapZoom] = useState(1.2);
 
   const filteredVessels = useMemo(() =>
     companyFilter ? vesselData.filter((v) => v.company === companyFilter) : vesselData,
@@ -162,11 +163,12 @@ export default function CommandCenter() {
     return () => clearInterval(interval);
   }, []);
 
-  // Reset image on vessel change (no map panning — markers stay fixed)
+  // Reset image on vessel change + pan map to selected vessel
   useEffect(() => {
     if (!selectedVessel) return;
     setImageIndex(0);
     setShowInfoPopup(true);
+    setMapCenter([selectedVessel.longitude, selectedVessel.latitude]);
   }, [selectedVessel]);
 
   // Auto-scroll highlights
@@ -315,15 +317,19 @@ export default function CommandCenter() {
                 }
               </Geographies>
 
-              {/* All vessel markers (no popup inside) */}
+              {/* All vessel markers */}
               {filteredVessels.map((vessel) => {
                 const isSelected = vessel.id === selectedVessel?.id;
+                const isHovered = vessel.id === hoveredVesselId;
                 return (
                   <Marker
                     key={vessel.id}
                     coordinates={[vessel.longitude, vessel.latitude]}
                     onClick={() => handleVesselClick(vessel)}
+                    onMouseEnter={() => setHoveredVesselId(vessel.id)}
+                    onMouseLeave={() => setHoveredVesselId(null)}
                   >
+                    {/* Ping ring - centered at origin, no transform */}
                     {isSelected && (
                       <circle
                         r={12}
@@ -335,10 +341,10 @@ export default function CommandCenter() {
                         style={{ animationDuration: "2s" }}
                       />
                     )}
+                    {/* Arrow marker - rotate only, no scale shift */}
                     <g
-                      transform={`rotate(${vessel.course}, 0, 0) scale(0.9)`}
+                      transform={`rotate(${vessel.course}, 0, 0)`}
                       className="cursor-pointer"
-                      style={{ transformOrigin: "center" }}
                     >
                       <polygon
                         points="0,-7 4,5 0,2 -4,5"
@@ -346,10 +352,30 @@ export default function CommandCenter() {
                         stroke={isSelected ? statusColors[vessel.status] : "hsl(0, 0%, 30%)"}
                         strokeWidth={isSelected ? 2 : 0.5}
                         opacity={isSelected ? 1 : 0.8}
-                      >
-                        <title>{vessel.name}</title>
-                      </polygon>
+                      />
                     </g>
+                    {/* Hover tooltip */}
+                    {isHovered && !isSelected && (
+                      <foreignObject x={8} y={-12} width={120} height={24} style={{ pointerEvents: "none", overflow: "visible" }}>
+                        <div style={{ background: "hsl(215, 25%, 20%)", color: "#fff", fontSize: 9, padding: "2px 6px", borderRadius: 4, whiteSpace: "nowrap", width: "fit-content" }}>
+                          {vessel.name}
+                        </div>
+                      </foreignObject>
+                    )}
+                    {/* Selected info popup */}
+                    {isSelected && showInfoPopup && (
+                      <foreignObject x={14} y={-50} width={180} height={100} style={{ overflow: "visible", pointerEvents: "none" }}>
+                        <div style={{ background: "hsl(0, 0%, 100%)", border: "1px solid hsl(215, 15%, 82%)", borderRadius: 6, padding: "6px 8px", boxShadow: "0 2px 8px rgba(0,0,0,0.15)", fontSize: 10, lineHeight: 1.5 }}>
+                          <div style={{ fontWeight: 700, fontSize: 11, marginBottom: 2 }}>{vessel.name}</div>
+                          <div style={{ color: "hsl(215, 15%, 45%)" }}>
+                            <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", backgroundColor: statusColors[vessel.status], marginRight: 4 }} />
+                            {vessel.status.charAt(0).toUpperCase() + vessel.status.slice(1)} · {vessel.hiringStatus}
+                          </div>
+                          <div style={{ color: "hsl(215, 15%, 45%)" }}>Speed: {vessel.speed} kn · Course: {vessel.course}°</div>
+                          <div style={{ color: "hsl(215, 15%, 55%)", fontSize: 9 }}>{vessel.company}</div>
+                        </div>
+                      </foreignObject>
+                    )}
                   </Marker>
                 );
               })}
