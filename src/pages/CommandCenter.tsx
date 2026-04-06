@@ -157,18 +157,16 @@ export default function CommandCenter() {
     [filteredVessels, selectedIndex, selectedVesselId]
   );
 
-  // Scatter plot data - efficiency vs operational hours
+  // Scatter plot data - efficiency vs active operational hours
   const scatterData = useMemo(() => filteredVessels.map((v) => {
     const dpH = parseInt(v.dpOpsHrs.split(":")[0]) || 0;
     const dpM = parseInt(v.dpOpsHrs.split(":")[1]) || 0;
     const transitH = parseInt(v.transitHrs.split(":")[0]) || 0;
     const transitM = parseInt(v.transitHrs.split(":")[1]) || 0;
-    const totalOpsH = parseInt(v.totalOpsHrs.split(":")[0]) || 0;
-    const totalOpsM = parseInt(v.totalOpsHrs.split(":")[1]) || 0;
     const activeHrs = Math.round((dpH + dpM / 60 + transitH + transitM / 60) * 10) / 10;
-    const totalHrs = Math.round((totalOpsH + totalOpsM / 60) * 10) / 10;
-    const efficiency = totalHrs > 0 ? Math.round((activeHrs / totalHrs) * 100) : 0;
-    return { id: v.id, name: v.name, company: v.company, efficiency, opsHours: totalHrs, crewOnBoard: v.crewOnBoard };
+    const totalH = parseInt(v.totalOpsHrs.split(":")[0]) || 24;
+    const efficiency = totalH > 0 ? Math.round((activeHrs / totalH) * 100) : 0;
+    return { id: v.id, name: v.name, company: v.company, efficiency, opsHours: activeHrs, crewOnBoard: v.crewOnBoard };
   }), [filteredVessels]);
 
   const fleetStats = useMemo(() => {
