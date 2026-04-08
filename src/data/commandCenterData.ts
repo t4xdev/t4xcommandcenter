@@ -202,17 +202,17 @@ function generateVessels(): VesselData[] {
   const realVessels: VesselData[] = [
     // === SSIDL Vessels ===
     {
-      id: "v1", name: "Dolphin-04", imo: "9328364", master: "Santosh K. Pandey",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "B-12 Platform",
-      longitude: 69.7077, latitude: 22.7147, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "07:07",
-      speed: 0, course: 0, fuelBalance: 27922, fuelUsed: 2963, fuelStart: 30885,
-      waterBalance: 22000, dpOpsHrs: "21:24", transitHrs: "00:00", portHrs: "02:36",
-      totalOpsHrs: "24:00", crewOnBoard: 14, maintenanceDone: 4, outstandingDefects: 0,
-      certificatesValid: 35, certificatesExpired: 0, provisionDays: 12,
-      hseToolbox: 1, hseDrills: 1, lti: 0, nearMisses: 0,
-      lastOps: "DP Operations at B-12 Platform, Berthing: 5, Unberthing: 4",
-      maintenanceRemarks: "Routine maintenance on ME turbo charger",
+      id: "v1", name: "Dolphin-04", imo: "9328364", master: "Santosh Kumar Pandey",
+      company: "SSIDL", fleet: "SSIDL Fleet", location: "SOUTH BASIN TUG BERTH",
+      longitude: 69.7217, latitude: 22.6902, status: "normal", hiringStatus: "ON-Hire",
+      client: "SSIDL", reportDate: "07-Apr-2026", reportTime: "07:25",
+      speed: 0, course: 0, fuelBalance: 24645, fuelUsed: 1630, fuelStart: 26275,
+      waterBalance: 18000, dpOpsHrs: "11:48", transitHrs: "00:00", portHrs: "12:12",
+      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
+      certificatesValid: 22, certificatesExpired: 2, provisionDays: 0,
+      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
+      lastOps: "B3 BERTHING 0030-0412, CB4 BERTHING 0854-1048, CB3 UNBIRTHING 1048-1136, CB3 BERTHING 1136-1300, B5 UNBIRTHING 1318-1500, SB5 UNBIRTHING 2312-2400",
+      maintenanceRemarks: "Mess room floor cleaning",
       overallRemarks: "All operations normal",
     },
     {
