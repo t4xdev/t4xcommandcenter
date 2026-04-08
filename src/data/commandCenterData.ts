@@ -595,6 +595,20 @@ function generateVessels(): VesselData[] {
       maintenanceRemarks: "No.01 aux. eng. heat exchanger back washed.",
       overallRemarks: "All systems normal",
     },
+    {
+      id: "v29", name: "Tug Dolphin #33", imo: "9891294", master: "D.G.N.Samarasekara",
+      company: "SLSC", fleet: "TAHID Fleet", location: "Colombo",
+      longitude: 79.8460, latitude: 6.9408, status: "warning", hiringStatus: "OFF-Hire",
+      client: "-", reportDate: "23-Mar-2026", reportTime: "12:00",
+      speed: 0, course: 0, fuelBalance: 48042, fuelUsed: 202, fuelStart: 48244,
+      waterBalance: 20000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
+      totalOpsHrs: "00:00", crewOnBoard: 0, maintenanceDone: 49, outstandingDefects: 0,
+      certificatesValid: 13, certificatesExpired: 1, provisionDays: 14,
+      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
+      lastOps: "TODAY NOON AT 1200 HRS, VESSEL OFFICIALLY HAND OVER TO ADANI HARBOUR SERVICES, INDIA.",
+      maintenanceRemarks: "Vessel handed over. ROBs: MGO 47.715 cubic meters. Lube oils documented.",
+      overallRemarks: "Vessel officially handed over to Adani Harbour Services",
+    },
   ];
 
   const realVesselIds = new Set(realVessels.map(v => v.id));
