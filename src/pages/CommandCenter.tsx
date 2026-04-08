@@ -176,12 +176,21 @@ const severityStyles: Record<string, string> = {
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
 // Vessel-specific image sets from VDR reports
 const vesselImageMap: Record<string, { images: string[], labels: string[] }> = {
-  "v1": { images: [vdrDolphinDeck, vdrDolphinForward, vdrDolphinEngine, vdrDolphinSteering, vdrDolphinGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v1": { images: [vdrD4Deck, vdrD4Forward, vdrD4Engine, vdrD4Steering, vdrD4Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
   "v5": { images: [vdrProgressDeck, vdrProgressWinch, vdrProgressEngine, vdrProgressSteering, vdrProgressGalley], labels: ["Deck Aft", "Tow Winch", "Engine Room", "Steering Room", "Galley"] },
   "v4": { images: [vdrVerdeDeckAft, vdrVerdeBridge, vdrVerdeEngine, vdrVerdeSteering, vdrVerdeGalley], labels: ["Deck Aft", "Bridge View", "Engine Room", "Steering Room", "Galley"] },
   "v3": { images: [vdrZaharatDeck, vesselImg8, vesselImg7, vesselImg6, vesselImg15], labels: ["Fore Deck", "Port View", "Hydraulic Unit", "Main Engine", "Control Panel"] },
   "v6": { images: [vesselImg11, vesselImg12, vesselImg13, vesselImg14, vesselImg9], labels: ["Cargo Deck", "Engine Bay", "Electrical Room", "Pump Room", "Night Cargo"] },
   "v7": { images: [vdrIlijanDeck2, vdrIlijanForward2, vdrIlijanEngine3, vdrIlijanSteering2, vdrIlijanGalley2], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v25": { images: [vdrAmeeratDeck, vdrAmeeratForward, vdrAmeeratEngine, vdrAmeeratSteering, vdrAmeeratGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v19": { images: [vdrB1Deck, vdrB1Forward, vdrB1Engine, vdrB1Steering, vdrB1Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v20": { images: [vdrB3Deck, vdrB3Forward, vdrB3Engine, vdrB3Steering, vdrB3Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v8": { images: [vdrD7Deck, vdrD7Forward, vdrD7Engine, vdrD7Steering, vdrD7Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v9": { images: [vdrD10Deck, vdrD10Forward, vdrD10Engine, vdrD10Steering, vdrD10Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v10": { images: [vdrD11Deck, vdrD11Forward, vdrD11Engine, vdrD11Steering, vdrD11Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v11": { images: [vdrD15Deck, vdrD15Forward, vdrD15Engine, vdrD15Steering, vdrD15Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v12": { images: [vdrD16Deck, vdrD16Forward, vdrD16Engine, vdrD16Steering, vdrD16Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  "v13": { images: [vdrD17Deck, vdrD17Forward, vdrD17Engine, vdrD17Steering, vdrD17Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
 };
 const defaultImageSets = [
   { images: [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5], labels: ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"] },
