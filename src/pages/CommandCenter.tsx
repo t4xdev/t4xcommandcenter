@@ -267,7 +267,7 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
 
   // Image slideshow - cycle every 3 seconds
   useEffect(() => {
-    const currentSet = selectedVessel ? getVesselImageSet(selectedVessel.id) : defaultImageSets[0];
+    const currentSet = selectedVessel ? getVesselImageSet(selectedVessel.id) : { images: [vdrDelaPazDeck], labels: ["Vessel"] };
     const interval = setInterval(() => {
       setImageIndex((prev) => (prev + 1) % currentSet.images.length);
     }, 3000);
