@@ -11,150 +11,22 @@ import {
 import { Button } from "@/components/ui/button";
 
 import adaniLogo from "@/assets/adani-logo.png";
-import vesselImg1 from "@/assets/vessel-deck.webp";
-import vesselImg2 from "@/assets/vessel-engine.webp";
-import vesselImg3 from "@/assets/vessel-cabin.webp";
-import vesselImg4 from "@/assets/vessel-machinery.webp";
-import vesselImg5 from "@/assets/vessel-cargo.jpeg";
-import vesselImg6 from "@/assets/vessel-engine2.webp";
-import vesselImg7 from "@/assets/vessel-hydraulic.webp";
-import vesselImg8 from "@/assets/vessel-port.webp";
-import vesselImg9 from "@/assets/vessel-night-cargo.webp";
-import vesselImg10 from "@/assets/vessel-night-containers.webp";
-import vesselImg11 from "@/assets/vessel-cargo-day.jpeg";
-import vesselImg12 from "@/assets/vessel-engine3.webp";
-import vesselImg13 from "@/assets/vessel-electrical.webp";
-import vesselImg14 from "@/assets/vessel-machinery2.webp";
-import vesselImg15 from "@/assets/vessel-control-panel.webp";
-// VDR-extracted vessel images
-import vdrProgressDeck from "@/assets/vdr-progress-deck.png";
-import vdrProgressWinch from "@/assets/vdr-progress-winch.png";
-import vdrProgressEngine from "@/assets/vdr-progress-engine.png";
-import vdrProgressSteering from "@/assets/vdr-progress-steering.png";
-import vdrProgressGalley from "@/assets/vdr-progress-galley.png";
-import vdrVerdeDeckAft from "@/assets/vdr-verde-aft.png";
-import vdrVerdeBridge from "@/assets/vdr-verde-bridge.png";
-import vdrVerdeEngine from "@/assets/vdr-verde-engine.png";
-import vdrVerdeSteering from "@/assets/vdr-verde-steering.png";
-import vdrVerdeGalley from "@/assets/vdr-verde-galley.png";
-import vdrIlijanAft from "@/assets/vdr-ilijan-aft.png";
-import vdrIlijanForward from "@/assets/vdr-ilijan-forward.png";
-import vdrIlijanEngine from "@/assets/vdr-ilijan-engine.png";
-import vdrIlijanEngine2 from "@/assets/vdr-ilijan-engine2.png";
-import vdrZaharatDeck from "@/assets/vdr-zaharat-deck.png";
-import vdrDolphinDeck from "@/assets/vdr-dolphin-deck.png";
-import vdrDolphinForward from "@/assets/vdr-dolphin-forward.png";
-import vdrDolphinEngine from "@/assets/vdr-dolphin-engine.png";
-import vdrDolphinSteering from "@/assets/vdr-dolphin-steering.png";
-import vdrDolphinGalley from "@/assets/vdr-dolphin-galley.png";
-import vdrIlijanDeck2 from "@/assets/vdr-ilijan-deck2.png";
-import vdrIlijanForward2 from "@/assets/vdr-ilijan-forward2.png";
-import vdrIlijanEngine3 from "@/assets/vdr-ilijan-engine3.png";
-import vdrIlijanSteering2 from "@/assets/vdr-ilijan-steering2.png";
-import vdrIlijanGalley2 from "@/assets/vdr-ilijan-galley2.png";
-// PDF-extracted vessel images
-import vdrAmeeratDeck from "@/assets/vdr-ameerat-deck.png";
-import vdrAmeeratForward from "@/assets/vdr-ameerat-forward.png";
-import vdrAmeeratEngine from "@/assets/vdr-ameerat-engine.png";
-import vdrAmeeratSteering from "@/assets/vdr-ameerat-steering.png";
-import vdrAmeeratGalley from "@/assets/vdr-ameerat-galley.png";
-import vdrB1Deck from "@/assets/vdr-b1-deck.png";
-import vdrB1Forward from "@/assets/vdr-b1-forward.png";
-import vdrB1Engine from "@/assets/vdr-b1-engine.png";
-import vdrB1Steering from "@/assets/vdr-b1-steering.png";
-import vdrB1Galley from "@/assets/vdr-b1-galley.png";
-import vdrB3Deck from "@/assets/vdr-b3-deck.png";
-import vdrB3Forward from "@/assets/vdr-b3-forward.png";
-import vdrB3Engine from "@/assets/vdr-b3-engine.png";
-import vdrB3Steering from "@/assets/vdr-b3-steering.png";
-import vdrB3Galley from "@/assets/vdr-b3-galley.png";
-import vdrD4Deck from "@/assets/vdr-d4-deck.png";
-import vdrD4Forward from "@/assets/vdr-d4-forward.png";
-import vdrD4Engine from "@/assets/vdr-d4-engine.png";
-import vdrD4Steering from "@/assets/vdr-d4-steering.png";
-import vdrD4Galley from "@/assets/vdr-d4-galley.png";
-import vdrD7Deck from "@/assets/vdr-d7-deck.png";
-import vdrD7Forward from "@/assets/vdr-d7-forward.png";
-import vdrD7Engine from "@/assets/vdr-d7-engine.png";
-import vdrD7Steering from "@/assets/vdr-d7-steering.png";
-import vdrD7Galley from "@/assets/vdr-d7-galley.png";
-import vdrD10Deck from "@/assets/vdr-d10-deck.png";
-import vdrD10Forward from "@/assets/vdr-d10-forward.png";
-import vdrD10Engine from "@/assets/vdr-d10-engine.png";
-import vdrD10Steering from "@/assets/vdr-d10-steering.png";
-import vdrD10Galley from "@/assets/vdr-d10-galley.png";
-import vdrD11Deck from "@/assets/vdr-d11-deck.png";
-import vdrD11Forward from "@/assets/vdr-d11-forward.png";
-import vdrD11Engine from "@/assets/vdr-d11-engine.png";
-import vdrD11Steering from "@/assets/vdr-d11-steering.png";
-import vdrD11Galley from "@/assets/vdr-d11-galley.png";
-import vdrD15Deck from "@/assets/vdr-d15-deck.png";
-import vdrD15Forward from "@/assets/vdr-d15-forward.png";
-import vdrD15Engine from "@/assets/vdr-d15-engine.png";
-import vdrD15Steering from "@/assets/vdr-d15-steering.png";
-import vdrD15Galley from "@/assets/vdr-d15-galley.png";
-import vdrD16Deck from "@/assets/vdr-d16-deck.png";
-import vdrD16Forward from "@/assets/vdr-d16-forward.png";
-import vdrD16Engine from "@/assets/vdr-d16-engine.png";
-import vdrD16Steering from "@/assets/vdr-d16-steering.png";
-import vdrD16Galley from "@/assets/vdr-d16-galley.png";
-import vdrD17Deck from "@/assets/vdr-d17-deck.png";
-import vdrD17Forward from "@/assets/vdr-d17-forward.png";
-import vdrD17Engine from "@/assets/vdr-d17-engine.png";
-import vdrD17Steering from "@/assets/vdr-d17-steering.png";
-import vdrD17Galley from "@/assets/vdr-d17-galley.png";
-// Batch 2 PDF-extracted vessel images
-import vdrD30Deck from "@/assets/vdr-d30-deck.png";
-import vdrD30Forward from "@/assets/vdr-d30-forward.png";
-import vdrD30Engine from "@/assets/vdr-d30-engine.png";
-import vdrD30Steering from "@/assets/vdr-d30-steering.png";
-import vdrD30Galley from "@/assets/vdr-d30-galley.png";
-import vdrD37Deck from "@/assets/vdr-d37-deck.png";
-import vdrD37Forward from "@/assets/vdr-d37-forward.png";
-import vdrD37Engine from "@/assets/vdr-d37-engine.png";
-import vdrD37Steering from "@/assets/vdr-d37-steering.png";
-import vdrD37Galley from "@/assets/vdr-d37-galley.png";
-import vdrD42Deck from "@/assets/vdr-d42-deck.png";
-import vdrD42Forward from "@/assets/vdr-d42-forward.png";
-import vdrD42Engine from "@/assets/vdr-d42-engine.png";
-import vdrD42Steering from "@/assets/vdr-d42-steering.png";
-import vdrD42Galley from "@/assets/vdr-d42-galley.png";
-import vdrDoratDeck from "@/assets/vdr-dorat-deck.png";
-import vdrDoratForward from "@/assets/vdr-dorat-forward.png";
-import vdrDoratEngine from "@/assets/vdr-dorat-engine.png";
-import vdrDoratSteering from "@/assets/vdr-dorat-steering.png";
-import vdrDoratGalley from "@/assets/vdr-dorat-galley.png";
-import vdrChallengerDeck from "@/assets/vdr-challenger-deck.png";
-import vdrChallengerForward from "@/assets/vdr-challenger-forward.png";
-import vdrChallengerEngine from "@/assets/vdr-challenger-engine.png";
-import vdrChallengerSteering from "@/assets/vdr-challenger-steering.png";
-import vdrChallengerGalley from "@/assets/vdr-challenger-galley.png";
-import vdrLancerDeck from "@/assets/vdr-lancer-deck.png";
-import vdrLancerForward from "@/assets/vdr-lancer-forward.png";
-import vdrLancerEngine from "@/assets/vdr-lancer-engine.png";
-import vdrLancerSteering from "@/assets/vdr-lancer-steering.png";
-import vdrLancerGalley from "@/assets/vdr-lancer-galley.png";
-import vdrProgressDeck2 from "@/assets/vdr-progress-deck2.png";
-import vdrProgressForward2 from "@/assets/vdr-progress-forward2.png";
-import vdrProgressEngine2 from "@/assets/vdr-progress-engine2.png";
-import vdrProgressSteering2 from "@/assets/vdr-progress-steering2.png";
-import vdrProgressGalley2 from "@/assets/vdr-progress-galley2.png";
+// VDR-extracted vessel images for the 6 active vessels
 import vdrDelaPazDeck from "@/assets/vdr-delapaz-deck.png";
 import vdrDelaPazForward from "@/assets/vdr-delapaz-forward.png";
 import vdrDelaPazEngine from "@/assets/vdr-delapaz-engine.png";
 import vdrDelaPazSteering from "@/assets/vdr-delapaz-steering.png";
 import vdrDelaPazGalley from "@/assets/vdr-delapaz-galley.png";
-import vdrIlijanDeck3 from "@/assets/vdr-ilijan-deck3.png";
-import vdrIlijanForward3 from "@/assets/vdr-ilijan-forward3.png";
-import vdrIlijanEngine4 from "@/assets/vdr-ilijan-engine4.png";
-import vdrIlijanSteering3 from "@/assets/vdr-ilijan-steering3.png";
-import vdrIlijanGalley3 from "@/assets/vdr-ilijan-galley3.png";
+import vdrIlijanDeck from "@/assets/vdr-ilijan-deck3.png";
+import vdrIlijanForward from "@/assets/vdr-ilijan-forward3.png";
+import vdrIlijanEngine from "@/assets/vdr-ilijan-engine4.png";
+import vdrIlijanSteering from "@/assets/vdr-ilijan-steering3.png";
+import vdrIlijanGalley from "@/assets/vdr-ilijan-galley3.png";
 import vdrMahaweliDeck from "@/assets/vdr-mahaweli-deck.png";
 import vdrMahaweliForward from "@/assets/vdr-mahaweli-forward.png";
 import vdrMahaweliEngine from "@/assets/vdr-mahaweli-engine.png";
 import vdrMahaweliSteering from "@/assets/vdr-mahaweli-steering.png";
 import vdrMahaweliGalley from "@/assets/vdr-mahaweli-galley.png";
-// Batch 3 PDF-extracted vessel images
 import vdrNarmadaDeck from "@/assets/vdr-narmada-deck.png";
 import vdrNarmadaForward from "@/assets/vdr-narmada-forward.png";
 import vdrNarmadaEngine from "@/assets/vdr-narmada-engine.png";
@@ -167,15 +39,9 @@ import vdrSabarmatiSteering from "@/assets/vdr-sabarmati-steering.png";
 import vdrSabarmatiGalley from "@/assets/vdr-sabarmati-galley.png";
 import vdrVerdeDeck from "@/assets/vdr-verde-deck.png";
 import vdrVerdeForward from "@/assets/vdr-verde-forward.png";
-import vdrD33Deck from "@/assets/vdr-d33-deck.png";
-import vdrD33Forward from "@/assets/vdr-d33-forward.png";
-import vdrD33Engine from "@/assets/vdr-d33-engine.png";
-import vdrD33Steering from "@/assets/vdr-d33-steering.png";
-import vdrD33Galley from "@/assets/vdr-d33-galley.png";
-import vdrZaharatForward from "@/assets/vdr-zaharat-forward.png";
-import vdrZaharatEngine from "@/assets/vdr-zaharat-engine.png";
-import vdrZaharatSteering from "@/assets/vdr-zaharat-steering.png";
-import vdrZaharatGalley from "@/assets/vdr-zaharat-galley.png";
+import vdrVerdeEngine from "@/assets/vdr-verde-engine.png";
+import vdrVerdeSteering from "@/assets/vdr-verde-steering.png";
+import vdrVerdeGalley from "@/assets/vdr-verde-galley.png";
 import {
   ComposableMap,
   Geographies,
@@ -233,9 +99,9 @@ const statusColors: Record<string, string> = {
 };
 
 const companyColors: Record<string, string> = {
-  "Adani Ports": "hsl(215, 60%, 45%)",
-  "Ocean Sparkle": "hsl(280, 45%, 45%)",
-  "SSIDL": "hsl(152, 55%, 38%)",
+  "The Adani Harbour International DMCC": "hsl(215, 60%, 45%)",
+  "Trident Maritime Corporation": "hsl(357, 70%, 48%)",
+  "SLSC": "hsl(152, 55%, 38%)",
 };
 
 const severityStyles: Record<string, string> = {
@@ -247,45 +113,18 @@ const severityStyles: Record<string, string> = {
 
 
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
-// Vessel-specific image sets from VDR reports
+// Vessel-specific image sets from VDR reports — 6 active vessels
+const VDR_LABELS = ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"];
 const vesselImageMap: Record<string, { images: string[], labels: string[] }> = {
-  "v1": { images: [vdrD4Deck, vdrD4Forward, vdrD4Engine, vdrD4Steering, vdrD4Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v5": { images: [vdrProgressDeck2, vdrProgressForward2, vdrProgressEngine2, vdrProgressSteering2, vdrProgressGalley2], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v4": { images: [vdrVerdeDeck, vdrVerdeForward, vdrVerdeEngine, vdrVerdeSteering, vdrVerdeGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v3": { images: [vdrZaharatDeck, vdrZaharatForward, vdrZaharatEngine, vdrZaharatSteering, vdrZaharatGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v6": { images: [vdrSabarmatiDeck, vdrSabarmatiForward, vdrSabarmatiEngine, vdrSabarmatiSteering, vdrSabarmatiGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v7": { images: [vdrIlijanDeck3, vdrIlijanForward3, vdrIlijanEngine4, vdrIlijanSteering3, vdrIlijanGalley3], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v24": { images: [vdrNarmadaDeck, vdrNarmadaForward, vdrNarmadaEngine, vdrNarmadaSteering, vdrNarmadaGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v25": { images: [vdrAmeeratDeck, vdrAmeeratForward, vdrAmeeratEngine, vdrAmeeratSteering, vdrAmeeratGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v26": { images: [vdrDoratDeck, vdrDoratForward, vdrDoratEngine, vdrDoratSteering, vdrDoratGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v27": { images: [vdrDelaPazDeck, vdrDelaPazForward, vdrDelaPazEngine, vdrDelaPazSteering, vdrDelaPazGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v28": { images: [vdrMahaweliDeck, vdrMahaweliForward, vdrMahaweliEngine, vdrMahaweliSteering, vdrMahaweliGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v29": { images: [vdrD33Deck, vdrD33Forward, vdrD33Engine, vdrD33Steering, vdrD33Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v2": { images: [vdrLancerDeck, vdrLancerForward, vdrLancerEngine, vdrLancerSteering, vdrLancerGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v21": { images: [vdrChallengerDeck, vdrChallengerForward, vdrChallengerEngine, vdrChallengerSteering, vdrChallengerGalley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v19": { images: [vdrB1Deck, vdrB1Forward, vdrB1Engine, vdrB1Steering, vdrB1Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v20": { images: [vdrB3Deck, vdrB3Forward, vdrB3Engine, vdrB3Steering, vdrB3Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v8": { images: [vdrD7Deck, vdrD7Forward, vdrD7Engine, vdrD7Steering, vdrD7Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v9": { images: [vdrD10Deck, vdrD10Forward, vdrD10Engine, vdrD10Steering, vdrD10Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v10": { images: [vdrD11Deck, vdrD11Forward, vdrD11Engine, vdrD11Steering, vdrD11Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v11": { images: [vdrD15Deck, vdrD15Forward, vdrD15Engine, vdrD15Steering, vdrD15Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v12": { images: [vdrD16Deck, vdrD16Forward, vdrD16Engine, vdrD16Steering, vdrD16Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v13": { images: [vdrD17Deck, vdrD17Forward, vdrD17Engine, vdrD17Steering, vdrD17Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v16": { images: [vdrD30Deck, vdrD30Forward, vdrD30Engine, vdrD30Steering, vdrD30Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v17": { images: [vdrD37Deck, vdrD37Forward, vdrD37Engine, vdrD37Steering, vdrD37Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
-  "v18": { images: [vdrD42Deck, vdrD42Forward, vdrD42Engine, vdrD42Steering, vdrD42Galley], labels: ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"] },
+  v1: { images: [vdrDelaPazDeck, vdrDelaPazForward, vdrDelaPazEngine, vdrDelaPazSteering, vdrDelaPazGalley], labels: VDR_LABELS },
+  v2: { images: [vdrIlijanDeck, vdrIlijanForward, vdrIlijanEngine, vdrIlijanSteering, vdrIlijanGalley], labels: VDR_LABELS },
+  v3: { images: [vdrMahaweliDeck, vdrMahaweliForward, vdrMahaweliEngine, vdrMahaweliSteering, vdrMahaweliGalley], labels: VDR_LABELS },
+  v4: { images: [vdrNarmadaDeck, vdrNarmadaForward, vdrNarmadaEngine, vdrNarmadaSteering, vdrNarmadaGalley], labels: VDR_LABELS },
+  v5: { images: [vdrSabarmatiDeck, vdrSabarmatiForward, vdrSabarmatiEngine, vdrSabarmatiSteering, vdrSabarmatiGalley], labels: VDR_LABELS },
+  v6: { images: [vdrVerdeDeck, vdrVerdeForward, vdrVerdeEngine, vdrVerdeSteering, vdrVerdeGalley], labels: VDR_LABELS },
 };
-const defaultImageSets = [
-  { images: [vesselImg1, vesselImg2, vesselImg3, vesselImg4, vesselImg5], labels: ["Deck View", "Engine Room", "Cabin", "Machinery", "Cargo Hold"] },
-  { images: [vesselImg6, vesselImg7, vesselImg8, vesselImg9, vesselImg10], labels: ["Main Engine", "Hydraulic Unit", "Port Side", "Night Cargo", "Containers"] },
-  { images: [vesselImg11, vesselImg12, vesselImg13, vesselImg14, vesselImg15], labels: ["Cargo Deck", "Engine Bay", "Electrical Room", "Pump Room", "Control Panel"] },
-  { images: [vdrIlijanAft, vdrIlijanForward, vdrIlijanEngine, vdrIlijanEngine2, vesselImg1], labels: ["Deck Aft", "Forward Deck", "Engine Room", "Steering Room", "Deck View"] },
-];
 const getVesselImageSet = (vesselId: string) => {
-  if (vesselImageMap[vesselId]) return vesselImageMap[vesselId];
-  let hash = 0;
-  for (let i = 0; i < vesselId.length; i++) hash = ((hash << 5) - hash) + vesselId.charCodeAt(i);
-  return defaultImageSets[Math.abs(hash) % defaultImageSets.length];
+  return vesselImageMap[vesselId] || { images: [vdrDelaPazDeck], labels: ["Vessel"] };
 };
 
 export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
