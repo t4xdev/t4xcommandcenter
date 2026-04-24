@@ -4,7 +4,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { FleetProvider } from "@/contexts/FleetContext";
 import Login from "@/pages/Login";
 import CommandCenter from "@/pages/CommandCenter";
 
@@ -29,15 +28,13 @@ const App = () => {
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <FleetProvider>
-            <Toaster />
-            <Sonner />
-            {authenticated ? (
-              <CommandCenter onLogout={handleLogout} />
-            ) : (
-              <Login onLogin={handleLogin} />
-            )}
-          </FleetProvider>
+          <Toaster />
+          <Sonner />
+          {authenticated ? (
+            <CommandCenter onLogout={handleLogout} />
+          ) : (
+            <Login onLogin={handleLogin} />
+          )}
         </TooltipProvider>
       </QueryClientProvider>
     </BrowserRouter>
