@@ -47,696 +47,255 @@ export interface AlertHighlight {
   timestamp: string;
 }
 
-// --- Company definitions ---
+// --- Companies in fleet ---
 const companies = [
-  { name: "Adani Ports", fleet: "TAHID Fleet", color: "#1c3557" },
-  { name: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", color: "#e30613" },
-  { name: "SSIDL", fleet: "SSIDL Fleet", color: "#0e7c46" },
+  { name: "The Adani Harbour International DMCC", fleet: "TAHID Fleet", color: "#1c3557" },
+  { name: "Trident Maritime Corporation", fleet: "Trident Fleet", color: "#e30613" },
+  { name: "SLSC", fleet: "SLSC Fleet", color: "#0e7c46" },
 ];
 
-// --- Seed locations along realistic shipping lanes & port approaches ---
-const locationPools = [
-  // Arabian Sea — spread across 55-75°E, 10-25°N
-  { name: "Off Mumbai", lon: 71.5, lat: 19.0, region: "Arabian Sea" },
-  { name: "Off Kandla", lon: 68.5, lat: 22.5, region: "Arabian Sea" },
-  { name: "Gujarat Offshore", lon: 69.5, lat: 20.5, region: "Arabian Sea" },
-  { name: "Off Goa", lon: 72.0, lat: 15.5, region: "Arabian Sea" },
-  { name: "Off Mangalore", lon: 73.0, lat: 13.0, region: "Arabian Sea" },
-  { name: "Off Kochi", lon: 74.5, lat: 10.5, region: "Arabian Sea" },
-  { name: "Lakshadweep Sea", lon: 72.0, lat: 11.5, region: "Arabian Sea" },
-  { name: "Arabian Sea West", lon: 60.0, lat: 16.0, region: "Arabian Sea" },
-  { name: "Arabian Sea Central", lon: 64.0, lat: 18.0, region: "Arabian Sea" },
-  { name: "Off Oman", lon: 58.0, lat: 21.0, region: "Arabian Sea" },
-  { name: "Arabian Sea South", lon: 62.0, lat: 12.0, region: "Arabian Sea" },
-  { name: "Off Muscat", lon: 57.0, lat: 23.0, region: "Arabian Sea" },
-  { name: "Mid Arabian Sea", lon: 66.0, lat: 15.0, region: "Arabian Sea" },
-  // Bay of Bengal — spread across 80-95°E, 5-20°N
-  { name: "Off Chennai", lon: 81.5, lat: 13.5, region: "Bay of Bengal" },
-  { name: "Off Vizag", lon: 84.5, lat: 17.5, region: "Bay of Bengal" },
-  { name: "Off Paradip", lon: 87.0, lat: 19.5, region: "Bay of Bengal" },
-  { name: "Off Kolkata", lon: 88.5, lat: 20.5, region: "Bay of Bengal" },
-  { name: "Bay of Bengal Central", lon: 86.0, lat: 14.0, region: "Bay of Bengal" },
-  { name: "Bay of Bengal South", lon: 83.0, lat: 8.0, region: "Bay of Bengal" },
-  { name: "Bay of Bengal East", lon: 90.0, lat: 12.0, region: "Bay of Bengal" },
-  { name: "Bay of Bengal North", lon: 88.0, lat: 18.0, region: "Bay of Bengal" },
-  { name: "Off Trincomalee", lon: 82.0, lat: 9.0, region: "Bay of Bengal" },
-  // South India / Sri Lanka corridor
-  { name: "Off Tuticorin", lon: 78.5, lat: 8.5, region: "Coastal" },
-  { name: "South of Sri Lanka", lon: 80.5, lat: 5.5, region: "Coastal" },
-  { name: "Off Kanyakumari", lon: 77.0, lat: 7.5, region: "Coastal" },
-  // Andaman Sea — 92-100°E, 5-18°N
-  { name: "Andaman Sea North", lon: 94.0, lat: 14.0, region: "Andaman Sea" },
-  { name: "Off Port Blair", lon: 93.0, lat: 12.0, region: "Andaman Sea" },
-  { name: "Andaman Sea South", lon: 95.0, lat: 8.0, region: "Andaman Sea" },
-  { name: "Andaman Sea Central", lon: 96.0, lat: 11.0, region: "Andaman Sea" },
-  // Southern Indian Ocean — 40-90°E, -5 to -20°S
-  { name: "South Indian Ocean NW", lon: 50.0, lat: -8.0, region: "Transit" },
-  { name: "South Indian Ocean NE", lon: 75.0, lat: -6.0, region: "Transit" },
-  { name: "Equatorial Lane West", lon: 58.0, lat: -2.0, region: "Transit" },
-  { name: "Equatorial Lane East", lon: 72.0, lat: 1.0, region: "Transit" },
-  { name: "Off Maldives", lon: 73.0, lat: 4.0, region: "Transit" },
-  { name: "South Indian Ocean Central", lon: 65.0, lat: -12.0, region: "Transit" },
-  // Mozambique Channel — 38-48°E, -12 to -22°S
-  { name: "Mozambique Channel North", lon: 42.0, lat: -13.0, region: "Mozambique" },
-  { name: "Mozambique Channel South", lon: 44.0, lat: -20.0, region: "Mozambique" },
-  { name: "Mozambique Channel Central", lon: 43.0, lat: -17.0, region: "Mozambique" },
-  // West Africa — 0-15°W, 0-10°N
-  { name: "Off Monrovia", lon: -10.5, lat: 5.5, region: "West Africa" },
-  { name: "Gulf of Guinea", lon: -3.0, lat: 4.0, region: "West Africa" },
-  { name: "Off Abidjan", lon: -4.0, lat: 5.0, region: "West Africa" },
-  // Southeast Asia — 100-125°E, 5-15°N
-  { name: "Off Batangas", lon: 121.0, lat: 13.5, region: "Southeast Asia" },
-  { name: "South China Sea", lon: 115.0, lat: 10.0, region: "Southeast Asia" },
-  { name: "Strait of Malacca", lon: 100.5, lat: 3.0, region: "Southeast Asia" },
-  { name: "Off Singapore", lon: 104.0, lat: 1.5, region: "Southeast Asia" },
-  // South Africa coast — 18-35°E, -28 to -35°S
-  { name: "Off Durban", lon: 31.5, lat: -30.0, region: "South Africa" },
-  { name: "Off Capetown", lon: 18.5, lat: -34.0, region: "South Africa" },
-  { name: "Off Port Elizabeth", lon: 26.0, lat: -34.0, region: "South Africa" },
+// --- The 6 active vessels (sourced from latest daily reports) ---
+export const vesselData: VesselData[] = [
+  {
+    id: "v1",
+    name: "Dela Paz",
+    imo: "1099890",
+    master: "Efivar Carabuena",
+    company: "Trident Maritime Corporation",
+    fleet: "Trident Fleet",
+    location: "Dela Paz Batangas, Philippines",
+    longitude: 121.0985,
+    latitude: 13.6221,
+    status: "normal",
+    hiringStatus: "ON-Hire",
+    client: "TAHID DELA PAZ",
+    reportDate: "24-Apr-2026",
+    reportTime: "12:00",
+    speed: 0,
+    course: 0,
+    fuelBalance: 88106,
+    fuelUsed: 250,
+    fuelStart: 88356,
+    waterBalance: 18800,
+    dpOpsHrs: "00:00",
+    transitHrs: "00:00",
+    portHrs: "24:00",
+    totalOpsHrs: "24:00",
+    crewOnBoard: 0,
+    maintenanceDone: 2,
+    outstandingDefects: 0,
+    certificatesValid: 38,
+    certificatesExpired: 0,
+    provisionDays: 7,
+    hseToolbox: 0,
+    hseDrills: 0,
+    lti: 0,
+    nearMisses: 0,
+    lastOps: "Vessel at anchor in Dela Paz Batangas - 24:00 in port.",
+    maintenanceRemarks: "Engine: Generator no.2 oil & filters changed, engine room flooring repainted. Deck: Bulwark exterior repainted, bridge & accommodation cleaning.",
+    overallRemarks: "All operations normal. Provisions received 17-Apr-2026.",
+  },
+  {
+    id: "v2",
+    name: "Ilijan",
+    imo: "1099917",
+    master: "Greg Gregorio",
+    company: "Trident Maritime Corporation",
+    fleet: "Trident Fleet",
+    location: "Ilijan Batangas, Philippines",
+    longitude: 121.0962,
+    latitude: 13.6222,
+    status: "normal",
+    hiringStatus: "ON-Hire",
+    client: "LFC",
+    reportDate: "24-Apr-2026",
+    reportTime: "12:01",
+    speed: 0,
+    course: 0,
+    fuelBalance: 90372,
+    fuelUsed: 200,
+    fuelStart: 90572,
+    waterBalance: 37,
+    dpOpsHrs: "00:00",
+    transitHrs: "00:00",
+    portHrs: "24:00",
+    totalOpsHrs: "24:00",
+    crewOnBoard: 0,
+    maintenanceDone: 2,
+    outstandingDefects: 0,
+    certificatesValid: 28,
+    certificatesExpired: 0,
+    provisionDays: 8,
+    hseToolbox: 1,
+    hseDrills: 0,
+    lti: 0,
+    nearMisses: 0,
+    lastOps: "Vessel at anchor in Dela Paz anchorage awaiting further instruction.",
+    maintenanceRemarks: "Daily cleaning on bridge, galley and accommodation.",
+    overallRemarks: "Variance of 5361 ltrs D.O added to ROB by LNG charterer correction.",
+  },
+  {
+    id: "v3",
+    name: "Mahaweli",
+    imo: "1099905",
+    master: "Vinoth Gunathilaka",
+    company: "SLSC",
+    fleet: "SLSC Fleet",
+    location: "Colombo, Sri Lanka",
+    longitude: 79.8481,
+    latitude: 6.9426,
+    status: "normal",
+    hiringStatus: "ON-Hire",
+    client: "SLPA",
+    reportDate: "23-Apr-2026",
+    reportTime: "12:01",
+    speed: 0,
+    course: 0,
+    fuelBalance: 83188,
+    fuelUsed: 2420,
+    fuelStart: 85609,
+    waterBalance: 26998,
+    dpOpsHrs: "00:00",
+    transitHrs: "00:00",
+    portHrs: "00:00",
+    totalOpsHrs: "00:00",
+    crewOnBoard: 8,
+    maintenanceDone: 29,
+    outstandingDefects: 0,
+    certificatesValid: 25,
+    certificatesExpired: 1,
+    provisionDays: 0,
+    hseToolbox: 0,
+    hseDrills: 0,
+    lti: 0,
+    nearMisses: 0,
+    lastOps: "10 tug operations - berthing/sailing for XIN PU DONG, SLS TOPAZ, GSL ARCADIA, MSC MIRAYA, MSC KETA II, MSC TIA, MSC ROWAN, RIO GRANDE, MOUNSTONE, RDO ENDEAVOUR.",
+    maintenanceRemarks: "AUX Engine no.02 500Hr lub oil service done, lub oil filter renewed (19L). Sea water filter cleaned, heat exchanger back-washed.",
+    overallRemarks: "Port operations - 8 ship crew on board.",
+  },
+  {
+    id: "v4",
+    name: "Narmada",
+    imo: "9960679",
+    master: "Sapriyandi Zainal Abidin",
+    company: "The Adani Harbour International DMCC",
+    fleet: "TAHID Fleet",
+    location: "Dakar Anchorage, Senegal",
+    longitude: -17.4013,
+    latitude: 14.6846,
+    status: "warning",
+    hiringStatus: "OFF-Hire",
+    client: "-",
+    reportDate: "23-Apr-2026",
+    reportTime: "00:00",
+    speed: 0,
+    course: 0,
+    fuelBalance: 60649,
+    fuelUsed: 160,
+    fuelStart: 60809,
+    waterBalance: 42000,
+    dpOpsHrs: "00:00",
+    transitHrs: "00:00",
+    portHrs: "24:00",
+    totalOpsHrs: "24:00",
+    crewOnBoard: 7,
+    maintenanceDone: 25,
+    outstandingDefects: 5,
+    certificatesValid: 43,
+    certificatesExpired: 0,
+    provisionDays: 35,
+    hseToolbox: 1,
+    hseDrills: 0,
+    lti: 0,
+    nearMisses: 0,
+    lastOps: "Deck watch 00:01h - 24:00h at Dakar Port.",
+    maintenanceRemarks: "Engine: Daily routine maintenance, winches greased, steering units inspection OK. Deck: Housekeeping, ship side stbd primer coat, bridge deck flooring topcoat.",
+    overallRemarks: "Vessel in good condition - all equipment fully operational. Tug OFF-Hire from 09/02/2026.",
+  },
+  {
+    id: "v5",
+    name: "Sabarmati",
+    imo: "9960681",
+    master: "Islam Abdelfattah Mohamed",
+    company: "The Adani Harbour International DMCC",
+    fleet: "TAHID Fleet",
+    location: "Buchanan Port, Liberia",
+    longitude: -10.0481,
+    latitude: 5.8541,
+    status: "normal",
+    hiringStatus: "ON-Hire",
+    client: "AML",
+    reportDate: "23-Apr-2026",
+    reportTime: "12:01",
+    speed: 0,
+    course: 0,
+    fuelBalance: 56635,
+    fuelUsed: 690,
+    fuelStart: 57325,
+    waterBalance: 33000,
+    dpOpsHrs: "00:00",
+    transitHrs: "00:00",
+    portHrs: "18:00",
+    totalOpsHrs: "24:00",
+    crewOnBoard: 7,
+    maintenanceDone: 29,
+    outstandingDefects: 0,
+    certificatesValid: 32,
+    certificatesExpired: 0,
+    provisionDays: 5,
+    hseToolbox: 3,
+    hseDrills: 0,
+    lti: 0,
+    nearMisses: 0,
+    lastOps: "STS - Static Tow operations (06:00 hrs Tow/AH/Rig/Sup, 18:00 hrs in port).",
+    maintenanceRemarks: "Deck: Daily cleaning, food provisions arrangement. Engine: Propulsion system visual inspection (good), primary & secondary fuel filter changed on stbd generator.",
+    overallRemarks: "MGO consumption: ME 490 L, Gens 200 L. Endurance till 25-Apr-2026.",
+  },
+  {
+    id: "v6",
+    name: "Verde Island",
+    imo: "1099929",
+    master: "Milan Hajdukovic",
+    company: "The Adani Harbour International DMCC",
+    fleet: "TAHID Fleet",
+    location: "Anchorage - Cape Town, South Africa",
+    longitude: 18.4607,
+    latitude: -33.8855,
+    status: "warning",
+    hiringStatus: "OFF-Hire",
+    client: "-",
+    reportDate: "22-Apr-2026",
+    reportTime: "12:00",
+    speed: 0,
+    course: 0,
+    fuelBalance: 106900,
+    fuelUsed: 300,
+    fuelStart: 107200,
+    waterBalance: 23500,
+    dpOpsHrs: "00:00",
+    transitHrs: "00:00",
+    portHrs: "24:00",
+    totalOpsHrs: "24:00",
+    crewOnBoard: 0,
+    maintenanceDone: 1,
+    outstandingDefects: 0,
+    certificatesValid: 32,
+    certificatesExpired: 0,
+    provisionDays: 0,
+    hseToolbox: 1,
+    hseDrills: 0,
+    lti: 0,
+    nearMisses: 0,
+    lastOps: "Vessel at anchorage Cape Town - 24:00 hrs at anchor.",
+    maintenanceRemarks: "Housekeeping. Engine: Hydraulic oil for winch on board (580 L), sludge on board (700 L).",
+    overallRemarks: "Vessel OFF-Hire. Endurance till 25-Apr-2026. Updated ship certificates amended.",
+  },
 ];
 
-const vesselPrefixes = [
-  "Dolphin", "Ocean", "Sea", "Marine", "Pacific", "Atlantic", "Neptune", "Triton",
-  "Coral", "Wave", "Storm", "Anchor", "Harbor", "Gulf", "Horizon", "Titan",
-  "Phoenix", "Voyager", "Explorer", "Pioneer", "Sentinel", "Guardian", "Hawk",
-  "Eagle", "Falcon", "Dragon", "Thunder", "Lightning", "Breeze", "Aurora",
-  "Sapphire", "Ruby", "Emerald", "Diamond", "Platinum", "Silver", "Golden",
-  "Royal", "Imperial", "Majestic", "Victory", "Liberty", "Fortune", "Glory",
-  "Spirit", "Valor", "Pride", "Unity", "Progress", "Success",
-];
+export const realVesselIds = new Set(vesselData.map(v => v.id));
+export const realVessels = vesselData;
 
-const vesselSuffixes = [
-  "Star", "Lancer", "Rider", "Swift", "Force", "Power", "Shield", "Blade",
-  "Arrow", "Tiger", "Lion", "Wolf", "Bear", "Hawk", "Ray", "Quest",
-  "Dream", "Hope", "Grace", "Legend", "Crown", "King", "Queen", "Prince",
-  "Express", "Venture", "Spark", "Blaze", "Dawn", "Dusk", "Night", "Wind",
-];
-
-const masters = [
-  "Santosh K. Pandey", "Mostafijur R. Sapui", "Akhilesh Mondal", "Milan Hajdukovic",
-  "Naresh M. Patil", "Rajesh Kumar", "Anil Sharma", "Vikram Singh", "Deepak Verma",
-  "Suresh Nair", "Mohammed Ali", "Pradeep Rao", "Ajay Patel", "Ramesh Iyer",
-  "Sanjay Mishra", "Abhishek Das", "Kiran Joshi", "Manoj Tiwari", "Prakash Gupta",
-  "Ravi Shankar", "Gopal Krishna", "Harish Menon", "Sachin Kulkarni", "Ashok Reddy",
-  "Balaji Srinivasan", "Chandra Mohan", "Dinesh Babu", "Ganesh Pillai", "Hari Prasad",
-  "Ivan Petrovic", "James Wilson", "Karl Schmidt", "Lars Andersen", "Marco Rossi",
-];
-
-const clients = [
-  "SSIDL", "Ocean Sparkle Ltd", "ONGC", "Reliance Industries", "BPCL",
-  "HPCL", "IOC", "Adani Group", "Tata Power", "L&T Hydrocarbon",
-  "Vedanta Ltd", "Cairn India", "Shell India", "BP India", "Total Energies",
-  "Saudi Aramco", "ADNOC", "QatarEnergy", "KPC", "NIOC",
-];
-
-const operations = [
-  "DP Operations at offshore platform",
-  "Berthing & Unberthing operations",
-  "Cargo transfer operations",
-  "STS transfer in progress",
-  "Standby at infield location",
-  "Transit to next port",
-  "Anchor handling operations",
-  "Towing operations underway",
-  "Supply run to platform",
-  "Survey operations",
-  "Rig move assistance",
-  "Emergency standby duty",
-  "Port call - bunkering",
-  "Dry dock maintenance",
-  "Crew change operations",
-];
-
-const maintenanceNotes = [
-  "Routine ME maintenance completed",
-  "AE port generator serviced",
-  "Hull cleaning scheduled",
-  "Fire pump inspection done",
-  "Lifeboat davit greased",
-  "Steering gear tested",
-  "Emergency generator tested",
-  "Bilge system flushed",
-  "Navigation equipment calibrated",
-  "Safety equipment inspection",
-  "Turbo charger maintenance",
-  "Fuel system cleaning",
-  "Cooling system maintenance",
-  "Electrical system check",
-  "Deck machinery overhaul",
-];
-
-// Seeded random for consistency
-function seededRandom(seed: number) {
-  let s = seed;
-  return () => {
-    s = (s * 16807 + 0) % 2147483647;
-    return (s - 1) / 2147483646;
-  };
-}
-
-function generateVessels(): VesselData[] {
-  const vessels: VesselData[] = [];
-  const rand = seededRandom(42);
-
-  // All real vessels from the fleet
-  const realVessels: VesselData[] = [
-    // === SSIDL Vessels ===
-    {
-      id: "v1", name: "Dolphin-04", imo: "9328364", master: "Santosh Kumar Pandey",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "SOUTH BASIN TUG BERTH",
-      longitude: 69.7217, latitude: 22.6902, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "07-Apr-2026", reportTime: "07:25",
-      speed: 0, course: 0, fuelBalance: 24645, fuelUsed: 1630, fuelStart: 26275,
-      waterBalance: 18000, dpOpsHrs: "11:48", transitHrs: "00:00", portHrs: "12:12",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 22, certificatesExpired: 2, provisionDays: 0,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "B3 BERTHING 0030-0412, CB4 BERTHING 0854-1048, CB3 UNBIRTHING 1048-1136, CB3 BERTHING 1136-1300, B5 UNBIRTHING 1318-1500, SB5 UNBIRTHING 2312-2400",
-      maintenanceRemarks: "Mess room floor cleaning",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v8", name: "Dolphin-07", imo: "9439565", master: "Arun Kumar Chauhan",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "Hazira Port",
-      longitude: 72.6167, latitude: 21.1000, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 36566, fuelUsed: 210, fuelStart: 36776,
-      waterBalance: 30000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 0, certificatesExpired: 0, provisionDays: 0,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "-",
-      maintenanceRemarks: "-",
-      overallRemarks: "-",
-    },
-    {
-      id: "v9", name: "Dolphin-10", imo: "9511583", master: "BHAGAD ABDUL KARIM",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "SB",
-      longitude: 69.7084, latitude: 22.7451, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 20002, fuelUsed: 2206, fuelStart: 22208,
-      waterBalance: 38000, dpOpsHrs: "14:30", transitHrs: "00:00", portHrs: "09:30",
-      totalOpsHrs: "24:00", crewOnBoard: 10, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 24, certificatesExpired: 3, provisionDays: 6,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Unberthing 0155-0300, 0300-0400, 0536-0706, 0742-0854, 0854-1000; Berthing 1000-1142, 1218-1312, 1312-1554, 1854-2130; Unberthing 1812-1854",
-      maintenanceRemarks: "Tug inside clean properly, both deck mopping",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v10", name: "Dolphin-11", imo: "9511595", master: "JAHANGIR ALAM MONDAL",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "MUNDRA SPM",
-      longitude: 69.6553, latitude: 22.7116, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "21-Mar-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 32632, fuelUsed: 1, fuelStart: 32634,
-      waterBalance: 12000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 27, certificatesExpired: 3, provisionDays: 0,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Standby Infield 24:00",
-      maintenanceRemarks: "-",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v11", name: "Dolphin-15", imo: "9574561", master: "NARESH DAS",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "B9",
-      longitude: 69.7047, latitude: 22.7398, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "07-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 20627, fuelUsed: 2221, fuelStart: 22848,
-      waterBalance: 34001, dpOpsHrs: "13:36", transitHrs: "00:00", portHrs: "10:24",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 23, certificatesExpired: 1, provisionDays: 3,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "AGENT DUTY 0001-0236, UNBERTHING 0418-0530, 0824-0918; BERTHING 0918-1118, 1130-1354, 1448-1700; UNBERTHING 1354-1442, 2312-2400",
-      maintenanceRemarks: "Daily routine clean ship. Tug washed with fresh water. Bridge deck railing primer touchup.",
-      overallRemarks: "DRY PROVISIONS AVAILABLE TILL 30 APRIL 2026",
-    },
-    {
-      id: "v12", name: "Dolphin-16", imo: "9574585", master: "Bosudeb Mondal",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "RORO JETTY",
-      longitude: 69.7054, latitude: 22.7491, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "03-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 22067, fuelUsed: 3770, fuelStart: 25837,
-      waterBalance: 18998, dpOpsHrs: "08:42", transitHrs: "00:00", portHrs: "15:18",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 24, certificatesExpired: 1, provisionDays: 6,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Berthing: 2, Unberthing: 3",
-      maintenanceRemarks: "-",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v13", name: "Dolphin-17", imo: "9574597", master: "Vasudev",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "Roro jetty",
-      longitude: 69.7052, latitude: 22.7489, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "12-Mar-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 30053, fuelUsed: 2, fuelStart: 30055,
-      waterBalance: 31000, dpOpsHrs: "12:36", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "12:36", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 0, certificatesExpired: 0, provisionDays: 7,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Unbarthing 0000-0042, 0242-0418, 0630-0830, 2048-2124; Barthing 0418-0630, 0942-1200, 1736-1924, 2124-2248",
-      maintenanceRemarks: "Full tug wash fresh water and liquid shop. Bridge deck white paint touch up. HG generator oil change.",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v14", name: "Dolphin-18", imo: "9606364", master: "Satya Narayan Bera",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "Mundra RORO",
-      longitude: 69.5660, latitude: 22.7472, status: "warning", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "06:55",
-      speed: 0, course: 0, fuelBalance: 16236, fuelUsed: 2713, fuelStart: 18949,
-      waterBalance: 34, dpOpsHrs: "15:07", transitHrs: "00:00", portHrs: "08:53",
-      totalOpsHrs: "24:00", crewOnBoard: 13, maintenanceDone: 3, outstandingDefects: 0,
-      certificatesValid: 33, certificatesExpired: 0, provisionDays: 11,
-      hseToolbox: 1, hseDrills: 1, lti: 0, nearMisses: 0,
-      lastOps: "DP Operations at RORO, Sailing/Unberthing/Berthing ops",
-      maintenanceRemarks: "New towing rope installed, sea suction strainer cleaning",
-      overallRemarks: "Monitor fuel levels - below 20k threshold",
-    },
-    {
-      id: "v15", name: "Dolphin-23", imo: "9644873", master: "Ravikant Kumar",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "Hazira CB2",
-      longitude: 72.6324, latitude: 21.0498, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "05-Apr-2026", reportTime: "07:10",
-      speed: 0, course: 0, fuelBalance: 42823, fuelUsed: 1226, fuelStart: 44049,
-      waterBalance: 27997, dpOpsHrs: "02:00", transitHrs: "00:00", portHrs: "22:00",
-      totalOpsHrs: "24:00", crewOnBoard: 12, maintenanceDone: 4, outstandingDefects: 0,
-      certificatesValid: 35, certificatesExpired: 0, provisionDays: 15,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "DP Operations at CB2, deck washing and winch painting",
-      maintenanceRemarks: "Deck washing, fwd winch painting, mushroom vents greased",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v16", name: "Dolphin-30", imo: "9891268", master: "Sahadeb Mondal",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "KANDLA PORT",
-      longitude: 70.2309, latitude: 22.9752, status: "normal", hiringStatus: "ON-Hire",
-      client: "OCEAN SPARKLE", reportDate: "07-Apr-2026", reportTime: "00:00",
-      speed: 0, course: 0, fuelBalance: 34454, fuelUsed: 2628, fuelStart: 37082,
-      waterBalance: 34000, dpOpsHrs: "11:18", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "11:18", crewOnBoard: 0, maintenanceDone: 1, outstandingDefects: 3,
-      certificatesValid: 2, certificatesExpired: 0, provisionDays: 3,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Berthing 0106-0324, Unberthing 0524-0742, Piloting 1012-1600, Berthing 1624-1912, Berthing 2154-0000",
-      maintenanceRemarks: "Deck: Port side main deck green paint applied. Engine: E/R daily routine, sanitary pump strainer cleaned, A/E port filter renewed.",
-      overallRemarks: "Dirty Water should be changed to dirty oil",
-    },
-    {
-      id: "v17", name: "Dolphin-37", imo: "9909302", master: "SHAIKH SAIFUDDIN",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "RORO JETTY",
-      longitude: 69.7053, latitude: 22.7388, status: "normal", hiringStatus: "ON-Hire",
-      client: "AHSL", reportDate: "05-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 36996, fuelUsed: 2553, fuelStart: 39549,
-      waterBalance: 30000, dpOpsHrs: "16:24", transitHrs: "00:00", portHrs: "07:36",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 26, certificatesExpired: 2, provisionDays: 10,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "06 BERTHING, 05 UNBERTHING MOVEMENT ATTENDED",
-      maintenanceRemarks: "SW water hydrophore P/P NRV sensor opened/cleared. SW hydrophore line flushed. M/E luboil pump save all tray cleaned. Gray paint applied forward bullard.",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v18", name: "Dolphin-42", imo: "9778210", master: "RAMADHAR KUMAR PAL",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "MUNDRA PORT HMEL SPM",
-      longitude: 69.6196, latitude: 22.6829, status: "normal", hiringStatus: "ON-Hire",
-      client: "-", reportDate: "06-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 52406, fuelUsed: 3965, fuelStart: 56371,
-      waterBalance: 16000, dpOpsHrs: "22:06", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "22:06", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 0, certificatesExpired: 0, provisionDays: 4,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "0000H-2124H: HMEL PULL BACK. 2318H-2400H: SHIFTING MP TO SB",
-      maintenanceRemarks: "DECK: Daily routines, engaged in pull back operation. ENGINE: Steering gear port and stbd hydraulic oil coolers fitted new pipes primer applied.",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v19", name: "B1-Brahmani", imo: "9572800", master: "Bidya Shankar Chaudhry",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "Ro Ro Jetty",
-      longitude: 69.7120, latitude: 22.7458, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "14-Mar-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 50004, fuelUsed: 0, fuelStart: 50004,
-      waterBalance: 38000, dpOpsHrs: "04:55", transitHrs: "00:00", portHrs: "19:05",
-      totalOpsHrs: "04:55", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 25, certificatesExpired: 1, provisionDays: 3,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Berthing: 1, Unberthing: 2",
-      maintenanceRemarks: "General shift on main deck area chipping, buffing, and primer applied. Fire patrolling and security every 30 min.",
-      overallRemarks: "All operations normal",
-    },
-    {
-      id: "v20", name: "B3-Baitarani", imo: "9572812", master: "Ganesh Kumar Singh",
-      company: "SSIDL", fleet: "SSIDL Fleet", location: "WB TUG BRAT",
-      longitude: 69.5660, latitude: 22.7472, status: "normal", hiringStatus: "ON-Hire",
-      client: "SSIDL", reportDate: "19-Mar-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 28985, fuelUsed: 2588, fuelStart: 31573,
-      waterBalance: 37000, dpOpsHrs: "09:09", transitHrs: "00:00", portHrs: "14:51",
-      totalOpsHrs: "09:09", crewOnBoard: 10, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 23, certificatesExpired: 2, provisionDays: 1,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Berthing: 4, Unberthing: 2",
-      maintenanceRemarks: "Daily general routine clean ship and watch duty. E/R daily routine maintenance watch keeping duty general cleaning.",
-      overallRemarks: "DRY PROVISION AVAILABLE TILL 31ST MARCH",
-    },
-    // === Ocean Sparkle Vessels ===
-    {
-      id: "v2", name: "Ocean Lancer", imo: "9719604", master: "MOSTAFIJUR RAHAMAN SAPUI",
-      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "KANDLA PORT",
-      longitude: 70.2232, latitude: 23.0113, status: "normal", hiringStatus: "ON-Hire",
-      client: "OCEAN SPARKLE", reportDate: "06-Apr-2026", reportTime: "00:00",
-      speed: 0, course: 0, fuelBalance: 34207, fuelUsed: 1610, fuelStart: 35817,
-      waterBalance: 18000, dpOpsHrs: "10:00", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "10:00", crewOnBoard: 11, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 1, certificatesExpired: 0, provisionDays: 4,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "BER OF VESSEL PM DUKE AT O/J-7, BER OF VESSEL SANMAR SITAR AT O/J-6, UNB OF VESSEL IPSEA COLOSSUS FROM C/J-16",
-      maintenanceRemarks: "DECK: General cleanship, deck watch keeping. ENGINE: E/R watch keeping, M/E intermediate shaft greasing. GALLEY: General housekeeping, AHU room cleanup.",
-      overallRemarks: "All systems operational",
-    },
-    {
-      id: "v5", name: "Ocean Progress", imo: "9766451", master: "NARESH MAHADEV PATIL",
-      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "KANDLA PORT",
-      longitude: 70.2231, latitude: 23.0108, status: "normal", hiringStatus: "ON-Hire",
-      client: "OCEAN SPARKLE", reportDate: "06-Apr-2026", reportTime: "00:00",
-      speed: 0, course: 0, fuelBalance: 32463, fuelUsed: 1010, fuelStart: 13473,
-      waterBalance: 6000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "00:00", crewOnBoard: 10, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 1, certificatesExpired: 0, provisionDays: 10,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "CJ-02 UNB 0136-0236, CJ-06 TOI CJ-02 SHIFTING 0324-0536, CJ-16 BER 0612-0812, OJ-02 BER 2312-2400",
-      maintenanceRemarks: "ENGINE: E/R daily routines, E/R blower suction filter changed, G.S and fire pump body cleaned, bunker received 20 KL. DECK: General cleaning, fender I-pad painted.",
-      overallRemarks: "Bunker received at Kandla Port 20 KL",
-    },
-    {
-      id: "v21", name: "Ocean Challenger", imo: "9815812", master: "SAMIM AHSHAN SK",
-      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "KANDLA",
-      longitude: 70.2231, latitude: 23.0113, status: "normal", hiringStatus: "ON-Hire",
-      client: "OSL", reportDate: "06-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 32273, fuelUsed: 1360, fuelStart: 33633,
-      waterBalance: 14000, dpOpsHrs: "06:18", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "06:18", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 1, certificatesExpired: 0, provisionDays: 9,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "PM DUKE BER 0000-0118, SANMAR SITAR BER 0236-0506, IPSEA COLOSSUS UNB 0506-0624, STOLT MAPLE UNB 2248-2400",
-      maintenanceRemarks: "E/R daily routine maintenance. E/R floor plate cleaned, Z/P room cleaning in progress. OBM tried out.",
-      overallRemarks: "All systems operational",
-    },
-    {
-      id: "v22", name: "Ocean Promise", imo: "9464209", master: "Ravi Shankar",
-      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "Off Paradip",
-      longitude: 86.5, latitude: 20.2, status: "normal", hiringStatus: "ON-Hire",
-      client: "Ocean Sparkle Ltd", reportDate: "05-Apr-2026", reportTime: "00:00",
-      speed: 0, course: 0, fuelBalance: 28900, fuelUsed: 1850, fuelStart: 30750,
-      waterBalance: 16000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "10:00",
-      totalOpsHrs: "10:00", crewOnBoard: 10, maintenanceDone: 2, outstandingDefects: 0,
-      certificatesValid: 31, certificatesExpired: 0, provisionDays: 17,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Berthing: 3, Unberthing: 3 at Paradip Port",
-      maintenanceRemarks: "Generator oil change completed",
-      overallRemarks: "All systems operational",
-    },
-    {
-      id: "v23", name: "Ocean Quest", imo: "9239381", master: "Gopal Krishna",
-      company: "Ocean Sparkle", fleet: "Ocean Sparkle Fleet", location: "Off Chennai",
-      longitude: 80.3, latitude: 13.1, status: "warning", hiringStatus: "ON-Hire",
-      client: "Ocean Sparkle Ltd", reportDate: "05-Apr-2026", reportTime: "00:00",
-      speed: 0, course: 0, fuelBalance: 17200, fuelUsed: 2100, fuelStart: 19300,
-      waterBalance: 9500, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "07:30",
-      totalOpsHrs: "07:30", crewOnBoard: 10, maintenanceDone: 1, outstandingDefects: 1,
-      certificatesValid: 28, certificatesExpired: 1, provisionDays: 3,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Berthing: 2, Unberthing: 1 at Chennai Port",
-      maintenanceRemarks: "Anchor windlass serviced",
-      overallRemarks: "Low provisions - resupply scheduled",
-    },
-    // === TAHID / Adani Ports Vessels ===
-    {
-      id: "v3", name: "Zaharat Al Behar", imo: "9581473", master: "AKHILESH MONDAL",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "ADS Dock2_DQUM_OMAN",
-      longitude: 57.7220, latitude: 19.6623, status: "warning", hiringStatus: "OFF-Hire",
-      client: "-", reportDate: "07-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 54140, fuelUsed: 0, fuelStart: 54140,
-      waterBalance: 45400, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
-      totalOpsHrs: "24:00", crewOnBoard: 5, maintenanceDone: 56, outstandingDefects: 0,
-      certificatesValid: 31, certificatesExpired: 2, provisionDays: 6,
-      hseToolbox: 1, hseDrills: 1, lti: 0, nearMisses: 0,
-      lastOps: "NIL - Vessel docked at ADS Dock2",
-      maintenanceRemarks: "DECK: General cleanship, watch duty, security watch. ENGG: M/E Control Air System 100 Hrs routine maintenance, drained water from drain separator, checked EP regulator.",
-      overallRemarks: "Vessel under dry dock maintenance",
-    },
-    {
-      id: "v4", name: "Tahid Verde Island", imo: "1099929", master: "Milan Hajdukovic",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "At sea - under way to Cape Town-SA",
-      longitude: 21.7148, latitude: -34.8399, status: "warning", hiringStatus: "OFF-Hire",
-      client: "-", reportDate: "08-Apr-2026", reportTime: "12:00",
-      speed: 12.5, course: 220, fuelBalance: 84000, fuelUsed: 3300, fuelStart: 87300,
-      waterBalance: 12000, dpOpsHrs: "00:00", transitHrs: "24:00", portHrs: "00:00",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 47, outstandingDefects: 0,
-      certificatesValid: 34, certificatesExpired: 0, provisionDays: 0,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Underway to Cape Town 0000H - 2400H",
-      maintenanceRemarks: "Housekeeping, Daily Deck/Engine routine job.",
-      overallRemarks: "NIL",
-    },
-    {
-      id: "v6", name: "Tahid Sabarmati", imo: "9960681", master: "Ahmed Abdelaziz",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "Buchanan Port, Liberia",
-      longitude: -10.0482, latitude: 5.8539, status: "normal", hiringStatus: "ON-Hire",
-      client: "AML", reportDate: "08-Apr-2026", reportTime: "12:01",
-      speed: 0, course: 0, fuelBalance: 31042, fuelUsed: 200, fuelStart: 31242,
-      waterBalance: 21000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
-      totalOpsHrs: "24:00", crewOnBoard: 7, maintenanceDone: 15, outstandingDefects: 0,
-      certificatesValid: 29, certificatesExpired: 0, provisionDays: 17,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "NIL",
-      maintenanceRemarks: "DECK: Housekeeping, cleaning/sweeping main deck, continue marking/stencil sounding tank. ENGINE: Check accumulator pressure fwd/aft winch normal, checking electrical connection port generator good, check oil level steering system normal.",
-      overallRemarks: "All systems normal",
-    },
-    {
-      id: "v7", name: "Tahid Ilijan", imo: "1099917", master: "Greg Gregorio",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "ILIJAN BATANGAS",
-      longitude: 121.0917, latitude: 13.6210, status: "normal", hiringStatus: "ON-Hire",
-      client: "LFC", reportDate: "08-Apr-2026", reportTime: "12:01",
-      speed: 0, course: 0, fuelBalance: 54316, fuelUsed: 180, fuelStart: 54496,
-      waterBalance: 6600, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
-      totalOpsHrs: "24:00", crewOnBoard: 8, maintenanceDone: 11, outstandingDefects: 0,
-      certificatesValid: 27, certificatesExpired: 1, provisionDays: 9,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Vessel at anchor in Dela Paz anchorage waiting further instruction",
-      maintenanceRemarks: "Daily cleaning on bridge, galley and accommodation",
-      overallRemarks: "Vessel was on hired. DO sounding conducted by charterers, ROB stands at 79857 liters.",
-    },
-    {
-      id: "v24", name: "Tahid Narmada", imo: "9960679", master: "SAPRIYANDI ZAINAL ABIDIN",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "Dakar Anchorage Area",
-      longitude: -17.4035, latitude: 14.6864, status: "normal", hiringStatus: "OFF-Hire",
-      client: "-", reportDate: "07-Apr-2026", reportTime: "12:00",
-      speed: 0, course: 0, fuelBalance: 63747, fuelUsed: 160, fuelStart: 63907,
-      waterBalance: 49000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
-      totalOpsHrs: "24:00", crewOnBoard: 7, maintenanceDone: 56, outstandingDefects: 5,
-      certificatesValid: 41, certificatesExpired: 0, provisionDays: 18,
-      hseToolbox: 2, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Deck Watch 0001H-2400H. 1100H-1130H Testing Emergency Fire Fighting Equipment.",
-      maintenanceRemarks: "ENGINE: Daily routine, tested emergency fire pump, tested fan fire damper, tested quick emergency release for fwd/aft winches OK. DECK: Daily routine, continue painting bridge deck wing flooring port side.",
-      overallRemarks: "All certificates valid and up to date",
-    },
-    {
-      id: "v25", name: "Ameerat Al Behar", imo: "9581461", master: "SEKH ABDUL HALIM",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "ADS DQUM_OMAN",
-      longitude: 57.7207, latitude: 19.6614, status: "normal", hiringStatus: "ON-Hire",
-      client: "ADC DUQM OMAN", reportDate: "02-Apr-2026", reportTime: "00:01",
-      speed: 0, course: 0, fuelBalance: 44051, fuelUsed: 1123, fuelStart: 45174,
-      waterBalance: 28680, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "09:05",
-      totalOpsHrs: "09:05", crewOnBoard: 0, maintenanceDone: 0, outstandingDefects: 0,
-      certificatesValid: 39, certificatesExpired: 1, provisionDays: 0,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "MV KALINA SHIFTING Q5-1 1100-1254, DK-2 OPEN 1354-1416, MV THE RULER UNDOCKING 1518-1718, MT ASPAIR UNDOCKING 1718-1830, MT KALINKA DOCKING 1930-1950, MT STELLER STEAM-7 SHIFTING BASIN-Q1 2054-2248",
-      maintenanceRemarks: "DEC: General cleanship. ENG: Engine room and machineries daily checks. FO transferred from no1 P&S to DAY tanks. Both M/E's T/C 100 hours routine maintenance.",
-      overallRemarks: "BERTHIG/UNBERTHING",
-    },
-    {
-      id: "v26", name: "Dorat Al Behar", imo: "9581459", master: "KALYAN MANNA",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "ADC QUQY 1_DQUM_OMAN",
-      longitude: 57.7211, latitude: 19.6617, status: "warning", hiringStatus: "OFF-Hire",
-      client: "ADC Duqm Oman", reportDate: "07-Apr-2026", reportTime: "08:30",
-      speed: 0, course: 0, fuelBalance: 44761, fuelUsed: 0, fuelStart: 44761,
-      waterBalance: 39080, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "00:00", crewOnBoard: 0, maintenanceDone: 56, outstandingDefects: 0,
-      certificatesValid: 44, certificatesExpired: 1, provisionDays: 7,
-      hseToolbox: 1, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "TUG OFFHIRE. WATCH KEEPING DONE.",
-      maintenanceRemarks: "TUG OFFHIRE.. WATCH KEEPING DONE",
-      overallRemarks: "All systems normal",
-    },
-    {
-      id: "v27", name: "Tahid Dela Paz", imo: "1099890", master: "Efivar Carabuena",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "Dela Paz Batangas",
-      longitude: 121.0984, latitude: 13.6221, status: "normal", hiringStatus: "ON-Hire",
-      client: "-", reportDate: "08-Apr-2026", reportTime: "12:00",
-      speed: 0, course: 0, fuelBalance: 47989, fuelUsed: 285, fuelStart: 48274,
-      waterBalance: 12500, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "24:00",
-      totalOpsHrs: "24:00", crewOnBoard: 0, maintenanceDone: 10, outstandingDefects: 0,
-      certificatesValid: 38, certificatesExpired: 0, provisionDays: 0,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "Patrol watch. 0728H Standby M/E, 0733H heave up anchor, 0739H anchor secured and proceed patrol watch.",
-      maintenanceRemarks: "Engine: Continue inventory of all tools",
-      overallRemarks: "All systems normal",
-    },
-    {
-      id: "v28", name: "Tahid Mahaweli", imo: "1099905", master: "VINOTH GUNATHILAKA",
-      company: "Adani Ports", fleet: "TAHID Fleet", location: "COLOMBO",
-      longitude: 79.8470, latitude: 6.9402, status: "normal", hiringStatus: "ON-Hire",
-      client: "SLPA", reportDate: "07-Apr-2026", reportTime: "12:01",
-      speed: 0, course: 0, fuelBalance: 67309, fuelUsed: 3829, fuelStart: 71138,
-      waterBalance: 29999, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "00:00", crewOnBoard: 8, maintenanceDone: 56, outstandingDefects: 0,
-      certificatesValid: 25, certificatesExpired: 1, provisionDays: 0,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "PORT OPERATION. Tug services: APL JAQUAD shifting GP-1 to GP-2, SEAFRONTIER sailing, HAFNIA HENRIETTE berthing, MSC SOFIA CELESTE sailing, KEN ORCHID berthing, GSL MELINA berthing, MSC GAIYA berthing, MSC RAPALLO berthing, BASE EVPRESS sailing, COSCO SHIPPING PERU berthing, MAERSK GENOA berthing, MSC TAURUS VII sailing",
-      maintenanceRemarks: "No.01 aux. eng. heat exchanger back washed.",
-      overallRemarks: "All systems normal",
-    },
-    {
-      id: "v29", name: "Tug Dolphin #33", imo: "9891294", master: "D.G.N.Samarasekara",
-      company: "SLSC", fleet: "TAHID Fleet", location: "Colombo",
-      longitude: 79.8460, latitude: 6.9408, status: "warning", hiringStatus: "OFF-Hire",
-      client: "-", reportDate: "23-Mar-2026", reportTime: "12:00",
-      speed: 0, course: 0, fuelBalance: 48042, fuelUsed: 202, fuelStart: 48244,
-      waterBalance: 20000, dpOpsHrs: "00:00", transitHrs: "00:00", portHrs: "00:00",
-      totalOpsHrs: "00:00", crewOnBoard: 0, maintenanceDone: 49, outstandingDefects: 0,
-      certificatesValid: 13, certificatesExpired: 1, provisionDays: 14,
-      hseToolbox: 0, hseDrills: 0, lti: 0, nearMisses: 0,
-      lastOps: "TODAY NOON AT 1200 HRS, VESSEL OFFICIALLY HAND OVER TO ADANI HARBOUR SERVICES, INDIA.",
-      maintenanceRemarks: "Vessel handed over. ROBs: MGO 47.715 cubic meters. Lube oils documented.",
-      overallRemarks: "Vessel officially handed over to Adani Harbour Services",
-    },
-  ];
-
-  const realVesselIds = new Set(realVessels.map(v => v.id));
-  vessels.push(...realVessels);
-
-  // Generate ~185 more dummy vessels
-  for (let i = 29; i <= 215; i++) {
-    const companyIdx = Math.floor(rand() * companies.length);
-    const company = companies[companyIdx];
-    const locIdx = Math.floor(rand() * locationPools.length);
-    const loc = locationPools[locIdx];
-
-    // Jitter ±1.5° to spread along lanes without landing on coast
-    const lonOffset = (rand() - 0.5) * 3;
-    const latOffset = (rand() - 0.5) * 3;
-
-    const statusRoll = rand();
-    const status: VesselData["status"] = statusRoll < 0.7 ? "normal" : statusRoll < 0.9 ? "warning" : "critical";
-
-    const hiringRoll = rand();
-    const hiringStatus: VesselData["hiringStatus"] = hiringRoll < 0.75 ? "ON-Hire" : "OFF-Hire";
-
-    const prefix = vesselPrefixes[Math.floor(rand() * vesselPrefixes.length)];
-    const suffix = vesselSuffixes[Math.floor(rand() * vesselSuffixes.length)];
-    const nameNum = Math.floor(rand() * 100);
-    const vesselName = rand() > 0.5 ? `${prefix} ${suffix}` : `${prefix}-${String(nameNum).padStart(2, "0")}`;
-
-    // Realistic ops mode: most vessels either DP/berthing ops, transit, or port/standby
-    const opsMode = rand();
-    let speed: number, dpHrs: number, transitHrs: number, portHrs: number;
-    if (opsMode < 0.45) {
-      // DP/berthing operations (like Dolphin-04) - most common
-      dpHrs = Math.round(16 + rand() * 8); // 16-24 hrs
-      transitHrs = 0;
-      portHrs = 24 - dpHrs;
-      speed = 0;
-    } else if (opsMode < 0.65) {
-      // Transit (like Tahid Verde) - vessel underway
-      dpHrs = 0;
-      transitHrs = 24;
-      portHrs = 0;
-      speed = Math.round((8 + rand() * 5) * 10) / 10; // 8-13 knots realistic
-    } else if (opsMode < 0.85) {
-      // Port/standby (like Zaharat, Sabarmati)
-      dpHrs = 0;
-      transitHrs = 0;
-      portHrs = 24;
-      speed = 0;
-    } else {
-      // Mixed ops (partial DP + transit)
-      dpHrs = Math.round(4 + rand() * 10); // 4-14 hrs
-      transitHrs = Math.round(2 + rand() * (20 - dpHrs));
-      portHrs = Math.max(24 - dpHrs - transitHrs, 0);
-      speed = Math.round((4 + rand() * 6) * 10) / 10;
-    }
-
-    // Fuel: realistic ranges from VDRs (15k-97k start, 0-3700 used)
-    const fuelStart = Math.round(20000 + rand() * 75000);
-    const fuelUsed = speed > 0 ? Math.round(200 + rand() * 3500) : Math.round(rand() * 500);
-    const fuelBalance = Math.max(fuelStart - fuelUsed, 0);
-
-    // Water: realistic (10-40000 ltrs based on vessel size)
-    const waterBalance = Math.round(5000 + rand() * 35000);
-    // Crew: 5-14 from VDRs
-    const crewOnBoard = Math.round(5 + rand() * 9);
-    // Maintenance: 0-12 per day from VDRs
-    const maintenanceDone = Math.round(rand() * 12);
-    const outstandingDefects = status === "critical" ? Math.round(1 + rand() * 4) : status === "warning" ? Math.round(rand() * 2) : 0;
-    // Certs: 22-35 valid from VDRs
-    const certsValid = Math.round(22 + rand() * 13);
-    const certsExpired = status === "critical" ? Math.round(1 + rand() * 2) : status === "warning" && rand() > 0.6 ? 1 : 0;
-    // Provisions: 0-20 days from VDRs
-    const provisionDays = Math.round(rand() * 20);
-
-    const pad = (n: number) => String(n).padStart(2, "0");
-
-    vessels.push({
-      id: `v${i}`,
-      name: vesselName,
-      imo: String(9000000 + Math.floor(rand() * 999999)),
-      master: masters[Math.floor(rand() * masters.length)],
-      company: company.name,
-      fleet: company.fleet,
-      location: loc.name,
-      longitude: loc.lon + lonOffset,
-      latitude: loc.lat + latOffset,
-      status,
-      hiringStatus,
-      client: hiringStatus === "ON-Hire" ? clients[Math.floor(rand() * clients.length)] : "-",
-      reportDate: `0${Math.floor(3 + rand() * 3)}-Apr-2026`,
-      reportTime: `${pad(Math.floor(rand() * 24))}:${pad(Math.floor(rand() * 60))}`,
-      speed,
-      course: Math.round(rand() * 360),
-      fuelBalance,
-      fuelUsed,
-      fuelStart,
-      waterBalance,
-      dpOpsHrs: `${pad(dpHrs)}:${pad(Math.floor(rand() * 60))}`,
-      transitHrs: `${pad(transitHrs)}:${pad(Math.floor(rand() * 60))}`,
-      portHrs: `${pad(portHrs)}:${pad(Math.floor(rand() * 60))}`,
-      totalOpsHrs: "24:00",
-      crewOnBoard,
-      maintenanceDone,
-      outstandingDefects,
-      certificatesValid: certsValid,
-      certificatesExpired: certsExpired,
-      provisionDays,
-      hseToolbox: rand() > 0.3 ? 1 : 0,
-      hseDrills: rand() > 0.5 ? 1 : 0,
-      lti: 0,
-      nearMisses: rand() > 0.9 ? 1 : 0,
-      lastOps: operations[Math.floor(rand() * operations.length)],
-      maintenanceRemarks: maintenanceNotes[Math.floor(rand() * maintenanceNotes.length)],
-      overallRemarks: status === "critical" ? "Attention required" : status === "warning" ? "Monitor closely" : "Normal operations",
-    });
-  }
-
-  return vessels;
-}
-
-export const vesselData: VesselData[] = generateVessels();
-export const realVesselIds = new Set([
-  "v1","v2","v3","v4","v5","v6","v7","v8","v9","v10","v11","v12","v13","v14",
-  "v15","v16","v17","v18","v19","v20","v21","v22","v23","v24","v25","v26","v27","v28",
-]);
-export const realVessels = vesselData.filter(v => realVesselIds.has(v.id));
-
-// Generate alerts from vessel data (critical/warning vessels)
+// --- Generate alerts from vessel data ---
 function generateAlerts(): AlertHighlight[] {
   const alerts: AlertHighlight[] = [];
   let id = 1;
@@ -756,7 +315,7 @@ function generateAlerts(): AlertHighlight[] {
         severity: "critical", timestamp: `${v.reportDate} ${v.reportTime}`,
       });
     }
-    if (v.provisionDays < 3) {
+    if (v.provisionDays > 0 && v.provisionDays < 3) {
       alerts.push({
         id: `a${id++}`, title: "Low Provisions", vesselName: v.name,
         description: `Only ${v.provisionDays} days of provisions remaining. Resupply needed.`,
@@ -777,21 +336,14 @@ function generateAlerts(): AlertHighlight[] {
         severity: "info", timestamp: `${v.reportDate} ${v.reportTime}`,
       });
     }
-    if (v.speed > 10) {
-      alerts.push({
-        id: `a${id++}`, title: "Transit Underway", vesselName: v.name,
-        description: `Vessel transiting at ${v.speed} knots. Course: ${v.course}°.`,
-        severity: "normal", timestamp: `${v.reportDate} ${v.reportTime}`,
-      });
-    }
   }
 
-  return alerts.slice(0, 50); // Cap at 50 for carousel performance
+  return alerts;
 }
 
 export const alertHighlights: AlertHighlight[] = generateAlerts();
 
-// Fleet comparison - aggregate by company
+// --- Fleet comparison aggregated by company ---
 export const fleetComparisonData = companies.map((c) => {
   const companyVessels = realVessels.filter((v) => v.company === c.name);
   const count = companyVessels.length;
