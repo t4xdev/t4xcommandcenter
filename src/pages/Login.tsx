@@ -133,9 +133,6 @@ export default function Login({ onLogin }: LoginProps) {
           <p className="text-[10px] text-warning leading-relaxed">
             Login access allowed under license to<br />Twenty4x Solutions FZCO
           </p>
-          <p className="text-[9px] text-muted-foreground mt-2">
-            Demo: admin / admin123
-          </p>
         </div>
       </div>
 
