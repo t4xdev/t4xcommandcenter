@@ -191,17 +191,18 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
   );
 
   // Compliance score data — derived from latest VDRs for the 6 active vessels
+  // VDR: report timeliness | PMS: maintenance done vs peer max (Mahaweli=35) | Utilization: active hrs / 24 | Fuel: ROB vs start
   const complianceData = useMemo(() => {
     const scores: Record<string, { vdr: number; pms: number; utilization: number; fuel: number; score: number; company: string }> = {
       // The Adani Harbour International DMCC (TAHID Fleet)
-      "Sabarmati": { vdr: 100, pms: 99, utilization: 75, fuel: 70, score: 90, company: "The Adani Harbour International DMCC" },
-      "Narmada": { vdr: 100, pms: 87, utilization: 0, fuel: 100, score: 72, company: "The Adani Harbour International DMCC" },
-      "Verde Island": { vdr: 100, pms: 96, utilization: 0, fuel: 95, score: 73, company: "The Adani Harbour International DMCC" },
+      "Sabarmati":    { vdr: 100, pms: 74, utilization: 25, fuel: 99, score: 85, company: "The Adani Harbour International DMCC" },
+      "Narmada":      { vdr: 100, pms: 89, utilization: 0,  fuel: 100, score: 75, company: "The Adani Harbour International DMCC" },
+      "Verde Island": { vdr: 100, pms: 37, utilization: 0,  fuel: 100, score: 65, company: "The Adani Harbour International DMCC" },
       // Trident Maritime Corporation (Trident Fleet)
-      "Dela Paz": { vdr: 100, pms: 100, utilization: 0, fuel: 88, score: 72, company: "Trident Maritime Corporation" },
-      "Ilijan": { vdr: 100, pms: 100, utilization: 0, fuel: 90, score: 73, company: "Trident Maritime Corporation" },
-      // SLSC (SLSC Fleet)
-      "Mahaweli": { vdr: 96, pms: 97, utilization: 100, fuel: 82, score: 94, company: "SLSC" },
+      "Dela Paz":     { vdr: 100, pms: 14, utilization: 0,  fuel: 100, score: 60, company: "Trident Maritime Corporation" },
+      "Ilijan":       { vdr: 100, pms: 14, utilization: 0,  fuel: 100, score: 60, company: "Trident Maritime Corporation" },
+      // SLSC (SLSC Fleet) — 1 cert expired drags overall score
+      "Mahaweli":     { vdr: 100, pms: 100, utilization: 100, fuel: 98, score: 90, company: "SLSC" },
     };
     return Object.entries(scores)
       .map(([name, s]) => ({ name, ...s }))
@@ -745,10 +746,10 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
                   </div>
 
                   <div className="grid grid-cols-4 gap-1.5">
-                    <KpiMini icon={Fuel} label="Fuel" value={`${(selectedVessel.fuelBalance / 1000).toFixed(1)}K`}
+                    <KpiMini icon={Fuel} label="Fuel (Ltrs)" value={`${(selectedVessel.fuelBalance / 1000).toFixed(1)}K`}
                       trend={selectedVessel.fuelBalance < 20000 ? "down" : "up"}
                       alert={selectedVessel.fuelBalance < 20000} />
-                    <KpiMini icon={Droplets} label="Water" value={`${selectedVessel.waterBalance > 1000 ? (selectedVessel.waterBalance / 1000).toFixed(1) + "K" : selectedVessel.waterBalance}`}
+                    <KpiMini icon={Droplets} label="Water (Ltrs)" value={`${selectedVessel.waterBalance > 1000 ? (selectedVessel.waterBalance / 1000).toFixed(1) + "K" : selectedVessel.waterBalance}`}
                       trend={selectedVessel.waterBalance < 5000 ? "down" : "up"}
                       alert={selectedVessel.waterBalance < 5000} />
                     <KpiMini icon={Clock} label="Ops Hrs" value={selectedVessel.totalOpsHrs} />
