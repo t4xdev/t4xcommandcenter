@@ -746,10 +746,10 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
                   </div>
 
                   <div className="grid grid-cols-4 gap-1.5">
-                    <KpiMini icon={Fuel} label="Fuel" value={`${(selectedVessel.fuelBalance / 1000).toFixed(1)}K`}
+                    <KpiMini icon={Fuel} label="Fuel (Ltrs)" value={`${(selectedVessel.fuelBalance / 1000).toFixed(1)}K`}
                       trend={selectedVessel.fuelBalance < 20000 ? "down" : "up"}
                       alert={selectedVessel.fuelBalance < 20000} />
-                    <KpiMini icon={Droplets} label="Water" value={`${selectedVessel.waterBalance > 1000 ? (selectedVessel.waterBalance / 1000).toFixed(1) + "K" : selectedVessel.waterBalance}`}
+                    <KpiMini icon={Droplets} label="Water (Ltrs)" value={`${selectedVessel.waterBalance > 1000 ? (selectedVessel.waterBalance / 1000).toFixed(1) + "K" : selectedVessel.waterBalance}`}
                       trend={selectedVessel.waterBalance < 5000 ? "down" : "up"}
                       alert={selectedVessel.waterBalance < 5000} />
                     <KpiMini icon={Clock} label="Ops Hrs" value={selectedVessel.totalOpsHrs} />
