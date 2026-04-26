@@ -190,19 +190,23 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
     [filteredVessels, selectedIndex, selectedVesselId]
   );
 
-  // Compliance score data — derived from latest VDRs for the 6 active vessels
-  // VDR: report timeliness | PMS: maintenance done vs peer max (Mahaweli=35) | Utilization: active hrs / 24 | Fuel: ROB vs start
+  // Compliance score data — derived from latest VDRs (Apr 25-26, 2026) for the 6 active vessels
+  // VDR: report timeliness (all on-time = 100)
+  // PMS: maintenance jobs done vs peer-max (Mahaweli = 32 jobs)
+  // Utilization: active operating hrs / 24 (Mahaweli scored 100 — 8 tug ops though logged as 0 port hrs)
+  // Fuel: ROB / fuel-start (efficiency of consumption)
+  // Overall score: weighted avg with deductions for expired certs (-10), outstanding defects (-5)
   const complianceData = useMemo(() => {
     const scores: Record<string, { vdr: number; pms: number; utilization: number; fuel: number; score: number; company: string }> = {
+      // SLSC — Mahaweli: high PMS & util, but 1 expired cert
+      "Mahaweli":     { vdr: 100, pms: 100, utilization: 100, fuel: 97, score: 88, company: "SLSC" },
       // The Adani Harbour International DMCC (TAHID Fleet)
-      "Sabarmati":    { vdr: 100, pms: 74, utilization: 25, fuel: 99, score: 85, company: "The Adani Harbour International DMCC" },
-      "Narmada":      { vdr: 100, pms: 89, utilization: 0,  fuel: 100, score: 75, company: "The Adani Harbour International DMCC" },
-      "Verde Island": { vdr: 100, pms: 37, utilization: 0,  fuel: 100, score: 65, company: "The Adani Harbour International DMCC" },
-      // Trident Maritime Corporation (Trident Fleet)
-      "Dela Paz":     { vdr: 100, pms: 14, utilization: 0,  fuel: 100, score: 60, company: "Trident Maritime Corporation" },
-      "Ilijan":       { vdr: 100, pms: 14, utilization: 0,  fuel: 100, score: 60, company: "Trident Maritime Corporation" },
-      // SLSC (SLSC Fleet) — 1 cert expired drags overall score
-      "Mahaweli":     { vdr: 100, pms: 100, utilization: 100, fuel: 98, score: 90, company: "SLSC" },
+      "Sabarmati":    { vdr: 100, pms: 91,  utilization: 17,  fuel: 99, score: 77, company: "The Adani Harbour International DMCC" },
+      "Narmada":      { vdr: 100, pms: 91,  utilization: 0,   fuel: 99, score: 70, company: "The Adani Harbour International DMCC" },
+      "Verde Island": { vdr: 100, pms: 6,   utilization: 0,   fuel: 99, score: 51, company: "The Adani Harbour International DMCC" },
+      // Trident Maritime Corporation (Trident Fleet) — both at Batangas, low PMS
+      "Dela Paz":     { vdr: 100, pms: 9,   utilization: 0,   fuel: 99, score: 52, company: "Trident Maritime Corporation" },
+      "Ilijan":       { vdr: 100, pms: 9,   utilization: 0,   fuel: 99, score: 52, company: "Trident Maritime Corporation" },
     };
     return Object.entries(scores)
       .map(([name, s]) => ({ name, ...s }))
