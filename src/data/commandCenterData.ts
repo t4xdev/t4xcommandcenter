@@ -308,6 +308,13 @@ function generateAlerts(): AlertHighlight[] {
         severity: v.fuelBalance < 15000 ? "critical" : "warning", timestamp: `${v.reportDate} ${v.reportTime}`,
       });
     }
+    if (v.waterBalance < 1000) {
+      alerts.push({
+        id: `a${id++}`, title: "Critical Fresh Water", vesselName: v.name,
+        description: `Fresh water balance at ${v.waterBalance.toLocaleString()} Ltrs - immediate resupply required.`,
+        severity: "critical", timestamp: `${v.reportDate} ${v.reportTime}`,
+      });
+    }
     if (v.certificatesExpired > 0) {
       alerts.push({
         id: `a${id++}`, title: "Certificates Expired", vesselName: v.name,
