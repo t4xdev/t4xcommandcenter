@@ -842,14 +842,14 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
                     dataKey="pms"
                     domain={[50, 105]}
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "PMS Score %", position: "bottom", fontSize: 9, fill: "hsl(216, 10%, 46%)", offset: 2 }}
+                    label={{ value: "Planned Maintenance Compliance score", position: "bottom", fontSize: 9, fill: "hsl(216, 10%, 46%)", offset: 2 }}
                   />
                   <YAxis
                     type="number"
                     dataKey="score"
                     domain={[20, 100]}
                     tick={{ fill: "hsl(216, 10%, 46%)", fontSize: 9 }}
-                    label={{ value: "Overall Compliance Score", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
+                    label={{ value: "QHSE Compliance Score", angle: -90, position: "insideLeft", fontSize: 9, fill: "hsl(216, 10%, 46%)" }}
                   />
                   <ZAxis type="number" dataKey="utilization" range={[30, 200]} name="Utilization" />
                   <Tooltip
