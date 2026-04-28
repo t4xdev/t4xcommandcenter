@@ -6,9 +6,7 @@ import t4xLogo from "@/assets/t4x_logo.png";
 import marineBanner from "@/assets/login-marine-bg.jpg";
 
 const STATIC_USERS = [
-  { username: "admin", password: "admin123" },
-  { username: "captain", password: "captain123" },
-  { username: "viewer", password: "viewer123" },
+  { username: "devteam", password: "techteam" },
 ];
 
 interface LoginProps {
