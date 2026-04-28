@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-import adaniLogo from "@/assets/adani-logo.png";
+
 // Vessel photos (MVA Maritime FZCO fleet)
 import anjali1 from "@/assets/vessels/anjali.jpeg";
 import anjali2 from "@/assets/vessels/anjali_2.jpeg";
@@ -336,7 +336,7 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
           <span className="text-xs font-mono text-muted-foreground">
             {currentTime.toLocaleTimeString()} UTC
           </span>
-          <img src={adaniLogo} alt="Adani" className="h-5 w-auto" />
+          
           <button
             onClick={() => setShowLogoutDialog(true)}
             className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md border border-border bg-card text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-colors"
