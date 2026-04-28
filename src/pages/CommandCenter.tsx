@@ -115,7 +115,7 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
   const [scrollPosition, setScrollPosition] = useState(0);
   const animationRef = useRef<number>();
   const autoRotateRef = useRef(autoRotate);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([75, 12]);
+  const [mapCenter, setMapCenter] = useState<[number, number]>([13.25, -8.78]);
   const [mapZoom, setMapZoom] = useState(2.5);
 
   const filteredVessels = useMemo(() =>
