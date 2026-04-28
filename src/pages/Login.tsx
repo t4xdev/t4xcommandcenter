@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
-import adaniLogo from "@/assets/adani_logo.png";
 import t4xLogo from "@/assets/t4x_logo.png";
-import adaniBanner from "@/assets/adani_banner.jpeg";
+import marineBanner from "@/assets/login-marine-bg.jpg";
 
 const STATIC_USERS = [
   { username: "admin", password: "admin123" },
@@ -136,11 +135,11 @@ export default function Login({ onLogin }: LoginProps) {
         </div>
       </div>
 
-      {/* Right Panel - Banner Image (no overlay) */}
+      {/* Right Panel - Marine Fleet Banner */}
       <div className="hidden md:block flex-1">
         <img
-          src={adaniBanner}
-          alt="Adani - Growth with Goodness"
+          src={marineBanner}
+          alt="Marine fleet at sea"
           className="w-full h-full object-cover"
         />
       </div>
