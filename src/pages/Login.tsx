@@ -46,14 +46,6 @@ export default function Login({ onLogin }: LoginProps) {
       {/* Left Panel */}
       <div className="w-full md:w-[360px] flex flex-col justify-between px-8 py-10 bg-card border-r border-border">
         <div className="flex flex-col items-center">
-          {/* Adani Logo */}
-          <img
-            src={adaniLogo}
-            alt="Adani"
-            className="h-16 w-auto object-contain mb-6"
-            style={{ mixBlendMode: "multiply" }}
-          />
-
           {/* Welcome Text */}
           <p className="text-sm font-medium text-info mb-0.5">Welcome Back</p>
           <p className="text-sm font-bold text-warning mb-8">Un-Lock-Your-Time</p>
