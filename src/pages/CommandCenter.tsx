@@ -11,37 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 
 import adaniLogo from "@/assets/adani-logo.png";
-// VDR-extracted vessel images for the 6 active vessels
-import vdrDelaPazDeck from "@/assets/vdr-delapaz-deck.png";
-import vdrDelaPazForward from "@/assets/vdr-delapaz-forward.png";
-import vdrDelaPazEngine from "@/assets/vdr-delapaz-engine.png";
-import vdrDelaPazSteering from "@/assets/vdr-delapaz-steering.png";
-import vdrDelaPazGalley from "@/assets/vdr-delapaz-galley.png";
-import vdrIlijanDeck from "@/assets/vdr-ilijan-deck3.png";
-import vdrIlijanForward from "@/assets/vdr-ilijan-forward3.png";
-import vdrIlijanEngine from "@/assets/vdr-ilijan-engine4.png";
-import vdrIlijanSteering from "@/assets/vdr-ilijan-steering3.png";
-import vdrIlijanGalley from "@/assets/vdr-ilijan-galley3.png";
-import vdrMahaweliDeck from "@/assets/vdr-mahaweli-deck.png";
-import vdrMahaweliForward from "@/assets/vdr-mahaweli-forward.png";
-import vdrMahaweliEngine from "@/assets/vdr-mahaweli-engine.png";
-import vdrMahaweliSteering from "@/assets/vdr-mahaweli-steering.png";
-import vdrMahaweliGalley from "@/assets/vdr-mahaweli-galley.png";
-import vdrNarmadaDeck from "@/assets/vdr-narmada-deck.png";
-import vdrNarmadaForward from "@/assets/vdr-narmada-forward.png";
-import vdrNarmadaEngine from "@/assets/vdr-narmada-engine.png";
-import vdrNarmadaSteering from "@/assets/vdr-narmada-steering.png";
-import vdrNarmadaGalley from "@/assets/vdr-narmada-galley.png";
-import vdrSabarmatiDeck from "@/assets/vdr-sabarmati-deck.png";
-import vdrSabarmatiForward from "@/assets/vdr-sabarmati-forward.png";
-import vdrSabarmatiEngine from "@/assets/vdr-sabarmati-engine.png";
-import vdrSabarmatiSteering from "@/assets/vdr-sabarmati-steering.png";
-import vdrSabarmatiGalley from "@/assets/vdr-sabarmati-galley.png";
-import vdrVerdeDeck from "@/assets/vdr-verde-deck.png";
-import vdrVerdeForward from "@/assets/vdr-verde-forward.png";
-import vdrVerdeEngine from "@/assets/vdr-verde-engine.png";
-import vdrVerdeSteering from "@/assets/vdr-verde-steering.png";
-import vdrVerdeGalley from "@/assets/vdr-verde-galley.png";
+// Vessel photos (MVA Maritime FZCO fleet)
+import anjali1 from "@/assets/vessels/anjali.jpeg";
+import anjali2 from "@/assets/vessels/anjali_2.jpeg";
+import anjali3 from "@/assets/vessels/anjali_3.jpeg";
+import anjali4 from "@/assets/vessels/anjali_4.jpeg";
+import islandQueen1 from "@/assets/vessels/island_queen.jpeg";
+import islandQueen2 from "@/assets/vessels/island_queen_2.jpeg";
+import islandQueen3 from "@/assets/vessels/island_queen_3.jpeg";
 import {
   ComposableMap,
   Geographies,
@@ -99,9 +76,7 @@ const statusColors: Record<string, string> = {
 };
 
 const companyColors: Record<string, string> = {
-  "The Adani Harbour International DMCC": "hsl(215, 60%, 45%)",
-  "Trident Maritime Corporation": "hsl(357, 70%, 48%)",
-  "SLSC": "hsl(152, 55%, 38%)",
+  "MVA Maritime FZCO": "hsl(215, 60%, 45%)",
 };
 
 const severityStyles: Record<string, string> = {
@@ -113,18 +88,13 @@ const severityStyles: Record<string, string> = {
 
 
 const ROTATION_OPTIONS = [5, 10, 15, 20, 30, 60];
-// Vessel-specific image sets from VDR reports — 6 active vessels
-const VDR_LABELS = ["Deck Aft", "Forward View", "Engine Room", "Steering Room", "Galley"];
+// Vessel photo sets (MVA Maritime FZCO)
 const vesselImageMap: Record<string, { images: string[], labels: string[] }> = {
-  v1: { images: [vdrDelaPazDeck, vdrDelaPazForward, vdrDelaPazEngine, vdrDelaPazSteering, vdrDelaPazGalley], labels: VDR_LABELS },
-  v2: { images: [vdrIlijanDeck, vdrIlijanForward, vdrIlijanEngine, vdrIlijanSteering, vdrIlijanGalley], labels: VDR_LABELS },
-  v3: { images: [vdrMahaweliDeck, vdrMahaweliForward, vdrMahaweliEngine, vdrMahaweliSteering, vdrMahaweliGalley], labels: VDR_LABELS },
-  v4: { images: [vdrNarmadaDeck, vdrNarmadaForward, vdrNarmadaEngine, vdrNarmadaSteering, vdrNarmadaGalley], labels: VDR_LABELS },
-  v5: { images: [vdrSabarmatiDeck, vdrSabarmatiForward, vdrSabarmatiEngine, vdrSabarmatiSteering, vdrSabarmatiGalley], labels: VDR_LABELS },
-  v6: { images: [vdrVerdeDeck, vdrVerdeForward, vdrVerdeEngine, vdrVerdeSteering, vdrVerdeGalley], labels: VDR_LABELS },
+  v1: { images: [anjali1, anjali2, anjali3, anjali4], labels: ["Anjali at Sea", "Anjali Alongside", "Deck View", "Mooring Area"] },
+  v2: { images: [islandQueen1, islandQueen2, islandQueen3], labels: ["Island Queen Berthed", "Bow Underway", "Bridge Console"] },
 };
 const getVesselImageSet = (vesselId: string) => {
-  return vesselImageMap[vesselId] || { images: [vdrDelaPazDeck], labels: ["Vessel"] };
+  return vesselImageMap[vesselId] || { images: [anjali1], labels: ["Vessel"] };
 };
 
 export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
@@ -198,15 +168,11 @@ export default function CommandCenter({ onLogout }: { onLogout?: () => void }) {
   // Overall score: weighted (VDR 15%, PMS 30%, Util 25%, Fuel 30%) with -10 per expired cert and -5 per outstanding defect
   const complianceData = useMemo(() => {
     const scores: Record<string, { vdr: number; pms: number; utilization: number; fuel: number; score: number; company: string }> = {
-      // SLSC — Mahaweli: 44 PMS jobs, 8 tug ops, 1 expired certificate
-      "Mahaweli":     { vdr: 100, pms: 100, utilization: 100, fuel: 97, score: 89, company: "SLSC" },
-      // The Adani Harbour International DMCC (TAHID Fleet)
-      "Sabarmati":    { vdr: 100, pms: 73,  utilization: 83,  fuel: 98, score: 87, company: "The Adani Harbour International DMCC" },
-      "Narmada":      { vdr: 100, pms: 98,  utilization: 0,   fuel: 100, score: 49, company: "The Adani Harbour International DMCC" },
-      "Verde Island": { vdr: 100, pms: 2,   utilization: 0,   fuel: 100, score: 46, company: "The Adani Harbour International DMCC" },
-      // Trident Maritime Corporation (Trident Fleet) — both at Batangas, low PMS
-      "Dela Paz":     { vdr: 100, pms: 9,   utilization: 0,   fuel: 100, score: 48, company: "Trident Maritime Corporation" },
-      "Ilijan":       { vdr: 100, pms: 9,   utilization: 0,   fuel: 99, score: 48, company: "Trident Maritime Corporation" },
+      // MVA Maritime FZCO — both vessels at Luanda, Angola (port ops)
+      // Anjali: 41 PMS jobs, 0 expired certs, fuel ROB 44.5/46.6 m³
+      "Anjali":       { vdr: 100, pms: 100, utilization: 0, fuel: 95, score: 74, company: "MVA Maritime FZCO" },
+      // Island Queen: 12 PMS jobs (29% of peer max), 10 expired certs (heavy penalty)
+      "Island Queen": { vdr: 100, pms: 29,  utilization: 0, fuel: 99, score: 38, company: "MVA Maritime FZCO" },
     };
     return Object.entries(scores)
       .map(([name, s]) => ({ name, ...s }))
